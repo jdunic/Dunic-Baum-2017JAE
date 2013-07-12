@@ -1,0 +1,12 @@
+Highlighted rows from <All specimens with gp and SL for exploration_cleaned.xlsx> were removed, except the VA.LOUT where I changed the gp width to 128.3 from 1283 
+1)	Specimens with missing gh, gw, SL, and wt were removed
+2)	Specimens with notes describing errors, or inconsistencies (e.g., dried fish, missing head, etc.) were removed
+3)	See <All specimens with gp and SL for exploration.xlsx> for specimens that need things double checked – e.g., species, measurement calculations (AP.VIRE where scale reading should be confirmed by length-weight relationship)
+
+Changed VA.LOUT gape width to 128.3 in Dec 13 2012 analysis
+
+*** Have not removed specimens that are missing SiteIDs or have "Site Not Certain"
+
+
+Specimens n over 5 with gp and SL for exploration_cleaned.csv
+Made from <<All specimens with gp and SL for exploration_cleaned.csv> by manually deleting Specimens where a SpeciesCode appeared less than 5 times. 
