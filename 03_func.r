@@ -1,3 +1,8 @@
+# Change active plot window (quartz())
+A <- function(PlotWindow) {
+  dev.set(which=PlotWindow)
+}
+
 # ggplot default colour list for n colours
 gg_colour_hue <- function(n) {
   hues = seq(15, 375, length=n+1)
@@ -146,7 +151,8 @@ mk_sma_graph_df <- function(sma_summary_df) {
     slp   <- sma_summary_df[3, i]
     int   <- sma_summary_df[1, i]
     yfrom <- 10^(slp*log10(from) + int)
-    yto   <- 10^(slp*log10(to) + int)
+    yto   <- 10^(slp*l
+      og10(to) + int)
     group <- colnames(sma_summary_df)[i]
     
     row <- t(c(group=group, slp=slp, int=int, from=from, to=to, yfrom=yfrom,
@@ -163,10 +169,10 @@ mk_sma_graph_df <- function(sma_summary_df) {
 }
 
 
-mk_sma_summary <- function(sma_object, group="column_name", grouping=F) {
+mk_sma_summary <- function(sma_object, group="column_name") {
   rows <- c('elev', 'slp_test', 'slope', 'lower_ci', 'upper_ci',
             'slp_p_value', 'xy_r^2', 'xy_corr_p_value', 'n', 'from', 'to')
-  if (grouping==F) {
+  #if (grouping==F) {
     elev = coef(sma_object)[[1]]
     slp_test = sma_object$slopetest[[1]][[4]]
     slope  = sma_object$slopetest[[1]][[5]]
@@ -178,73 +184,102 @@ mk_sma_summary <- function(sma_object, group="column_name", grouping=F) {
     n = sma_object$n[[1]]
     from = sma_object$from[[1]]
     to   = sma_object$to[[1]]
-  } else {
+
+  columns <- c(elev, slp_test, slope, lower, upper, slp_p_val, xy_r2, xy_cor, n,
+               from, to)
+  
+  sma_df <- data.frame(columns, row.names=rows)
+  names(sma_df) <- sma_object$groups
+  #sma_df <- format(sma_df[1], digits=3, sci=F)
+  return(sma_df)
+}
+
+mk_spp_summary <- function(sma_object, num_spp=NA, grouping=F) {
+  
+  if (grouping==F) {
+    sma_df <- data.frame(elev=numeric(), slp_test=numeric(), slope=numeric(), 
+                      upper=numeric(), lower=numeric(), slp_p_val=numeric(), 
+                      xy_r2=numeric(), xy_cor=numeric(), n=numeric(), 
+                      from=numeric(), to=numeric()
+    )
+
+    for (i in 1:num_spp) {
+      #spp = as.factor(names(sma_object[[1]]))
+      #spp = as.character(attr(sma_object[i], which="split_labels")[[i]][[1]])
+      elev = coef(sma_object[[i]])[[1]]
+      slp_test = sma_object[[i]]$slopetest[[1]][[4]]
+      slope  = sma_object[[i]]$slopetest[[1]][[5]]
+      lower  = sma_object[[i]]$slopetest[[1]][6][[1]][[1]]
+      upper  = sma_object[[i]]$slopetest[[1]][6][[1]][[2]]
+      slp_p_val  = sma_object[[i]]$slopetest[[1]][[3]]
+      xy_r2  = sma_object[[i]]$r2[[1]]
+      xy_cor = sma_object[[i]]$pval[[1]]
+      n = sma_object[[i]]$n[[1]]
+      from = sma_object[[i]]$from[[1]]
+      to   = sma_object[[i]]$to[[1]]   
+      
+      row <- c(elev, slp_test, slope, lower, upper, slp_p_val, xy_r2, xy_cor, 
+               n, from, to)
+      sma_df <- rbind(sma_df, row)
+      columns <- c("elev", "slp_test", "slope", "lower", "upper", "slp_p_val", 
+               "xy_r2", "xy_cor", "n", "from", "to")
+  
+      #sma_df <- data.frame(columns, row.names=rows)
+      names(sma_df) <- columns
+      #sma_df <- format(sma_df[1], digits=3, sci=F)
+    }
+    return(sma_df)
+  } else if (grouping==T) {
+
+    sma_df <- data.frame(group=character(), elev=numeric(), slp_test=numeric(), 
+                      slope=numeric(), upper=numeric(), lower=numeric(), 
+                      slp_p_val=numeric(), xy_r2=numeric(), xy_cor=numeric(), 
+                      n=numeric(), from=numeric(), to=numeric(),
+                      stringsAsFactors=FALSE
+    )
     for (i in 1:length(sma_object$groups)) {
+
       elev = sma_object$coef[[i]][[1]][1]
       slp_test = sma_object$slopetest[[i]]$test.value
       slope = sma_object$slopetest[[i]]$b
       lower = sma_object$slopetest[[i]]$ci[1, 1]
       upper = sma_object$slopetest[[i]]$ci[1, 2]
       slp_p_val = sma_object$slopetest[[i]]$p
-      xy_r2 = sma_object$r
-      xy_cor = sma_object$pval
-      n = sma_object$n
-      from = sma_object$from
-      to = sma_object$to
+      xy_r2 = sma_object$r[i][[1]]
+      xy_cor = sma_object$pval[i][[1]]
+      n = sma_object$n[i][[1]]
+      from = sma_object$from[i][[1]]
+      to = sma_object$to[i][[1]]
+      group = sma_object$groups[i][[1]]
+
+      row <- c("group"=as.character(group), "elev"=as.numeric(elev), 
+               "slp_test"=as.numeric(slp_test), "slope"=as.numeric(slope),
+               "lower"=as.numeric(lower), "upper"=as.numeric(upper), 
+               "slp_p_val"=as.numeric(slp_p_val), "xy_r2"=as.numeric(xy_r2), 
+               "xy_cor"=as.numeric(xy_cor), "n"=as.numeric(n), 
+               "from"=as.numeric(from), "to"=as.numeric(to))
+      sma_df[i, ] <- row
     }
-  }
-  
-  columns <- c(elev, slp_test, slope, lower, upper, slp_p_val, xy_r2, xy_cor, n,
-               from, to)
-  
-  sma_df <- data.frame(columns, row.names=rows)
-  #names(sma_df) <- sma_object$groups
-  #sma_df <- format(sma_df[1], digits=3, sci=F)
-  return(sma_df)
-}
-
-mk_spp_summary <- function(sma_object, num_spp) {
-
-  sma_df <- data.frame(group=character(), elev=numeric(), slp_test=numeric(), 
-                      slope=numeric(), upper=numeric(), lower=numeric(), 
-                      slp_p_val=numeric(), xy_r2=numeric(), xy_cor=numeric(), 
-                      n=numeric(), from=numeric(), to=numeric()
-  )
-  
-  for (i in 1:num_spp) {
-    #spp = as.factor(names(sma_object[[1]]))
-    #spp = as.character(attr(sma_object[i], which="split_labels")[[i]][[1]])
-    elev = coef(sma_object[[i]])[[1]]
-    slp_test = sma_object[[i]]$slopetest[[1]][[4]]
-    slope  = sma_object[[i]]$slopetest[[1]][[5]]
-    lower  = sma_object[[i]]$slopetest[[1]][6][[1]][[1]]
-    upper  = sma_object[[i]]$slopetest[[1]][6][[1]][[2]]
-    slp_p_val  = sma_object[[i]]$slopetest[[1]][[3]]
-    xy_r2  = sma_object[[i]]$r2[[1]]
-    xy_cor = sma_object[[i]]$pval[[1]]
-    n = sma_object[[i]]$n[[1]]
-    from = sma_object[[i]]$from[[1]]
-    to   = sma_object[[i]]$to[[1]]
-    group = sma_object$groups[i]  
-    
-    row <- c(group, elev, slp_test, slope, lower, upper, slp_p_val, xy_r2, xy_cor, 
-             n, from, to)
-    sma_df <- rbind(sma_df, row)
-  }
-
-  columns <- c("elev", "slp_test", "slope", "lower", "upper", "slp_p_val", 
-               "xy_r2", "xy_cor", "n", "from", "to")
-  
+  columns <- c("group", "elev", "slp_test", "slope", "lower", "upper", 
+         "slp_p_val", "xy_r2", "xy_cor", "n", "from", "to")
   #sma_df <- data.frame(columns, row.names=rows)
   names(sma_df) <- columns
   #sma_df <- format(sma_df[1], digits=3, sci=F)
+  
+  for (x in 2:12) {
+    sma_df[, x] <- as.numeric(sma_df[, x])
+  }
   return(sma_df)
+  }
 }
+
+
 
 mk_smaSPP_graph_df <- function(sma_summary_df, num_spp) {
   sma_graph_df <- data.frame(group=character(), slp=numeric(), int=numeric(), 
                              from=numeric(), to=numeric(), yfrom=numeric(), 
-                             yto=numeric()
+                             yto=numeric(),
+                             stringsAsFactors=FALSE
   )
   for (i in 1:num_spp) {
     from  <- sma_summary_df[i, 11]
@@ -318,6 +353,44 @@ mk_gaFG_SMAplot <- function(df_points, df_lines) {
 
 # Makes SMA plots for FGs facetted
 # ==============================================================================
+mk_SMAplot <- function(df_points, df_lines, facet = TRUE, x = "SL", gapeType = c("gh", 
+  "gw", "ga"), grouping = c("j_fg", "Family", "SpeciesCode", "Region", 
+  "dissected_by")) {
+  
+  plot_base <- ggplot(data = df_points, aes_string(x = x, y = gapeType)) +
+  scale_y_log10() +
+  scale_x_log10() +
+  xlab("log(standard length, mm)") +
+  geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
+    yend = yto))
+
+  if (facet == FALSE) {
+    plot1 <- plot_base + geom_point( aes_string(colour = grouping))
+    switch(gapeType,
+      "gh" = { plot1 + ylab("log(vertical gape, mm)") },
+      "gw" = { plot1 + ylab("log(horizontal gape, mm)") },
+      "ga" = { plot1 + ylab(expression(paste("log(gape area ", mm^2, ")", 
+        sep= ""))) }
+      )
+
+  } else if (facet == TRUE) {
+    plot2 <- plot_base + geom_point()
+    switch(gapeType,
+      "gh" = { plot3 <- plot2 + ylab("log(vertical gape, mm)") },
+      "gw" = { plot3 <- plot2 + ylab("log(horizontal gape, mm)") },
+      "ga" = { plot3 <- plot2 + ylab(expression(paste("log(gape area ", mm^2, ")", 
+        sep= ""))) }
+      )
+    switch(grouping,
+      "j_fg" = { plot3 + facet_wrap( ~ j_fg) },
+      "Family" = { plot3 + facet_wrap( ~ Family) },
+      "SpeciesCode" = { plot3 + facet_wrap( ~ SpeciesCode) },
+      "Region" = { plot3 + facet_wrap( ~ Region) },
+      "dissected_by" = { plot3 + facet_wrap( ~ dissected_by) }
+      )
+  }
+}
+
 
 mk_ghFG_SMAfacet <- function(df_points, df_lines) {
   ggplot(data = df_points, aes(x = SL, y = gh)) +
