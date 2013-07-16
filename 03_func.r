@@ -127,6 +127,34 @@ awesome <- function(lm) {
 ################################################################################
 #############                    SMA Functions                      ############
 ################################################################################
+run_sma <- function(df, gapeType=c("gh", "gw", "ga"), robust=TRUE) {
+  if (robust == TRUE) {
+    switch(gapeType,
+    "gh" = { sma(gh ~ SL, data = df, log = "xy", method = "SMA", robust = TRUE, 
+      slope.test = 1) },
+    "gw" = { sma(gw ~ SL, data = df, log = "xy", method = "SMA", robust = TRUE, 
+      slope.test = 1) },
+    "ga" = { sma(ga ~ SL, data = df, log = "xy", method = "SMA", robust = TRUE, 
+      slope.test = 2) }
+    )
+  } else if (robust == FALSE) {
+    switch(gapeType, 
+    "gh" = { sma(gh ~ SL, data = df, log = "xy", method = "SMA", robust = FALSE, 
+      slope.test = 1) },
+    "gw" = { sma(gw ~ SL, data = df, log = "xy", method = "SMA", robust = FALSE, 
+      slope.test = 1) },
+    "ga" = { sma(ga ~ SL, data = df, log = "xy", method = "SMA", robust = FALSE, 
+      slope.test = 2) }
+    )
+  }
+}
+
+check_assump <- function(sma_object) {
+  plot(sma_object, which = "qq")
+  plot(sma_object, which = "residual")
+  abline(h=0, col="red")
+}
+
 mk_sma_df <- function(t) {
   data.frame(elevation  = t$coef[[1]][1,1],
              lw_ci_elev = t$coef[[1]][1,2],
@@ -195,7 +223,8 @@ mk_sma_summary <- function(sma_object, group="column_name") {
 }
 
 mk_spp_summary <- function(sma_object, num_spp=NA, grouping=F) {
-  
+# Use (grouping == F) when multiple sma_objects are generated using dlply
+# Use (grouping == T) when the sma_object was generated using x~y*group
   if (grouping==F) {
     sma_df <- data.frame(elev=numeric(), slp_test=numeric(), slope=numeric(), 
                       upper=numeric(), lower=numeric(), slp_p_val=numeric(), 
