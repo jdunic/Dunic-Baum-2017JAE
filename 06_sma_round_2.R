@@ -1,83 +1,70 @@
 ################################################################################
 ########                Individual functional group SMAs                ########
 ################################################################################
-A <- par(mfrow = c(2, 1))
-B <- par(mfrow = c(1, 1))
+A2 <- par(mfrow = c(1, 1))
+B2 <- par(mfrow = c(2, 1))
+C2 <- par(mfrow = c(3, 2))
+
+A3 <- par(mfrow = c(1, 1))
+B3 <- par(mfrow = c(2, 1))
+C3 <- par(mfrow = c(3, 2))
+
+xh
 
 # Piscivores
-pGH <- sma(gh~SL, data=p, log="xy", method="SMA", robust=F, slope.test=1)
-pGW <- sma(gw~SL, data=p, log="xy", method="SMA", robust=F, slope.test=1)
-pGA <- sma(ga~SL, data=p, log="xy", method="SMA", robust=F, slope.test=2)
-
-pGH
-plot(pGH)
+pGH <- sma(gh~SL, data=p, log="xy", method="SMA", robust=T, slope.test=1)
+pGW <- sma(gw~SL, data=p, log="xy", method="SMA", robust=T, slope.test=1)
+pGA <- sma(ga~SL, data=p, log="xy", method="SMA", robust=T, slope.test=2)
 
 # verifying SMA assumptions
-plot(pGH, which="residual")
-abline(h=0, col="red")
-hist(residuals(pGH))
-plot(residuals(pGH)~log(p$SL))
-abline(h=0, col="red")
+check_assump(pGH)
+check_assump(pGW)
+check_assump(pGA)
 
 # Benthic Invertivores
-bGH <- sma(gh~SL, data=b, log="xy", method="SMA", robust=F, slope.test=1)
-bGW <- sma(gw~SL, data=b, log="xy", method="SMA", robust=F, slope.test=1)
-bGA <- sma(ga~SL, data=b, log="xy", method="SMA", robust=F, slope.test=2)
-bGH
-
-plot(bGH)
+bGH <- sma(gh~SL, data=b, log="xy", method="SMA", robust=T, slope.test=1)
+bGW <- sma(gw~SL, data=b, log="xy", method="SMA", robust=T, slope.test=1)
+bGA <- sma(ga~SL, data=b, log="xy", method="SMA", robust=T, slope.test=2)
 
 # verifying SMA assumptions
-plot(b_sma, which="residual")
-abline(h=0, col="red")
-hist(residuals(bGH))
-plot(residuals(bGH)~log(b$SL))
-abline(h=0, col="red")
+check_assump(bGH)
+check_assump(bGW)
+check_assump(bGA)
 
 # Zooplanktivores
-zGH <- sma(gh~SL, data=zp, log="xy", method="SMA", robust=F, slope.test=1)
-zGW <- sma(gw~SL, data=zp, log="xy", method="SMA", robust=F, slope.test=1)
-zGA <- sma(ga~SL, data=zp, log="xy", method="SMA", robust=F, slope.test=2)
+zGH <- sma(gh~SL, data=zp, log="xy", method="SMA", robust=T, slope.test=1)
+zGW <- sma(gw~SL, data=zp, log="xy", method="SMA", robust=T, slope.test=1)
+zGA <- sma(ga~SL, data=zp, log="xy", method="SMA", robust=T, slope.test=2)
 zGH
 
-plot(zGH)
-
 # verifying SMA assumptions
-plot(z_sma, which="residual")
-abline(h=0, col="red")
-hist(residuals(z_sma))
-plot(residuals(z_sma)~log(zp$SL))
-abline(h=0, col="red")
+check_assump(zGH)
+check_assump(zGW)
+check_assump(zGA)
 
 # Herbivores
-hGH <- sma(gh~SL, data=h, log="xy", method="SMA", robust=F, slope.test=1)
-hGW <- sma(gw~SL, data=h, log="xy", method="SMA", robust=F, slope.test=1)
-hGA <- sma(ga~SL, data=h, log="xy", method="SMA", robust=F, slope.test=2)
+hGH <- sma(gh~SL, data=h, log="xy", method="SMA", robust=T, slope.test=1)
+hGW <- sma(gw~SL, data=h, log="xy", method="SMA", robust=T, slope.test=1)
+hGA <- sma(ga~SL, data=h, log="xy", method="SMA", robust=T, slope.test=2)
 hGH
 
-plot(hGH)
-
 # verifying SMA assumptions
-plot(h_sma, which="residual")
-abline(h=0, col="red")
-hist(residuals(hGH))
-plot(residuals(hGH)~log(h$SL))
-abline(h=0, col="red")
+check_assump(hGH)
+check_assump(hGW)
+check_assump(hGA)
 
 # Corallivores
-cGH <- sma(gh~SL, data=c, log="xy", method="SMA", robust=F, slope.test=1)
-cGW <- sma(gw~SL, data=c, log="xy", method="SMA", robust=F, slope.test=1)
-cGA <- sma(ga~SL, data=c, log="xy", method="SMA", robust=F, slope.test=2)
+cGH <- sma(gh~SL, data=c, log="xy", method="SMA", robust=T, slope.test=1)
+cGW <- sma(gw~SL, data=c, log="xy", method="SMA", robust=T, slope.test=1)
+cGA <- sma(ga~SL, data=c, log="xy", method="SMA", robust=T, slope.test=2)
 cGH
 
 plot(cGH)
 
 # verifying SMA assumptions
-plot(c_sma, which="residual")
-abline(h=0, col="red")
-hist(residuals(cGH))
-plot(residuals(cGH)~log(c$SL))
-abline(h=0, col="red")
+check_assump(cGH)
+check_assump(cGW)
+check_assump(cGA)
 
 
 ################################################################################
@@ -125,6 +112,10 @@ lutjanidae_gh <- sma(gh~SL, data=p[which(p$Family=="Lutjanidae"), ], log="xy",
 p_serranidae_gh <- sma(gh~SL, data=p[which(p$Family=="Serranidae"), ], log="xy",
                   method="SMA", robust=F, slope.test=1)
 
+check_assump(carangidae_gh)
+check_assump(lutjanidae_gh)
+check_assump(p_serranidae_gh)
+
 # Benthic invertivore families/species:
 monotaxis_gh <- sma(gh~SL, data=b[which(b$SpeciesCode=="MO.GRAN"), ], log="xy",
                  method="SMA", robust=F, slope.test=1)
@@ -132,6 +123,10 @@ paracirrhites_gh <- sma(gh~SL, data=b[which(b$SpeciesCode=="PA.ARCA"), ],
                      log="xy", method="SMA", robust=F, slope.test=1)
 parupeneus_gh <- sma(gh~SL, data=b[which(b$SpeciesCode=="PA.INSU"), ], log="xy",
                   method="SMA", robust=F, slope.test=1)
+
+check_assump(monotaxis_gh)
+check_assump(paracirrhites_gh)
+check_assump(parupeneus_gh)
 
 # Zooplanktivore families:
 caesionidae_gh <- sma(gh~SL, data=z[which(z$Family=="Caesionidae"), ], 
@@ -141,6 +136,10 @@ pomacentridae_gh <- sma(gh~SL, data=z[which(z$Family=="Pomacentridae"), ],
 z_serranidae_gh <- sma(gh~SL, data=z[which(z$Family=="Serranidae"), ],
                   log="xy", method="SMA", robust=F, slope.test=1)
 
+check_assump(caesionidae_gh)
+check_assump(pomacanthidae_gh)
+check_assump(z_serranidae_gh)
+
 # Herbivore families:
 acanthuridae_gh <- sma(gh~SL, data=h[which(h$Family=="Acanthuridae"), ], 
                     log="xy", method="SMA", robust=F, slope.test=1)
@@ -148,6 +147,11 @@ pomacanthidae_gh <- sma(gh~SL, data=h[which(h$Family=="Pomacanthidae"), ],
                      log="xy", method="SMA", robust=F, slope.test=1)
 scaridae_gh <- sma(gh~SL, data=h[which(h$Family=="Scaridae"), ], 
                 log="xy", method="SMA", robust=F, slope.test=1)
+
+check_assump(acanthuridae_gh)
+check_assump(pomacanthidae_gh)
+check_assump(scaridae_gh)
+
 # Corallivore:
 chaetodon_gh <- sma(gh~SL, data=c[which(c$SpeciesCode=="CH.ORNA"), ], 
                    log="xy", method="SMA", robust=F, slope.test=1)
@@ -192,6 +196,10 @@ lutjanidae_gw <- sma(gw~SL, data=p[which(p$Family=="Lutjanidae"), ], log="xy",
 p_serranidae_gw <- sma(gw~SL, data=p[which(p$Family=="Serranidae"), ], log="xy",
                      method="SMA", robust=F, slope.test=1)
 
+check_assump(carangidae_gw)
+check_assump(lutjanidae_gw)
+check_assump(p_serranidae_gw)
+
 # Benthic invertivore families/species:
 monotaxis_gw <- sma(gw~SL, data=b[which(b$SpeciesCode=="MO.GRAN"), ], log="xy",
                     method="SMA", robust=F, slope.test=1)
@@ -199,6 +207,9 @@ paracirrhites_gw <- sma(gw~SL, data=b[which(b$SpeciesCode=="PA.ARCA"), ],
                         log="xy", method="SMA", robust=F, slope.test=1)
 parupeneus_gw <- sma(gw~SL, data=b[which(b$SpeciesCode=="PA.INSU"), ], log="xy",
                      method="SMA", robust=F, slope.test=1)
+check_assump(monotaxis_gw)
+check_assump(paracirrhites_gw)
+check_assump(parupeneus_gw)
 
 # Zooplanktivore families:
 caesionidae_gw <- sma(gw~SL, data=z[which(z$Family=="Caesionidae"), ], 
@@ -208,6 +219,10 @@ pomacentridae_gw <- sma(gw~SL, data=z[which(z$Family=="Pomacentridae"), ],
 z_serranidae_gw <- sma(gw~SL, data=z[which(z$Family=="Serranidae"), ],
                      log="xy", method="SMA", robust=F, slope.test=1)
 
+check_assump(caesionidae_gw)
+check_assump(pomacentridae_gw)
+check_assump(z_serranidae_gw)
+
 # Herbivore families:
 acanthuridae_gw <- sma(gw~SL, data=h[which(h$Family=="Acanthuridae"), ], 
                        log="xy", method="SMA", robust=F, slope.test=1)
@@ -215,6 +230,11 @@ pomacanthidae_gw <- sma(gw~SL, data=h[which(h$Family=="Pomacanthidae"), ],
                         log="xy", method="SMA", robust=F, slope.test=1)
 scaridae_gw <- sma(gw~SL, data=h[which(h$Family=="Scaridae"), ], 
                    log="xy", method="SMA", robust=F, slope.test=1)
+
+check_assump(acanthuridae_gw)
+check_assump(pomacanthidae_gw)
+check_assump(scaridae_gw)
+
 # Corallivore:
 chaetodon_gw <- sma(gw~SL, data=c[which(c$SpeciesCode=="CH.ORNA"), ], 
                     log="xy", method="SMA", robust=F, slope.test=1)
@@ -258,6 +278,9 @@ lutjanidae_ga <- sma(ga~SL, data=p[which(p$Family=="Lutjanidae"), ], log="xy",
                      method="SMA", robust=F, slope.test=2)
 p_serranidae_ga <- sma(ga~SL, data=p[which(p$Family=="Serranidae"), ], log="xy",
                      method="SMA", robust=F, slope.test=2)
+check_assump(carangidae_ga)
+check_assump(lutjanidae_ga)
+check_assump(p_serranidae_ga)
 
 # Benthic invertivore families/species:
 monotaxis_ga <- sma(ga~SL, data=b[which(b$SpeciesCode=="MO.GRAN"), ], log="xy",
@@ -267,6 +290,10 @@ paracirrhites_ga <- sma(ga~SL, data=b[which(b$SpeciesCode=="PA.ARCA"), ],
 parupeneus_ga <- sma(ga~SL, data=b[which(b$SpeciesCode=="PA.INSU"), ], log="xy",
                      method="SMA", robust=F, slope.test=2)
 
+check_assump(monotaxis_ga)
+check_assump(paracirrhites_ga)
+check_assump(parupeneus_ga)
+
 # Zooplanktivore families:
 caesionidae_ga <- sma(ga~SL, data=z[which(z$Family=="Caesionidae"), ], 
                       log="xy", method="SMA", robust=F, slope.test=2)
@@ -275,6 +302,10 @@ pomacentridae_ga <- sma(ga~SL, data=z[which(z$Family=="Pomacentridae"), ],
 z_serranidae_ga <- sma(ga~SL, data=z[which(z$Family=="Serranidae"), ],
                      log="xy", method="SMA", robust=F, slope.test=2)
 
+check_assump(caesionidae_ga)
+check_assump(pomacentridae_ga)
+check_assump(z_serranidae_ga)
+
 # Herbivore families:
 acanthuridae_ga <- sma(ga~SL, data=h[which(h$Family=="Acanthuridae"), ], 
                        log="xy", method="SMA", robust=F, slope.test=2)
@@ -282,6 +313,11 @@ pomacanthidae_ga <- sma(ga~SL, data=h[which(h$Family=="Pomacanthidae"), ],
                         log="xy", method="SMA", robust=F, slope.test=2)
 scaridae_ga <- sma(ga~SL, data=h[which(h$Family=="Scaridae"), ], 
                    log="xy", method="SMA", robust=F, slope.test=2)
+
+check_assump(acanthuridae_ga)
+check_assump(pomacanthidae_ga)
+check_assump(scaridae_ga)
+
 # Corallivore:
 chaetodon_ga <- sma(ga~SL, data=c[which(c$SpeciesCode=="CH.ORNA"), ], 
                     log="xy", method="SMA", robust=F, slope.test=2)
@@ -324,6 +360,13 @@ gh_sma <- function(df) {
 p_famGH <- dlply(p, .(Family), gh_sma)
 z_famGH <- dlply(z, .(Family), gh_sma)
 h_famGH <- dlply(h, .(Family), gh_sma)
+
+p_famGH_summ <- ldply(p_famGH, .fun=mk_sma_summary(z, 
+  group=as.character())))
+
+p_famGH_assump <- l_ply(p_famGH, .fun=check_assump)
+z_famGH_assump <- l_ply(z_famGH, .fun=check_assump)
+h_famGH_assump <- l_ply(h_famGH, .fun=check_assump)
 
 p_famGH_summ <- cbind(p_fam, mk_spp_summary(p_famGH, 3))
 z_famGH_summ <- cbind(z_fam, mk_spp_summary(z_famGH, 3))
@@ -720,13 +763,99 @@ dev.off()
 ########                  Corallivore Random Effects                    ########
 ################################################################################
 
-cGH <- sma(gh~SL*Region, data=c, log="xy", method="SMA", robust=T, slope.test=1)
-c_regGH_summ <- cbind(unique(c$Region), mk_spp_summary(cGH, 5))
+cGA <- sma(ga~SL*Region, data=c, log="xy", method="SMA", robust=T, slope.test=1)
 
-cGH_summ <- mk_spp_summary(cGH, group="CH.ORNA")
-mk_sma_graph_df(cGH_summ)
+cGA_summ <- mk_spp_summary(cGA, grouping=T)
+cGA_reg_graphing <- mk_smaSPP_graph_df(cGA_summ, 5)
+names(cGA_reg_graphing)[1] <- "Region"
 
-c_sppGH_summ <- cbind("CH.ORNA", mk_spp_summary(c_sppGH, 1))
+A <- dev.cur()
+B <- dev.cur()
+
+A <- dev.set(which=2)
+B <- dev.set(which=3)
+
+plot.new()
+
+cGA_SMAplot <- 
+  ggplot(data = c, aes(x = SL, y = ga, colour=Region)) +
+    geom_point() +
+    geom_text(position=position_jitter(w=0.01, h=0.01), aes(label=dissected_by), 
+      size=3) +
+    scale_y_log10() +
+    scale_x_log10() +
+    #scale_x_log10(limits=c(1, 1000)) +
+    xlab("log(standard length, mm)") +
+    ylab(expression(paste("log(gape area ", mm^2, ")", sep= ""))) +
+    geom_segment(data = cGA_reg_graphing, aes(x = from, xend = to, y = yfrom, yend = yto))
+cGA_SMAplot
+
+mk_ghFG_SMAfacet(pento, height_df, gapeType="gh")
+
+mk_ghReg_SMAplot(c, cGH_reg_graphing)
+
+
+mk_ghReg_SMAplot <- function(df_points, df_lines) {
+  ggplot(data = df_points, aes(x = SL, y = gh, colour = Region) +
+    geom_point() +
+    scale_y_log10() +
+    scale_x_log10() +
+    #scale_x_log10(limits=c(1, 1000)) +
+    xlab("log(standard length, mm)") +
+    ylab("log(vertical gape, mm)") +
+    scale_colour_discrete(name = "Functional \n Group") +
+    #theme(legend.key.height = unit(1.5, "line")) +
+    #theme(legend.position = c(0.90, 0.35)) +
+    #theme(legend.background = element_rect(fill = "#FFFFFFaa", colour = 'NA')) +
+    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
+      yend = yto))
+}
+
+
+
+ggplot(data = c, aes(x = SL, y = gh, colour=Region)) +
+  geom_point() +
+  scale_y_log10() +
+  scale_x_log10() +
+  xlab("log(standard length, mm)") +
+  ylab("log(vertical gape, mm)") +
+  #ylab(expression(paste("log(gape area ", mm^2, ")", sep= ""))) +
+  scale_colour_discrete(name = "Functional \n Group") +
+  theme(legend.key.height = unit(1.5, "line")) +
+  theme(legend.position = c(0.90, 0.35)) +
+  theme(legend.background = element_rect(fill = "#FFFFFFaa", colour = 'NA')) +
+  geom_segment(data = cGH_reg_graphing, aes(x = from, xend = to, y = yfrom, yend = yto)) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
