@@ -149,9 +149,10 @@ run_sma <- function(df, gapeType=c("gh", "gw", "ga"), robust=TRUE) {
   }
 }
 
-check_assump <- function(sma_object) {
+check_assump <- function(sma_object, plotTitle) {
   plot(sma_object, which = "qq")
   plot(sma_object, which = "residual")
+  title(main = plotTitle)
   abline(h=0, col="red")
 }
 
@@ -168,19 +169,19 @@ mk_sma_df <- function(t) {
   )
 }
 
-mk_sma_graph_df <- function(sma_summary_df) {
-  sma_graph_df <- data.frame(group=numeric(), slp=numeric(), int=numeric(), 
+
+mk_sma_graph_df <- function(sma_summary_df, num_groups, group_name) {
+  sma_graph_df <- data.frame(group=character(), slp=numeric(), int=numeric(), 
                              from=numeric(), to=numeric(), yfrom=numeric(), 
-                             yto=numeric()
+                             yto=numeric(), stringsAsFactors=FALSE
   )
-  for (i in 1:5) {
+  for (i in 1:num_groups) {
     from  <- sma_summary_df[10, i]
     to    <- sma_summary_df[11, i]
     slp   <- sma_summary_df[3, i]
     int   <- sma_summary_df[1, i]
     yfrom <- 10^(slp*log10(from) + int)
-    yto   <- 10^(slp*l
-      og10(to) + int)
+    yto   <- 10^(slp*log10(to) + int)
     group <- colnames(sma_summary_df)[i]
     
     row <- t(c(group=group, slp=slp, int=int, from=from, to=to, yfrom=yfrom,
@@ -193,10 +194,11 @@ mk_sma_graph_df <- function(sma_summary_df) {
   sma_graph_df[, 5] <- as.numeric(as.character(sma_graph_df[, 5]))
   sma_graph_df[, 6] <- as.numeric(as.character(sma_graph_df[, 6]))
   sma_graph_df[, 7] <- as.numeric(as.character(sma_graph_df[, 7]))
+  names(sma_graph_df)[1] <- group_name
   return(sma_graph_df)
 }
 
-
+# Used for single group
 mk_sma_summary <- function(sma_object, group="column_name") {
   rows <- c('elev', 'slp_test', 'slope', 'lower_ci', 'upper_ci',
             'slp_p_value', 'xy_r^2', 'xy_corr_p_value', 'n', 'from', 'to')
@@ -335,6 +337,139 @@ mk_smaSPP_graph_df <- function(sma_summary_df, num_spp) {
 
 # Makes SMA plots for Families all on one graph
 # ==============================================================================
+
+mk_SMAplot <- function(df_points, df_lines, gapeType = c("gh", "gw", "ga"), 
+  point_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
+  line_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
+  labels = c("dissected_by", "Region", "SpecimenID", "None") 
+  ) {
+  
+  plot_base <- ggplot(data = df_points, aes_string(x = "SL", y = gapeType)) +
+         geom_point( aes_string(colour = point_colour)) +
+         geom_segment(data = df_lines, aes_string(x = "from", xend = "to", 
+          y = "yfrom", yend = "yto", colour = line_colour)) +
+         scale_y_log10() +
+         scale_x_log10() +
+         xlab("log(standard length, mm)")
+
+  switch(gapeType,
+    "gh" = { plot_base <- plot_base + ylab("log(vertical gape, mm)") },
+      "gw" = { plot_base <- plot_base + ylab("log(horizontal gape, mm)") },
+      "ga" = { plot_base <- plot_base + ylab(expression(
+        paste("log(gape area ", mm^2, ")", sep= ""))) }
+  )
+
+  if (labels == "None") {
+    plot1 <- plot_base
+  } else {
+    plot1 <- plot_base + geom_text(position = position_jitter(w = 0.03, 
+      h = 0.03), aes_string(label = labels), size = 3)
+  }
+
+  plot1
+}
+
+
+mk_SMAfacets <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"), 
+    point_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
+    labels = c("dissected_by", "Region", "SpecimenID", "None"),
+    facetting = c(j_fg, Family, SpeciesCode, Region, dissected_by)
+    ) {
+  
+  plot_base <- ggplot(data = df_points, aes_string(x = "SL", y = gapeType)) +
+       geom_point( aes_string(colour = point_colour)) +
+       geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
+        yend = yto)) +
+       scale_y_log10() +
+       scale_x_log10() +
+       xlab("log(standard length, mm)")
+  
+  switch(gapeType,
+    "gh" = { plot_base <- plot_base + ylab("log(vertical gape, mm)") },
+      "gw" = { plot_base <- plot_base + ylab("log(horizontal gape, mm)") },
+      "ga" = { plot_base <- plot_base + ylab(expression(
+        paste("log(gape area ", mm^2, ")", sep= ""))) }
+  )
+
+  if (labels == "None") {
+    plot1 <- plot_base
+  } else {
+    plot1 <- plot_base + geom_text(position = position_jitter(w = 0.03, 
+      h = 0.03), aes_string(label = labels), size = 3)
+  }
+
+  plot1 + facet_wrap( as.formula(sprintf('~ %s', facetting)) )
+}
+
+
+mk_SMAplot <- function(df_points, df_lines, facets = TRUE, x = "SL", gapeType = 
+  c("gh", "gw", "ga"), grouping = c("j_fg", "Family", "SpeciesCode", "Region", 
+  "dissected_by"), labels = c("Region", "Region_colour", "dissected_by",  
+  "dissected_colour", "SpecimenID", "None")) {
+  
+  plot_base <- ggplot(data = df_points, aes_string(x = x, y = gapeType)) +
+  scale_y_log10() +
+  scale_x_log10() +
+  xlab("log(standard length, mm)")
+
+  if (facets == FALSE) {
+    plot1 <- plot_base + geom_point( aes_string(colour = grouping) ) +
+             geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
+                yend = yto)) + aes_string(colour = grouping)
+    
+    switch(labels,
+    "dissected_by" = { plot1 <- plot1 + 
+      geom_text(position=position_jitter(w=0.03, h=0.03), 
+        aes(label=dissected_by), size=3) },
+    "Region" = { plot1 <- plot1 + 
+      geom_text(position=position_jitter(w=0.03, h=0.03), 
+        aes(label=dissected_by), size=3) },
+    "None" = { plot1 <- plot1 }
+      )
+
+    switch(gapeType,
+      "gh" = { plot1 + ylab("log(vertical gape, mm)") },
+      "gw" = { plot1 + ylab("log(horizontal gape, mm)") },
+      "ga" = { plot1 + ylab(expression(paste("log(gape area ", mm^2, ")", 
+        sep= ""))) }
+      )
+
+  } else if (facets == TRUE) {
+    plot2 <- plot_base + geom_point() +
+             geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
+                yend = yto))
+    switch(labels,
+    "dissected_by" = { plot2 <- plot2 + 
+      geom_point( aes_string(colour=labels) ) +
+      geom_text(position=position_jitter(w=0.03, h=0.03), 
+        aes(label=dissected_by), size=3) },
+    "dissected_colour" = { plot2 <- plot2 +
+      geom_point( aes(colour=dissected_by)) },
+    "Region" = { plot2 <- plot2 + 
+      geom_point( aes_string(colour=labels) ) +
+      geom_text(position=position_jitter(w=0.03, h=0.03), 
+        aes(label=Region), size=3) },
+    "Region_colour" = { plot2 <- plot2 +
+      geom_point( aes(colour=Region)) },
+    "None" = { plot2 <- plot2 }
+      )
+
+    switch(gapeType,
+      "gh" = { plot3 <- plot2 + ylab("log(vertical gape, mm)") },
+      "gw" = { plot3 <- plot2 + ylab("log(horizontal gape, mm)") },
+      "ga" = { plot3 <- plot2 + ylab(expression(paste("log(gape area ", mm^2, ")", 
+        sep= ""))) }
+      )
+    switch(grouping,
+      "j_fg" = { plot3 + facet_wrap( ~ j_fg) },
+      "Family" = { plot3 + facet_wrap( ~ Family) },
+      "SpeciesCode" = { plot3 + facet_wrap( ~ SpeciesCode) },
+      "Region" = { plot3 + facet_wrap( ~ Region) },
+      "dissected_by" = { plot3 + facet_wrap( ~ dissected_by) }
+      )
+  }
+}
+
 mk_ghFG_SMAplot <- function(df_points, df_lines) {
   ggplot(data = df_points, aes(x = SL, y = gh, colour=j_fg)) +
     geom_point() +
@@ -382,45 +517,6 @@ mk_gaFG_SMAplot <- function(df_points, df_lines) {
 
 # Makes SMA plots for FGs facetted
 # ==============================================================================
-mk_SMAplot <- function(df_points, df_lines, facet = TRUE, x = "SL", gapeType = c("gh", 
-  "gw", "ga"), grouping = c("j_fg", "Family", "SpeciesCode", "Region", 
-  "dissected_by")) {
-  
-  plot_base <- ggplot(data = df_points, aes_string(x = x, y = gapeType)) +
-  scale_y_log10() +
-  scale_x_log10() +
-  xlab("log(standard length, mm)") +
-  geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
-    yend = yto))
-
-  if (facet == FALSE) {
-    plot1 <- plot_base + geom_point( aes_string(colour = grouping))
-    switch(gapeType,
-      "gh" = { plot1 + ylab("log(vertical gape, mm)") },
-      "gw" = { plot1 + ylab("log(horizontal gape, mm)") },
-      "ga" = { plot1 + ylab(expression(paste("log(gape area ", mm^2, ")", 
-        sep= ""))) }
-      )
-
-  } else if (facet == TRUE) {
-    plot2 <- plot_base + geom_point()
-    switch(gapeType,
-      "gh" = { plot3 <- plot2 + ylab("log(vertical gape, mm)") },
-      "gw" = { plot3 <- plot2 + ylab("log(horizontal gape, mm)") },
-      "ga" = { plot3 <- plot2 + ylab(expression(paste("log(gape area ", mm^2, ")", 
-        sep= ""))) }
-      )
-    switch(grouping,
-      "j_fg" = { plot3 + facet_wrap( ~ j_fg) },
-      "Family" = { plot3 + facet_wrap( ~ Family) },
-      "SpeciesCode" = { plot3 + facet_wrap( ~ SpeciesCode) },
-      "Region" = { plot3 + facet_wrap( ~ Region) },
-      "dissected_by" = { plot3 + facet_wrap( ~ dissected_by) }
-      )
-  }
-}
-
-
 mk_ghFG_SMAfacet <- function(df_points, df_lines) {
   ggplot(data = df_points, aes(x = SL, y = gh)) +
     geom_point() +
