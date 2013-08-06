@@ -40,6 +40,62 @@ write_lme_gen <- function(df, y){
 }
 
 
+write_sma_eqn <- function(df, y){
+  m = lm(log(y) ~ log(SL), df);
+  l <- list(a = format(coef(m)[1], digits = 2), 
+            b = format(coef(m)[2], digits = 2), 
+            r2 = format(summary(m)$r.squared, digits = 3)
+  )
+  
+  if (l$a >= 0) {
+    eq <- substitute(italic(y) == b %.% italic(x) + a*","~~italic(r)^2~"="~r2, l) 
+  } else {
+      l <- list(a = format(abs(coef(m)[1]), digits = 2), 
+                b = format(coef(m)[2], digits = 2), 
+                r2 = format(summary(m)$r.squared, digits = 3)
+    )
+    eq <- substitute(italic(y) == b %.% italic(x) - a*","~~italic(r)^2~"="~r2, l)
+  }
+  as.character(as.expression(eq))
+}
+
+write_group_sma_eqn <- function(sma_summary_df, group_column) {
+  df <- sma_summary_df
+  m = matrix(data=NA, nrow=0, ncol=3)
+  count <- length(group_column)
+  for (i in (1:count)) {
+    l <- list(slp = format(sma_summary_df$slope[i], digits=2),
+              int = format(sma_summary_df$elev[i], digits=2), 
+              r2 = format(sma_summary_df$xy_r2[i], digits=2)
+    )
+    if (l$int >= 0) {
+      eqn <- substitute(italic(y) ==
+                          slp%.%italic(x) + int*~~italic(r)^2~"="~r2, l)
+      r2 <- substitute(italic(r)^2~"="~r2, l)
+    } else {
+        l <- list(slp = format(df[[3]][i], digits=2),
+                  int = format(abs(df[[2]][i]), digits=2), 
+                  r2 = format(df[[4]][i], digits=2)
+      )
+      eqn <- substitute(italic(y) ==
+                          slp%.% italic(x) - int*~~italic(r)^2~"="~r2, l)
+      r2 <- substitute(italic(r)^2~"="~r2, l)
+    }    
+    #browser()
+    sma_eq <- as.character(as.expression(eqn)) 
+    r2_exp <- as.character(as.expression(r2))
+    m <- rbind(m, c(as.character(df[[1]][i]), sma_eq, r2_exp))
+    #m <- rbind(m, c(as.character(df[i,1]), lm_eq))
+  }
+  m <- as.data.frame(m)
+}
+
+expression(atop(lm_eq, "r"^2~"="))
+
+labs(x = expression(atop(,paste("Distribution of node ages, ", 
+italic(gamma)))))
+
+
 count_spp <- function(df) {
   ddply(.data = df, .(SpeciesCode), summarize, 
         len = length(SpeciesCode),
@@ -183,9 +239,13 @@ mk_sma_graph_df <- function(sma_summary_df, num_groups, group_name) {
     yfrom <- 10^(slp*log10(from) + int)
     yto   <- 10^(slp*log10(to) + int)
     group <- colnames(sma_summary_df)[i]
+    midpoint_y <- sqrt(yfrom * yto)
+    midpoint_x <- sqrt(from * to)
+    ref_intercept <- log10(midpoint_y/(midpoint_x^2))
     
     row <- t(c(group=group, slp=slp, int=int, from=from, to=to, yfrom=yfrom,
-               yto=yto))
+               yto=yto, midpoint_x=midpoint_x, midpoint_y=midpoint_y, 
+               ref_intercept=ref_intercept))
     sma_graph_df <- rbind(sma_graph_df, row)
   }
   sma_graph_df[, 2] <- as.numeric(as.character(sma_graph_df[, 2]))
@@ -194,6 +254,9 @@ mk_sma_graph_df <- function(sma_summary_df, num_groups, group_name) {
   sma_graph_df[, 5] <- as.numeric(as.character(sma_graph_df[, 5]))
   sma_graph_df[, 6] <- as.numeric(as.character(sma_graph_df[, 6]))
   sma_graph_df[, 7] <- as.numeric(as.character(sma_graph_df[, 7]))
+  sma_graph_df[, 8] <- as.numeric(as.character(sma_graph_df[, 8]))
+  sma_graph_df[, 9] <- as.numeric(as.character(sma_graph_df[, 9]))
+  sma_graph_df[, 10] <- as.numeric(as.character(sma_graph_df[, 10]))
   names(sma_graph_df)[1] <- group_name
   return(sma_graph_df)
 }
@@ -224,7 +287,7 @@ mk_sma_summary <- function(sma_object, group="column_name") {
   return(sma_df)
 }
 
-mk_spp_summary <- function(sma_object, num_spp=NA, grouping=F) {
+mk_spp_summary <- function(sma_object, num_spp=NA, grouping=F, group_name) {
 # Use (grouping == F) when multiple sma_objects are generated using dlply
 # Use (grouping == T) when the sma_object was generated using x~y*group
   if (grouping==F) {
@@ -306,7 +369,7 @@ mk_spp_summary <- function(sma_object, num_spp=NA, grouping=F) {
 
 
 
-mk_smaSPP_graph_df <- function(sma_summary_df, num_spp) {
+mk_smaSPP_graph_df <- function(sma_summary_df, num_spp, group_name) {
   sma_graph_df <- data.frame(group=character(), slp=numeric(), int=numeric(), 
                              from=numeric(), to=numeric(), yfrom=numeric(), 
                              yto=numeric(),
@@ -320,18 +383,26 @@ mk_smaSPP_graph_df <- function(sma_summary_df, num_spp) {
     yfrom <- 10^(slp*log10(from) + int)
     yto   <- 10^(slp*log10(to) + int)
     group <- as.character(sma_summary_df[i, 1])
+    midpoint_y <- sqrt(yfrom * yto)
+    midpoint_x <- sqrt(from * to)
+    ref_intercept <- log10(midpoint_y/(midpoint_x^2))
     
     row <- t(c(group=group, slp=slp, int=int, from=from, to=to, yfrom=yfrom,
-               yto=yto)
+               yto=yto, midpoint_x=midpoint_x, midpoint_y=midpoint_y, 
+               ref_intercept=ref_intercept)
              )
     sma_graph_df <- rbind(sma_graph_df, row)
   }
-  sma_graph_df[, 2] <- as.numeric(as.character(sma_graph_df[, 2]))
-  sma_graph_df[, 3] <- as.numeric(as.character(sma_graph_df[, 3]))
-  sma_graph_df[, 4] <- as.numeric(as.character(sma_graph_df[, 4]))
-  sma_graph_df[, 5] <- as.numeric(as.character(sma_graph_df[, 5]))
-  sma_graph_df[, 6] <- as.numeric(as.character(sma_graph_df[, 6]))
-  sma_graph_df[, 7] <- as.numeric(as.character(sma_graph_df[, 7]))
+  sma_graph_df[, 2]  <- as.numeric(as.character(sma_graph_df[, 2]))
+  sma_graph_df[, 3]  <- as.numeric(as.character(sma_graph_df[, 3]))
+  sma_graph_df[, 4]  <- as.numeric(as.character(sma_graph_df[, 4]))
+  sma_graph_df[, 5]  <- as.numeric(as.character(sma_graph_df[, 5]))
+  sma_graph_df[, 6]  <- as.numeric(as.character(sma_graph_df[, 6]))
+  sma_graph_df[, 7]  <- as.numeric(as.character(sma_graph_df[, 7]))
+  sma_graph_df[, 8]  <- as.numeric(as.character(sma_graph_df[, 8]))
+  sma_graph_df[, 9]  <- as.numeric(as.character(sma_graph_df[, 9]))
+  sma_graph_df[, 10] <- as.numeric(as.character(sma_graph_df[, 10]))
+  names(sma_graph_df)[1] <- group_name
   return(sma_graph_df)
 }
 
@@ -341,13 +412,14 @@ mk_smaSPP_graph_df <- function(sma_summary_df, num_spp) {
 mk_SMAplot <- function(df_points, df_lines, gapeType = c("gh", "gw", "ga"), 
   point_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
   line_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
-  labels = c("dissected_by", "Region", "SpecimenID", "None") 
+  labels = c("dissected_by", "Region", "SpecimenID", "None")
+  #point_shape = c("Family", "SpeciesCode", "Region", "dissected_by", "None") 
   ) {
   
   plot_base <- ggplot(data = df_points, aes_string(x = "SL", y = gapeType)) +
-         geom_point( aes_string(colour = point_colour)) +
          geom_segment(data = df_lines, aes_string(x = "from", xend = "to", 
           y = "yfrom", yend = "yto", colour = line_colour)) +
+         geom_point( aes_string(colour = point_colour) ) +
          scale_y_log10() +
          scale_x_log10() +
          xlab("log(standard length, mm)")
@@ -359,11 +431,18 @@ mk_SMAplot <- function(df_points, df_lines, gapeType = c("gh", "gw", "ga"),
         paste("log(gape area ", mm^2, ")", sep= ""))) }
   )
 
+  #if (point_shape == "None") {
+  #  plot1 <- plot_base + geom_point( aes_string(colour = point_colour))
+  #} else {
+  #  plot1 <- plot_base + geom_point( aes_string(colour = point_colour, 
+  #    scale_shape = point_shape)) +
+  #}
+
   if (labels == "None") {
     plot1 <- plot_base
   } else {
-    plot1 <- plot_base + geom_text(position = position_jitter(w = 0.03, 
-      h = 0.03), aes_string(label = labels), size = 3)
+    plot1 <- plot_base + geom_text(position = position_jitter(w = 0.02, 
+      h = 0.02), aes_string(label = labels), colour="black", size = 2)
   }
 
   plot1
@@ -373,7 +452,8 @@ mk_SMAplot <- function(df_points, df_lines, gapeType = c("gh", "gw", "ga"),
 mk_SMAfacets <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"), 
     point_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
     labels = c("dissected_by", "Region", "SpecimenID", "None"),
-    facetting = c(j_fg, Family, SpeciesCode, Region, dissected_by)
+    facetting = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"), 
+    facet_columns
     ) {
   
   plot_base <- ggplot(data = df_points, aes_string(x = "SL", y = gapeType)) +
@@ -382,7 +462,8 @@ mk_SMAfacets <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"),
         yend = yto)) +
        scale_y_log10() +
        scale_x_log10() +
-       xlab("log(standard length, mm)")
+       xlab("log(standard length, mm)") +
+       theme_bw()
   
   switch(gapeType,
     "gh" = { plot_base <- plot_base + ylab("log(vertical gape, mm)") },
@@ -394,13 +475,122 @@ mk_SMAfacets <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"),
   if (labels == "None") {
     plot1 <- plot_base
   } else {
-    plot1 <- plot_base + geom_text(position = position_jitter(w = 0.03, 
-      h = 0.03), aes_string(label = labels), size = 3)
+    plot1 <- plot_base + geom_text(position = position_jitter(w = 0.02, 
+      h = 0.02), aes_string(label = labels), size = 2)
   }
 
-  plot1 + facet_wrap( as.formula(sprintf('~ %s', facetting)) )
+  plot1 + facet_wrap( as.formula(sprintf('~ %s', facetting)), ncol = facet_columns )
 }
 
+theme_L_border <- function(colour = "black", size = 1, linetype = 1) {
+  structure(
+    function(x = 0, y = 0, width = 1, height = 1, ...) {
+      polylineGrob(
+        x=c(x+width, x, x), y=c(y,y,y+height), ..., default.units = "npc",
+        gp=gpar(lwd=size, col=colour, lty=linetype),
+      )
+    },
+    class = "theme",
+    type = "box",
+    call = match.call()
+  )
+}
+
+mk_SMAfacets2 <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"), 
+    #point_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
+    labels = c("dissected_by", "Region", "SpecimenID", "None"),
+    facetting = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"), 
+    facet_columns
+    ) {
+  
+  plot_base <- ggplot(data = df_points, aes_string(x = "SL", y = gapeType)) +
+       geom_point(shape = 1, colour = "grey") +
+       geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
+        yend = yto)) +
+       scale_y_log10() +
+       scale_x_log10() +
+       xlab("log(standard length, mm)") +
+       theme_classic() +
+       theme(strip.background = element_blank(),
+        plot.background = element_blank(), 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.border = element_blank(), 
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        axis.line.x = element_line(colour = "black")
+        ) +
+        geom_point(aes(x = 10, y = 1), alpha = 0) +
+        geom_point(aes(x = 650, y = 12000), alpha = 0)
+  switch(gapeType,
+    "gh" = { plot_base <- plot_base + ylab("log(vertical gape, mm)") },
+      "gw" = { plot_base <- plot_base + ylab("log(horizontal gape, mm)") },
+      "ga" = { plot_base <- plot_base + ylab(expression(
+        paste("log(gape area ", mm^2, ")", sep= ""))) }
+  )
+  if (labels == "None") {
+    plot1 <- plot_base
+  } else {
+    plot1 <- plot_base + geom_text(position = position_jitter(w = 0.02, 
+      h = 0.02), aes_string(label = labels), size = 2)
+  }
+  plot1 + facet_wrap( as.formula(sprintf('~ %s', facetting)), ncol = facet_columns, 
+  scales = "free")
+}
+
+mk_multipanel_plots1 <- function(point_df, colour, line_df_row, ref_intercept_row)
+ggplot(data = point_df, aes_string(x = "SL", y = "ga")) +
+    geom_segment(data = line_df_row, aes_string(x = "from", xend = "to", 
+     y = "yfrom", yend = "yto")) +
+    geom_point(colour = colour) +
+    scale_y_log10(limits = c(1, 12000)) +
+    scale_x_log10(limits = c(1, 1100)) +
+    theme(axis.title.x = element_blank()) +
+    theme(axis.title.y = element_blank()) +
+    #xlab("log(standard length, mm)") +     
+    #ylab(expression(paste("log(gape area ", mm^2, ")", sep= ""))) + 
+  geom_abline(intercept = ref_intercept_row, slope = 2, linetype = 2, 
+    colour = "darkgrey") +
+  theme_bw() +
+  theme( plot.background = element_blank(), 
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(), 
+    panel.border = element_blank(), 
+    panel.background = element_blank()
+  ) +
+    theme(axis.line = element_line(color = 'black'))
+
+
+mk_multipanel_plots2 <- function(fg_point_df, spp_point_df, spp_line_df_row, 
+  ref_intercept_row, fg_line_df_row = NA) {
+  plot_base <- 
+      ggplot(data = fg_point_df, aes_string(x = "SL", y = "ga")) +
+        geom_point(shape = 1, colour = "grey") +
+        geom_segment(data = spp_line_df_row, aes_string(x = "from", xend = "to", 
+         y = "yfrom", yend = "yto")) +
+        geom_point(data = spp_point_df, colour = "black", shape = 1) +
+        scale_y_log10() +
+        scale_x_log10() +
+        theme(axis.title.x = element_blank()) +
+        theme(axis.title.y = element_blank()) +
+        #xlab("log(standard length, mm)") +     
+        #ylab(expression(paste("log(gape area ", mm^2, ")", sep= ""))) + 
+      geom_abline(intercept = ref_intercept_row, slope = 2, linetype = 2, 
+        colour = "darkgrey") +
+      theme_bw() +
+      theme( plot.background = element_blank(), 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.border = element_blank(), 
+        panel.background = element_blank()
+      ) +
+      theme(axis.line = element_line(color = 'black')) +
+      theme(axis.text = element_blank())
+      #plot <- plot_base +
+       # geom_segment(data = fg_line_df_row, aes_string(x = "from", xend = "to", 
+        # y = "yfrom", yend = "yto"), colour = "grey")
+    plot_base
+}
 
 mk_SMAplot <- function(df_points, df_lines, facets = TRUE, x = "SL", gapeType = 
   c("gh", "gw", "ga"), grouping = c("j_fg", "Family", "SpeciesCode", "Region", 
@@ -869,8 +1059,39 @@ write_lme_groups <- function(summ_df, variable) {
 #   }))
 # }
 
+# Mapping function taken from SO answer by Joris Meys from:
+# http://stackoverflow.com/questions/5353184/fixing-maps-library-data-for-pacific-centred-0-360-longitude-display
+# Used to adjust polygons so that they are not left 'open' on the cut when the 
+# ends (for "world" and "worldHiRes") when the map is pacific ocean-centric.
+# xlimits have been added to the final call for map() at the end of the function 
+# because they were causing islands in the pacific to disappear in first part of 
+# the function where the polygons are moved around. 
+plot.map<- function(database,center, xlimits, ...){
+    Obj <- map(database,...,plot=F)
+    coord <- cbind(Obj[[1]],Obj[[2]])
 
+    # split up the coordinates
+    id <- rle(!is.na(coord[,1]))
+    id <- matrix(c(1,cumsum(id$lengths)),ncol=2,byrow=T)
+    polygons <- apply(id,1,function(i){coord[i[1]:i[2],]})
 
+    # split up polygons that differ too much
+    polygons <- lapply(polygons,function(x){
+        x[,1] <- x[,1] + center
+        x[,1] <- ifelse(x[,1]>180,x[,1]-360,x[,1])
+        if(sum(diff(x[,1])>300,na.rm=T) >0){
+          id <- x[,1] < 0
+          x <- rbind(x[id,],c(NA,NA),x[!id,])
+       }
+       x
+    })
+    # reconstruct the object
+    polygons <- do.call(rbind,polygons)
+    Obj[[1]] <- polygons[,1]
+    Obj[[2]] <- polygons[,2]
+
+    map(Obj,..., xlim=xlimits)
+}
 
 
 
