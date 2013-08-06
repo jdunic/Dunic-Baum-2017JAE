@@ -1,0 +1,1141 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"F",
+				"F"
+			],
+			[
+				"slpte",
+				"slopetest"
+			],
+			[
+				"B",
+				"b"
+			],
+			[
+				"b",
+				"b"
+			],
+			[
+				"diss",
+				"dissections__gw__isnull"
+			],
+			[
+				"s",
+				"spp"
+			],
+			[
+				"fk_Sp",
+				"fk_Species"
+			],
+			[
+				"fk_T",
+				"fk_Treatment__TreatmentCode"
+			],
+			[
+				"packe",
+				"packed_notes"
+			],
+			[
+				"samp",
+				"samp_notes"
+			],
+			[
+				"col",
+				"col_notes"
+			],
+			[
+				"row",
+				"row"
+			],
+			[
+				"stomachsam",
+				"stomach_sample"
+			],
+			[
+				"select",
+				"select_related"
+			],
+			[
+				"sle",
+				"select_related"
+			],
+			[
+				"na_spec",
+				"na_spec"
+			],
+			[
+				"packed",
+				"packedsamples_set"
+			],
+			[
+				"c",
+				"c"
+			],
+			[
+				"N",
+				"NullBooleanField"
+			],
+			[
+				"fk",
+				"fk_Packed"
+			],
+			[
+				"samples",
+				"samples"
+			],
+			[
+				"En",
+				"EnteredBy"
+			],
+			[
+				"sample",
+				"sample_id"
+			],
+			[
+				"D",
+				"D"
+			],
+			[
+				"fk_Tra",
+				"packedsamples__fk_TrayName__Submitted"
+			],
+			[
+				"Fg",
+				"Fg"
+			],
+			[
+				"fk_G",
+				"fk_Species__fk_Guild__GuildCode"
+			],
+			[
+				"Sic",
+				"fk_Species__ScientificName"
+			],
+			[
+				"values",
+				"values_list"
+			],
+			[
+				"fk_Species",
+				"fk_Specimen__fk_Species__fk_Type__Type"
+			],
+			[
+				"write",
+				"writerow"
+			],
+			[
+				"fk_f",
+				"fk_Species__Family"
+			],
+			[
+				"fk_Species__",
+				"fk_Species__EnglishName"
+			],
+			[
+				"fk_Species__Sc",
+				"fk_Species__ScientificName"
+			],
+			[
+				"date",
+				"date_collected"
+			],
+			[
+				"specimen",
+				"specimen_id"
+			],
+			[
+				"speci",
+				"specimen_id"
+			],
+			[
+				"cole",
+				"collected_by"
+			],
+			[
+				"dat",
+				"date_collected"
+			],
+			[
+				"dateco",
+				"date_collected"
+			],
+			[
+				"datec",
+				"date_collected"
+			],
+			[
+				"dpthcolecd",
+				"depth_collected"
+			],
+			[
+				"dept",
+				"depth_collected"
+			],
+			[
+				"dep",
+				"depth_collected"
+			],
+			[
+				"Depth",
+				"depth_collected"
+			],
+			[
+				"fk_",
+				"fk_Species__fk_Guild__GuildCode"
+			],
+			[
+				"spec",
+				"species_count"
+			],
+			[
+				"sp",
+				"sp"
+			],
+			[
+				"fk_P",
+				"fk_Packed__fk_Sample__fk_Specimen__fk_Species__fk_Guild__GuildCode"
+			],
+			[
+				"sel",
+				"select_related"
+			],
+			[
+				"fk_Speci",
+				"fk_Species__SpeciesCode"
+			],
+			[
+				"fk_Spe",
+				"fk_Specimen__fk_Species__SpeciesCode"
+			],
+			[
+				"samps",
+				"samps"
+			],
+			[
+				"Q",
+				"Q"
+			],
+			[
+				"collectionnoes",
+				"collection_notes"
+			],
+			[
+				"fk_Specimen__",
+				"fk_Specimen__fk_Species__SpeciesCode"
+			],
+			[
+				"fg",
+				"fg"
+			],
+			[
+				"fk_Specimen",
+				"fk_Specimen__fk_Species__fk_Guild__GuildCode"
+			],
+			[
+				"sfu",
+				"sfu_old_results"
+			],
+			[
+				"Standar",
+				"STANDARD"
+			],
+			[
+				"dry",
+				"drying_time"
+			],
+			[
+				"Drying",
+				"DryingMethod"
+			],
+			[
+				"drying",
+				"drying_method"
+			],
+			[
+				"Prepped",
+				"PreppedBy"
+			],
+			[
+				"pre",
+				"preprocessings__fk_Treatment__TreatmentCode"
+			],
+			[
+				"state",
+				"state_import"
+			],
+			[
+				"shitt",
+				"shitty_date_conversion"
+			],
+			[
+				"2011_K",
+				"2011_KI_PP_collections"
+			],
+			[
+				"datewasd",
+				"date_wash_dry"
+			],
+			[
+				"auto_now",
+				"auto_now_add"
+			],
+			[
+				"entere",
+				"entered_by"
+			],
+			[
+				"csv",
+				"csv"
+			],
+			[
+				"line",
+				"line_number"
+			],
+			[
+				"containe",
+				"ContainerType"
+			],
+			[
+				"KI_SI",
+				"KI_SI_sample_Index"
+			],
+			[
+				"Old",
+				"OldSampleID"
+			],
+			[
+				"fs",
+				"fk_Species"
+			],
+			[
+				"d",
+				"d"
+			],
+			[
+				"a",
+				"a"
+			],
+			[
+				"f",
+				"fishdb_sites"
+			],
+			[
+				"site",
+				"site"
+			],
+			[
+				"wrt",
+				"writerow"
+			],
+			[
+				"Datp",
+				"DateProcessed"
+			],
+			[
+				"Di",
+				"DissectedBy"
+			],
+			[
+				"pt",
+				"print"
+			],
+			[
+				"is",
+				"iso"
+			],
+			[
+				"Pre",
+				"PreySize"
+			],
+			[
+				"e",
+				"e"
+			],
+			[
+				"tl",
+				"tl"
+			],
+			[
+				"specim",
+				"specimenID"
+			],
+			[
+				"spp",
+				"spp"
+			],
+			[
+				"import",
+				"import"
+			],
+			[
+				"ro",
+				"row"
+			],
+			[
+				"r",
+				"row"
+			],
+			[
+				"R",
+				"row"
+			],
+			[
+				"Does",
+				"ObjectDoesNotExist"
+			],
+			[
+				"In",
+				"IntegrityError"
+			],
+			[
+				"Objec",
+				"ObjectDoesNotExist"
+			],
+			[
+				"Tray",
+				"TRAYadmin"
+			],
+			[
+				"State",
+				"State"
+			],
+			[
+				"Lengh",
+				"LengthWeights"
+			],
+			[
+				"A",
+				"A"
+			],
+			[
+				"rU",
+				"results"
+			],
+			[
+				"Tret",
+				"Treatment"
+			],
+			[
+				"fmp_",
+				"fmp_speciesID"
+			],
+			[
+				"fk_Fish",
+				"fk_FishingMethodID"
+			],
+			[
+				"Date",
+				"DateDissected"
+			],
+			[
+				"SharkPie",
+				"SharkPieces"
+			],
+			[
+				"wt",
+				"wt"
+			],
+			[
+				"fmp_Specim",
+				"fmp_specimenID"
+			],
+			[
+				"pk_Sampl",
+				"pk_SampleTypeID"
+			],
+			[
+				"pk_Samp",
+				"pk_SampleTypeID"
+			],
+			[
+				"Packe",
+				"PackedSamples"
+			],
+			[
+				"PrepEnter",
+				"PrepEnteredBy"
+			],
+			[
+				"Prep",
+				"PrepEnteredBy"
+			],
+			[
+				"get",
+				"get_or_create"
+			],
+			[
+				"Fishing",
+				"FishingMethod"
+			],
+			[
+				"auto",
+				"auto_now_add"
+			],
+			[
+				"SampleID",
+				"fk_SampleID"
+			],
+			[
+				"Len",
+				"LengthWeights"
+			],
+			[
+				"Fish",
+				"FishingMethods"
+			],
+			[
+				"FishingHabitat",
+				"FishingHabitats"
+			],
+			[
+				"Fi",
+				"FishingHabitat"
+			],
+			[
+				"Sample",
+				"SampleID"
+			],
+			[
+				"unique",
+				"unique_together"
+			],
+			[
+				"Samp",
+				"SampleID"
+			],
+			[
+				"model",
+				"models"
+			],
+			[
+				"DAte",
+				"DateField"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "# Change active plot window (quartz())\nA <- function(PlotWindow) {\n  dev.set(which=PlotWindow)\n}\n\n# ggplot default colour list for n colours\ngg_colour_hue <- function(n) {\n  hues = seq(15, 375, length=n+1)\n  hcl(h=hues, l=65, c=100)[1:n]\n}\n\n################################################################################\n#############             Graph equations and formatting            ############\n################################################################################\n# extract ggplot legend to stick beside gridExtra plots as desired:\nextract_legend <- function(a.gplot){\n  tmp    <- ggplot_gtable(ggplot_build(a.gplot))\n  leg    <- which(sapply(tmp$grobs, function(x) x$name) == \"guide-box\")\n  legend <- tmp$grobs[[leg]]\n  return(legend)\n}\n\nwrite_lme_gen <- function(df, y){\n  m = lm(log(y) ~ log(SL), df);\n  l <- list(a = format(coef(m)[1], digits = 2), \n            b = format(coef(m)[2], digits = 2), \n            r2 = format(summary(m)$r.squared, digits = 3)\n  )\n  \n  if (l$a >= 0) {\n    eq <- substitute(italic(y) == b %.% italic(x) + a*\",\"~~italic(r)^2~\"=\"~r2, l) \n  } else {\n      l <- list(a = format(abs(coef(m)[1]), digits = 2), \n                b = format(coef(m)[2], digits = 2), \n                r2 = format(summary(m)$r.squared, digits = 3)\n    )\n    eq <- substitute(italic(y) == b %.% italic(x) - a*\",\"~~italic(r)^2~\"=\"~r2, l)\n  }\n  as.character(as.expression(eq))\n}\n\n\ncount_spp <- function(df) {\n  ddply(.data = df, .(SpeciesCode), summarize, \n        len = length(SpeciesCode),\n        n = paste(\"n ==\", len)\n  )\n}\n\n\n################################################################################\n#############                    Linear Models                      ############\n################################################################################\n\nfg_lm <- function(df, gape) {\n    lm <- lm(log(gape)~log(SL), data=df)\n    data.frame(int   = coefficients(lm)[1],\n               slope = coefficients(lm)[2],\n               rsq   = summary(lm)$r.squared,\n               se    = summary(lm)$coefficients[2,2],\n               p_val = summary(lm)$coef[2,4],\n               lw_conf_slp = confint(lm, level = 0.95)[2,1],\n               up_conf_slp = confint(lm, level = 0.95)[2,2],\n               lw_conf_int = confint(lm, level = 0.95)[1,1],\n               up_conf_int = confint(lm, level = 0.95)[1,2]\n               )\n}\n\ngroupwise_lm_gh <- function(df, variable) {\n  lm  <- with(data=df, ddply(df, .(variable), function(z) {\n    t <- lm(log(gh)~log(SL), data=z)\n    data.frame(int    = coefficients(t)[1],\n               slope  = coefficients(t)[2],\n               rsq    = summary(t)$r.squared,\n               se     = summary(t)$coefficients[2,2],\n               p_val  = summary(t)$coef[2,4],\n               lw_conf_slp = confint(t, level = 0.95)[2,1],\n               up_conf_slp = confint(t, level = 0.95)[2,2],\n               lw_conf_int = confint(t, level = 0.95)[1,1],\n               up_conf_int = confint(t, level = 0.95)[1,2])\n  }))\n}\n\ngroupwise_lm_gw <- function(df, variable) {\n  lm  <- with(data=df, ddply(df, .(variable), function(z) {\n    t <- lm(log(gw)~log(SL), data=z)\n    data.frame(int    = coefficients(t)[1],\n               slope  = coefficients(t)[2],\n               rsq    = summary(t)$r.squared,\n               se     = summary(t)$coefficients[2,2],\n               p_val  = summary(t)$coef[2,4],\n               lw_conf_slp = confint(t, level = 0.95)[2,1],\n               up_conf_slp = confint(t, level = 0.95)[2,2],\n               lw_conf_int = confint(t, level = 0.95)[1,1],\n               up_conf_int = confint(t, level = 0.95)[1,2])\n  }))\n}\n\ngroupwise_lm_ga <- function(df, variable) {\n  lm  <- with(data=df, ddply(df, .(variable), function(z) {\n    t <- lm(log(ga)~log(SL), data=z)\n    data.frame(int    = coefficients(t)[1],\n               slope  = coefficients(t)[2],\n               rsq    = summary(t)$r.squared,\n               se     = summary(t)$coefficients[2,2],\n               p_val  = summary(t)$coef[2,4],\n               lw_conf_slp = confint(t, level = 0.95)[2,1],\n               up_conf_slp = confint(t, level = 0.95)[2,2],\n               lw_conf_int = confint(t, level = 0.95)[1,1],\n               up_conf_int = confint(t, level = 0.95)[1,2])\n  }))\n}\n\n\nawesome <- function(lm) {\n  ldply(lm, function(model) {\n    c(\n      \"coefs\" = coef(model),\n      \"confint\" = confint(model, level=0.95),\n      \"rsq\" = summary(model)$r.squared,\n      \"se\" = summary(model)$coefficients[2,2],\n      \"p_val\" = summary(model)$coefficients[2,4]\n    )\n  })\n}\n\n################################################################################\n#############                    SMA Functions                      ############\n################################################################################\nrun_sma <- function(df, gapeType=c(\"gh\", \"gw\", \"ga\"), robust=TRUE) {\n  if (robust == TRUE) {\n    switch(gapeType,\n    \"gh\" = { sma(gh ~ SL, data = df, log = \"xy\", method = \"SMA\", robust = TRUE, \n      slope.test = 1) },\n    \"gw\" = { sma(gw ~ SL, data = df, log = \"xy\", method = \"SMA\", robust = TRUE, \n      slope.test = 1) },\n    \"ga\" = { sma(ga ~ SL, data = df, log = \"xy\", method = \"SMA\", robust = TRUE, \n      slope.test = 2) }\n    )\n  } else if (robust == FALSE) {\n    switch(gapeType, \n    \"gh\" = { sma(gh ~ SL, data = df, log = \"xy\", method = \"SMA\", robust = FALSE, \n      slope.test = 1) },\n    \"gw\" = { sma(gw ~ SL, data = df, log = \"xy\", method = \"SMA\", robust = FALSE, \n      slope.test = 1) },\n    \"ga\" = { sma(ga ~ SL, data = df, log = \"xy\", method = \"SMA\", robust = FALSE, \n      slope.test = 2) }\n    )\n  }\n}\n\ncheck_assump <- function(sma_object) {\n  plot(sma_object, which = \"qq\")\n  plot(sma_object, which = \"residual\")\n  abline(h=0, col=\"red\")\n}\n\nmk_sma_df <- function(t) {\n  data.frame(elevation  = t$coef[[1]][1,1],\n             lw_ci_elev = t$coef[[1]][1,2],\n             up_ci_elev = t$coef[[1]][1,3],\n             slope      = t$coef[[1]][2,1],\n             lw_ci_slp  = t$coef[[1]][2,2],\n             up_ci_slp  = t$coef[[1]][2,3],\n             r2         = t$r2[[1]],\n             n          = t$n[[1]],\n             pval       = t$pval[[1]]\n  )\n}\n\nmk_sma_graph_df <- function(sma_summary_df) {\n  sma_graph_df <- data.frame(group=numeric(), slp=numeric(), int=numeric(), \n                             from=numeric(), to=numeric(), yfrom=numeric(), \n                             yto=numeric()\n  )\n  for (i in 1:5) {\n    from  <- sma_summary_df[10, i]\n    to    <- sma_summary_df[11, i]\n    slp   <- sma_summary_df[3, i]\n    int   <- sma_summary_df[1, i]\n    yfrom <- 10^(slp*log10(from) + int)\n    yto   <- 10^(slp*l\n      og10(to) + int)\n    group <- colnames(sma_summary_df)[i]\n    \n    row <- t(c(group=group, slp=slp, int=int, from=from, to=to, yfrom=yfrom,\n               yto=yto))\n    sma_graph_df <- rbind(sma_graph_df, row)\n  }\n  sma_graph_df[, 2] <- as.numeric(as.character(sma_graph_df[, 2]))\n  sma_graph_df[, 3] <- as.numeric(as.character(sma_graph_df[, 3]))\n  sma_graph_df[, 4] <- as.numeric(as.character(sma_graph_df[, 4]))\n  sma_graph_df[, 5] <- as.numeric(as.character(sma_graph_df[, 5]))\n  sma_graph_df[, 6] <- as.numeric(as.character(sma_graph_df[, 6]))\n  sma_graph_df[, 7] <- as.numeric(as.character(sma_graph_df[, 7]))\n  return(sma_graph_df)\n}\n\n\nmk_sma_summary <- function(sma_object, group=\"column_name\") {\n  rows <- c('elev', 'slp_test', 'slope', 'lower_ci', 'upper_ci',\n            'slp_p_value', 'xy_r^2', 'xy_corr_p_value', 'n', 'from', 'to')\n  #if (grouping==F) {\n    elev = coef(sma_object)[[1]]\n    slp_test = sma_object$slopetest[[1]][[4]]\n    slope  = sma_object$slopetest[[1]][[5]]\n    lower  = sma_object$slopetest[[1]][6][[1]][[1]]\n    upper  = sma_object$slopetest[[1]][6][[1]][[2]]\n    slp_p_val  = sma_object$slopetest[[1]][[3]]\n    xy_r2  = sma_object$r2[[1]]\n    xy_cor = sma_object$pval[[1]]\n    n = sma_object$n[[1]]\n    from = sma_object$from[[1]]\n    to   = sma_object$to[[1]]\n\n  columns <- c(elev, slp_test, slope, lower, upper, slp_p_val, xy_r2, xy_cor, n,\n               from, to)\n  \n  sma_df <- data.frame(columns, row.names=rows)\n  names(sma_df) <- sma_object$groups\n  #sma_df <- format(sma_df[1], digits=3, sci=F)\n  return(sma_df)\n}\n\nmk_group_summary <- function(sma_object, num_spp=NA, grouping=F) {\n  \n  if (grouping==F) {\n    sma_df <- data.frame(elev=numeric(), slp_test=numeric(), slope=numeric(), \n                      upper=numeric(), lower=numeric(), slp_p_val=numeric(), \n                      xy_r2=numeric(), xy_cor=numeric(), n=numeric(), \n                      from=numeric(), to=numeric()\n    )\n\n    for (i in 1:num_spp) {\n      #spp = as.factor(names(sma_object[[1]]))\n      #spp = as.character(attr(sma_object[i], which=\"split_labels\")[[i]][[1]])\n      elev = coef(sma_object[[i]])[[1]]\n      slp_test = sma_object[[i]]$slopetest[[1]][[4]]\n      slope  = sma_object[[i]]$slopetest[[1]][[5]]\n      lower  = sma_object[[i]]$slopetest[[1]][6][[1]][[1]]\n      upper  = sma_object[[i]]$slopetest[[1]][6][[1]][[2]]\n      slp_p_val  = sma_object[[i]]$slopetest[[1]][[3]]\n      xy_r2  = sma_object[[i]]$r2[[1]]\n      xy_cor = sma_object[[i]]$pval[[1]]\n      n = sma_object[[i]]$n[[1]]\n      from = sma_object[[i]]$from[[1]]\n      to   = sma_object[[i]]$to[[1]]   \n      \n      row <- c(elev, slp_test, slope, lower, upper, slp_p_val, xy_r2, xy_cor, \n               n, from, to)\n      sma_df <- rbind(sma_df, row)\n      columns <- c(\"elev\", \"slp_test\", \"slope\", \"lower\", \"upper\", \"slp_p_val\", \n               \"xy_r2\", \"xy_cor\", \"n\", \"from\", \"to\")\n  \n      #sma_df <- data.frame(columns, row.names=rows)\n      names(sma_df) <- columns\n      #sma_df <- format(sma_df[1], digits=3, sci=F)\n    }\n    return(sma_df)\n  } else if (grouping==T) {\n\n    sma_df <- data.frame(group=character(), elev=numeric(), slp_test=numeric(), \n                      slope=numeric(), upper=numeric(), lower=numeric(), \n                      slp_p_val=numeric(), xy_r2=numeric(), xy_cor=numeric(), \n                      n=numeric(), from=numeric(), to=numeric(),\n                      stringsAsFactors=FALSE\n    )\n    for (i in 1:length(sma_object$groups)) {\n\n      elev = sma_object$coef[[i]][[1]][1]\n      slp_test = sma_object$slopetest[[i]]$test.value\n      slope = sma_object$slopetest[[i]]$b\n      lower = sma_object$slopetest[[i]]$ci[1, 1]\n      upper = sma_object$slopetest[[i]]$ci[1, 2]\n      slp_p_val = sma_object$slopetest[[i]]$p\n      xy_r2 = sma_object$r[i][[1]]\n      xy_cor = sma_object$pval[i][[1]]\n      n = sma_object$n[i][[1]]\n      from = sma_object$from[i][[1]]\n      to = sma_object$to[i][[1]]\n      group = sma_object$groups[i][[1]]\n\n      row <- c(\"group\"=as.character(group), \"elev\"=as.numeric(elev), \n               \"slp_test\"=as.numeric(slp_test), \"slope\"=as.numeric(slope),\n               \"lower\"=as.numeric(lower), \"upper\"=as.numeric(upper), \n               \"slp_p_val\"=as.numeric(slp_p_val), \"xy_r2\"=as.numeric(xy_r2), \n               \"xy_cor\"=as.numeric(xy_cor), \"n\"=as.numeric(n), \n               \"from\"=as.numeric(from), \"to\"=as.numeric(to))\n      sma_df[i, ] <- row\n    }\n  columns <- c(\"group\", \"elev\", \"slp_test\", \"slope\", \"lower\", \"upper\", \n         \"slp_p_val\", \"xy_r2\", \"xy_cor\", \"n\", \"from\", \"to\")\n  #sma_df <- data.frame(columns, row.names=rows)\n  names(sma_df) <- columns\n  #sma_df <- format(sma_df[1], digits=3, sci=F)\n  \n  for (x in 2:12) {\n    sma_df[, x] <- as.numeric(sma_df[, x])\n  }\n  return(sma_df)\n  }\n}\n\n\n\nmk_smaSPP_graph_df <- function(sma_summary_df, num_spp) {\n  sma_graph_df <- data.frame(group=character(), slp=numeric(), int=numeric(), \n                             from=numeric(), to=numeric(), yfrom=numeric(), \n                             yto=numeric(),\n                             stringsAsFactors=FALSE\n  )\n  for (i in 1:num_spp) {\n    from  <- sma_summary_df[i, 11]\n    to    <- sma_summary_df[i, 12]\n    slp   <- sma_summary_df[i, 4]\n    int   <- sma_summary_df[i, 2]\n    yfrom <- 10^(slp*log10(from) + int)\n    yto   <- 10^(slp*log10(to) + int)\n    group <- as.character(sma_summary_df[i, 1])\n    \n    row <- t(c(group=group, slp=slp, int=int, from=from, to=to, yfrom=yfrom,\n               yto=yto)\n             )\n    sma_graph_df <- rbind(sma_graph_df, row)\n  }\n  sma_graph_df[, 2] <- as.numeric(as.character(sma_graph_df[, 2]))\n  sma_graph_df[, 3] <- as.numeric(as.character(sma_graph_df[, 3]))\n  sma_graph_df[, 4] <- as.numeric(as.character(sma_graph_df[, 4]))\n  sma_graph_df[, 5] <- as.numeric(as.character(sma_graph_df[, 5]))\n  sma_graph_df[, 6] <- as.numeric(as.character(sma_graph_df[, 6]))\n  sma_graph_df[, 7] <- as.numeric(as.character(sma_graph_df[, 7]))\n  return(sma_graph_df)\n}\n\n# Makes SMA plots for Families all on one graph\n# ==============================================================================\nmk_ghFG_SMAplot <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gh, colour=j_fg)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(vertical gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) \n}\n\nmk_gwFG_SMAplot <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gw, colour=j_fg)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(horizontal gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) \n}\n\nmk_gaFG_SMAplot <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = ga, colour=j_fg)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(expression(paste(\"log(gape area \", mm^2, \")\", sep= \"\"))) +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) \n}\n\n# Makes SMA plots for FGs facetted\n# ==============================================================================\nmk_SMAplot <- function(df_points, df_lines, facet = TRUE, x = \"SL\", gapeType = c(\"gh\", \n  \"gw\", \"ga\"), grouping = c(\"j_fg\", \"Family\", \"SpeciesCode\", \"Region\", \n  \"dissected_by\")) {\n  \n  plot_base <- ggplot(data = df_points, aes_string(x = x, y = gapeType)) +\n  scale_y_log10() +\n  scale_x_log10() +\n  xlab(\"log(standard length, mm)\") +\n  geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, \n    yend = yto))\n\n  if (facet == FALSE) {\n    plot1 <- plot_base + geom_point( aes_string(colour = grouping))\n    switch(gapeType,\n      \"gh\" = { plot1 + ylab(\"log(vertical gape, mm)\") },\n      \"gw\" = { plot1 + ylab(\"log(horizontal gape, mm)\") },\n      \"ga\" = { plot1 + ylab(expression(paste(\"log(gape area \", mm^2, \")\", \n        sep= \"\"))) }\n      )\n\n  } else if (facet == TRUE) {\n    plot2 <- plot_base + geom_point()\n    switch(gapeType,\n      \"gh\" = { plot3 <- plot2 + ylab(\"log(vertical gape, mm)\") },\n      \"gw\" = { plot3 <- plot2 + ylab(\"log(horizontal gape, mm)\") },\n      \"ga\" = { plot3 <- plot2 + ylab(expression(paste(\"log(gape area \", mm^2, \")\", \n        sep= \"\"))) }\n      )\n    switch(grouping,\n      \"j_fg\" = { plot3 + facet_wrap( ~ j_fg) },\n      \"Family\" = { plot3 + facet_wrap( ~ Family) },\n      \"SpeciesCode\" = { plot3 + facet_wrap( ~ SpeciesCode) },\n      \"Region\" = { plot3 + facet_wrap( ~ Region) },\n      \"dissected_by\" = { plot3 + facet_wrap( ~ dissected_by) }\n      )\n  }\n}\n\n\nmk_ghFG_SMAfacet <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gh)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(vertical gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) +\n    facet_wrap(~ j_fg)\n}\n\nmk_gwFG_SMAfacet <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gw)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(horizontal gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) +\n    facet_wrap(~ j_fg)\n}\n\nmk_gaFG_SMAfacet <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = ga)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(expression(paste(\"log(gape area \", mm^2, \")\", sep= \"\"))) +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) +\n    facet_wrap(~ j_fg)\n}\n\n# Makes SMA plots for Families all on one graph\n# ==============================================================================\nmk_ghFam_SMAplot <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gh, colour=Family)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(vertical gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) \n}\n\nmk_gwFam_SMAplot <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gw, colour=Family)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(horizontal gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) \n}\n\nmk_gaFam_SMAplot <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = ga, colour=Family)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(expression(paste(\"log(gape area \", mm^2, \")\", sep= \"\"))) +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) \n}\n\n# Makes SMA plots for families all on separate facets (colour = black)\n# ==============================================================================\nmk_ghFam_SMAfacets <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gh)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(vertical gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, \n                 aes(x = from, xend = to, y = yfrom, yend = yto)\n    ) +\n    facet_wrap(~ Family)\n}\nmk_gwFam_SMAfacets <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gw)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(horizontal gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) +\n    facet_wrap(~ Family)\n}\n\nmk_gaFam_SMAfacets <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = ga)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(expression(paste(\"log(gape area \", mm^2, \")\", sep= \"\"))) +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    theme(legend.key.height = unit(1.5, \"line\")) +\n    theme(legend.position = c(0.90, 0.35)) +\n    theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) +\n    facet_wrap(~ Family)\n}\n\n\n# Makes SMA plots for species all on one graph\n# ==============================================================================\nmk_gh_SMAplot <- function(df_points, df_lines, colour_by) {\n  ggplot(data = df_points, aes(x = SL, y = gh, colour=SpeciesCode)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(vertical gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) \n}\n\nmk_gw_SMAplot <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gw, colour=SpeciesCode)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(horizontal gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) \n}\n\nmk_ga_SMAplot <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = ga, colour=SpeciesCode)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(expression(paste(\"log(gape area \", mm^2, \")\", sep= \"\"))) +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) \n}\n\n# Makes SMA plots for species all on separate facets (colour = black)\n# ==============================================================================\nmk_gh_SMAplot_facets <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gh)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(vertical gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, \n                 aes(x = from, xend = to, y = yfrom, yend = yto)\n                 ) +\n    facet_wrap(~ SpeciesCode)\n}\n mk_gw_SMAplot_facets <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = gw)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(\"log(horizontal gape, mm)\") +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    #theme(legend.key.height = unit(1.5, \"line\")) +\n    #theme(legend.position = c(0.90, 0.35)) +\n    #theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) +\n    facet_wrap(~ SpeciesCode)\n}\n\nmk_ga_SMAplot_facets <- function(df_points, df_lines) {\n  ggplot(data = df_points, aes(x = SL, y = ga)) +\n    geom_point() +\n    scale_y_log10() +\n    scale_x_log10() +\n    #scale_x_log10(limits=c(1, 1000)) +\n    xlab(\"log(standard length, mm)\") +\n    ylab(expression(paste(\"log(gape area \", mm^2, \")\", sep= \"\"))) +\n    scale_colour_discrete(name = \"Functional \\n Group\") +\n    theme(legend.key.height = unit(1.5, \"line\")) +\n    theme(legend.position = c(0.90, 0.35)) +\n    theme(legend.background = element_rect(fill = \"#FFFFFFaa\", colour = 'NA')) +\n    geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, yend = yto)) +\n    facet_wrap(~ SpeciesCode)\n}\n\n# groupwise_lm_gh <- function(df, variable) {\n#   lm  <- with(data=df, ddply(df, .(variable), function(z) {\n#     t <- lm(log(gh)~log(SL), data=z)\n#     data.frame(int   = coefficients(t)[1],\n#                slope = coefficients(t)[2],\n#                rsq   = summary(t)$r.squared,\n#                se    = summary(t)$coefficients[2,2],\n#                p_val = summary(t)$coef[2,4])\n#   }))\n# }\n# \n# groupwise_lm_gw <- function(df, variable) {\n#   lm  <- with(data=df, ddply(df, .(variable), function(z) {\n#     t <- lm(log(gw)~log(SL), data=z)\n#     data.frame(int   = coefficients(t)[1],\n#                slope = coefficients(t)[2],\n#                rsq   = summary(t)$r.squared,\n#                se    = summary(t)$coefficients[2,2],\n#                p_val = summary(t)$coef[2,4])\n#   }))\n# }\n# \n# groupwise_lm_ga <- function(df, variable) {\n#   lm  <- with(data=df, ddply(df, .(variable), function(z) {\n#     t <- lm(log(ga)~log(SL), data=z)\n#     data.frame(int   = coefficients(t)[1],\n#                slope = coefficients(t)[2],\n#                rsq   = summary(t)$r.squared,\n#                se    = summary(t)$coefficients[2,2],\n#                p_val = summary(t)$coef[2,4])\n#   }))\n# }\n# \n# call_master_df <- function(lm) {\n#     coefs <- ldply(lm, coef)\n#     rsq   <- function(lm) c(\"rsqd\"  = summary(lm)$r.squared)\n#     se    <- function(lm) c(\"SE\"    = summary(lm)$coefficients[2,2])\n#     p_val <- function(lm) c(\"p_val\" = summary(lm)$coefficients[2,4])\n#     spp.n <- ddply(.data = p, .(SpeciesCode), summarize, \n#                    n     = paste(\"n ==\", length(SpeciesCode))\n#                    )\n#     dfs <- list(coefs,\n#                 rsqs   <- ldply(lm, rsq),\n#                 ses    <- ldply(lm, se),\n#                 p_vals <- ldply(lm, p_val),\n#                 spp.n)\n#     all <- join_all(dfs, by=\"SpeciesCode\")\n# }\n\n# Function that generates data\n\n# Example dataframe produced by using above groupwise function\n# test <- groupwise_lm_gh(fish, fish$SpeciesCode)\n\n\nwrite_lme_groups <- function(summ_df, variable) {\n  df <- summ_df\n  m = matrix(data=NA, nrow=0, ncol=2)\n  len <- length(variable)\n  for (i in (1:len)) {\n    l <- list(slp = format(df[[3]][i], digits=2),\n              int = format(df[[2]][i], digits=2), \n              r2 = format(df[[4]][i], digits=2)\n    )\n    if (l$int >= 0) {\n      eqn <- substitute(italic(y) ==\n                          slp%.%italic(x) + int*~~italic(r)^2~\"=\"~r2, l)\n    } else {\n        l <- list(slp = format(df[[3]][i], digits=2),\n                  int = format(abs(df[[2]][i]), digits=2), \n                  r2 = format(df[[4]][i], digits=2)\n      )\n      eqn <- substitute(italic(y) ==\n                          slp%.% italic(x) - int*~~italic(r)^2~\"=\"~r2, l)\n    }\n    #browser()\n    lm_eq <- as.character(as.expression(eqn)) \n    m <- rbind(m, c(as.character(df[[1]][i]), lm_eq))\n    #m <- rbind(m, c(as.character(df[i,1]), lm_eq))\n  }\n  m <- as.data.frame(m)\n}\n\n\n################################################################################\n#############             Predator - Prey Size Functions            ############\n################################################################################\n# groupwise_rq <- function(df, variable) {\n#   rq  <- ddply(df, .(variable), function(z) {\n#     r <- rq(psize ~ sl, tau = c(0.10, 0.90), data = z) \n#     })\n# }\n# \n# rq(formula, tau=.5, data, subset, weights, na.action,\n#    method=\"br\", model = TRUE, contrasts, ...) \n# \n# groupwise_lm_gw <- function(df, variable) {\n#   lm  <- with(data=df, ddply(df, .(variable), function(z) {\n#     t <- lm(log(gw)~log(SL), data=z)\n#     data.frame(int   = coefficients(t)[1],\n#                slope = coefficients(t)[2],\n#                rsq   = summary(t)$r.squared,\n#                se    = summary(t)$coefficients[2,2],\n#                p_val = summary(t)$coef[2,4])\n#   }))\n# }\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+			"file": "03_func.r",
+			"file_size": 30237,
+			"file_write_time": 1373935801000000,
+			"settings":
+			{
+				"buffer_size": 30239,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/jillian/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+			"settings":
+			{
+				"buffer_size": 179,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 267.0,
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: List Packages"
+			],
+			[
+				"Package Control: rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"pythvi",
+				"SublimeREPL: Python - virtualenv"
+			],
+			[
+				"Package Control: upda",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"Package Control: up",
+				"Package Control: Upgrade/Overwrite All Packages"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 170.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/jillian/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/jillian/Library/Application Support/Sublime Text 2/Packages/User/SublimeREPL.sublime-settings",
+		"/Users/jillian/Library/Application Support/Sublime Text 2/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/jillian/Databases/fishdb/csvimport.py",
+		"/Users/jillian/Dropbox/Stable isotope database/input_data/CW_merged_isotope_dissections2011.csv",
+		"/Users/jillian/Dropbox/Stable isotope database/input_data/CW_dis_merged_2012.csv",
+		"/Users/jillian/Dropbox/Stable isotope database/input_data/RT_dissections10.csv",
+		"/Users/jillian/Dropbox/Stable isotope database/input_data/2011_KI_fish_dissections.csv",
+		"/Users/jillian/Databases/fishdb/new_configs.slate",
+		"/Users/jillian/Databases/fishdb/gape_export_July09_for_MS",
+		"/Users/jillian/Databases/fishdb/all_SI_results.py",
+		"/Users/jillian/Databases/fishdb/apps/helpers/models.py",
+		"/Users/jillian/Databases/fishdb/query_scripts/si_results_status.py",
+		"/Users/jillian/Databases/fishdb/apps/species/admin.py",
+		"/Users/jillian/Databases/fishdb/apps/data/admin.py",
+		"/Users/jillian/Library/Application Support/Sublime Text 2/Packages/SublimeREPL/SublimeREPL.sublime-settings",
+		"/Users/jillian/Databases/fishdb/shark_data_export.py",
+		"/Users/jillian/Databases/fishdb/query_scripts/Pi_todo_list_export.py",
+		"/Users/jillian/Databases/fishdb/NA_fish_submission_counts.py",
+		"/Users/jillian/Databases/fishdb/apps/data/models.py",
+		"/Users/jillian/Databases/fishdb/fishdb/urls.py",
+		"/Users/jillian/Databases/fishdb/fishdb/settings.py",
+		"/Users/jillian/Databases/fishdb/manage.py",
+		"/Users/jillian/Databases/fishdb/apps/species/models.py",
+		"/Users/jillian/Databases/fishdb/funnel_report.py",
+		"/Users/jillian/Databases/fishdb/sql.py",
+		"/Users/jillian/Databases/fishdb/apps/sharks/models.py",
+		"/Users/jillian/Dropbox/Stable isotope database/input_data/csv_data/Taxonomies.csv",
+		"/Applications/R64.app/Contents/MacOS/R",
+		"/Users/jillian/Databases/fishdb/query_scripts/stomach_counts.py",
+		"/Users/jillian/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/jillian/Databases/fishdb/shark_data_SI_export.py",
+		"/Users/jillian/Databases/fishdb/shark_data_SI_export_Jun05.csv",
+		"/Users/jillian/Databases/fishdb/pp_SI_results.py",
+		"/Users/jillian/Databases/fishdb/lost_samples.py",
+		"/Users/jillian/Databases/fishdb/get_packed_samps.py",
+		"/Users/jillian/Databases/fishdb/fish_SI_results.py",
+		"/Users/jillian/Databases/fishdb/schema/schema_May2013.dot",
+		"/Users/jillian/Databases/fishdb/fishdb/backup/models.py",
+		"/Users/jillian/Databases/fishdb/fishdb/backup/admin.py",
+		"/Users/jillian/Databases/fishdb/apps/sharks/admin.py",
+		"/Users/jillian/Databases/fishdb/fishdb.dot",
+		"/Users/jillian/R_projects/plotting and graphics workshop/graphics packages.r",
+		"/Users/jillian/R_projects/modelling tools workshop/modelling tools.R",
+		"/Users/jillian/Databases/fishdb/fish_specimens_herbert_counts.py",
+		"/Users/jillian/Databases/fishdb/venv/lib/python2.7/site-packages/data_exports/migrations/0004_auto__del_field_export_display_labels.py",
+		"/Users/jillian/Databases/fishdb/si_results_status.py",
+		"/Users/jillian/Documents/fishdb.sublime-project",
+		"/Users/jillian/Databases/fishdb/apps/helpers/admin.py",
+		"/Users/jillian/Library/Application Support/Sublime Text 2/Packages/User/fishdb_venv_repl.sublime-build",
+		"/Users/jillian/Library/Application Support/Sublime Text 2/Packages/User/SublimeREPLHistory/fishdb_python_venv.sublime-build",
+		"/Users/jillian/Databases/fishdb/fishdb/admin.py",
+		"/Users/jillian/Databases/fishdb/fishdb/wsgi.py",
+		"/Users/jillian/Databases/fishdb/schema/graphviz_script.py",
+		"/Users/jillian/Databases/fishdb/missing_preps.py",
+		"/Users/jillian/Databases/fishdb/query specimens.py",
+		"/Users/jillian/Databases/fishdb/fishdb/models.py",
+		"/Users/jillian/Databases/fishdb/missing_preprocessings.py",
+		"/Users/jillian/Databases/fishdb/spp_collected_2012_for_AnimalCare.py",
+		"/Users/jillian/Databases/fishdb/apps/shark_models.py",
+		"/Users/jillian/Databases/fishdb/apps/shark_admin.py",
+		"/Users/jillian/Databases/fishdb/apps/species_models.py",
+		"/Users/jillian/Databases/fishdb/fishdb/species_admin.py",
+		"/Users/jillian/Databases/fishdb/fishdb/data_models.py",
+		"/Users/jillian/Databases/fishdb/apps/data_admin.py",
+		"/Users/jillian/Databases/fishdb/fishdb/helper_models.py",
+		"/Users/jillian/Databases/fishdb/apps/helper_admin.py",
+		"/Users/jillian/Databases/fishdb/fishdb/helper.py",
+		"/Users/jillian/Databases/fishdb/trophic data query.py",
+		"/Users/jillian/Databases/fishdb/Pi_todo_list_export.py",
+		"/Users/jillian/Databases/fishdb/stomach_counts.py",
+		"/Users/jillian/Databases/fishdb/fishdb/helper_tables.py",
+		"/Users/jillian/Databases/fishdb/queries/stomach_counts.py",
+		"/Users/jillian/Databases/fishdb/fishdb/get_packed_samps.py",
+		"/Users/jillian/dev/zoops_db/non_zoops_db_files/year_data_with_oxygen.py",
+		"/Users/jillian/Databases/fishdb/Migration record",
+		"/Users/jillian/Databases/fishdb/my_project.dot",
+		"/Users/jillian/Databases/fishdb/trophic query",
+		"/Users/jillian/Databases/fishdb/packing_dupes_script",
+		"/Users/jillian/dev/zoops_db/non_zoops_db_files/lts_effect_all_species.py",
+		"/Users/jillian/Databases/fishdb/cleanup.py",
+		"/Users/jillian/dev/zoops_db/non_zoops_db_files/excel_import.py",
+		"/Users/jillian/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/jillian/Desktop/SQL_SI_db.sql",
+		"/Users/jillian/Databases/fishdb/csv_data/HouseholdSurveys.csv",
+		"/Users/jillian/Dropbox/Stable isotope database/SI_DB/PrimaryProducers",
+		"/Users/jillian/dev/zoops_db/__init__.py",
+		"/Users/jillian/Downloads/sleepdata.csv",
+		"/Users/jillian/Desktop/CSC 371/Lab Oct 12.sql",
+		"/Users/jillian/Desktop/CSC 371/oracle_create.sql",
+		"/Users/jillian/dev/Resumes/Resume_2012_10.tex",
+		"/Users/jillian/Downloads/SampleIndexData/KI_SampInd_UnMatched_Known_Treat.csv",
+		"/Users/jillian/Dropbox/Stable isotope database/input data for cleanup/isotope_rinsing_2010_ForImport.csv",
+		"/Users/jillian/Desktop/CSC 371/Notes Sept 26.sql",
+		"/Users/jillian/Desktop/moderncv/moderncvstyleclassic.sty",
+		"/Users/jillian/Desktop/2011_KI_fish_dissections_1.294_fixed_by_matt.csv.fixed",
+		"/Users/jillian/Dropbox/Stable isotope database/input data for cleanup/2011_KI_fish_dissections_1_294.csv",
+		"/Users/jillian/Desktop/ex5.py",
+		"/Users/jillian/Desktop/LPTHW/ex4.py",
+		"/Users/jillian/Desktop/LPTHW/ex3.py",
+		"/Users/jillian/Desktop/LPTHW/ex2.py",
+		"/Users/jillian/Desktop/LPTHW/ex1.py",
+		"/Users/jillian/Dropbox/Stable isotope database/SI_DB/Keeping track of Data Import.docx",
+		"/Users/jillian/Downloads/search.json",
+		"/Users/jillian/School/Models in Ecology/Lab 6/lab 6 turtle matrix.R~",
+		"/Users/jillian/Desktop/Saanich_Inlet_Pressure.csv",
+		"/tmp/subl stdin bbDDXj.txt",
+		"/Users/jillian/School/Models in Ecology/Independent Project/Towboard/DATA/fish_tow_raw_out_Jan2012.csv",
+		"/Users/jillian/R_projects/zoops/oxy_tripod.csv"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"",
+			"fishdb/fishdb.dot",
+			"/fishdb.dot",
+			"",
+			"csvimport.py",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"mk_spp_summary",
+			"SLMM",
+			"p_fam",
+			"                                                  ",
+			"enter",
+			"repl",
+			"ceparg126",
+			"ceparg",
+			"ceparg126",
+			"repl",
+			"sample, created",
+			"samp, created",
+			"join",
+			"SharkSpecimens",
+			"fk_Packed__fk_Sample__SampleID",
+			"PrepEntered",
+			"KIF_Tray1-7",
+			"#'",
+			"2008",
+			"DateCollected",
+			"date_collected = '",
+			"date_collected =",
+			"',\n",
+			"fmp",
+			"ki_2011",
+			"int(",
+			"trays",
+			"-8",
+			"utf-",
+			"sharkdis",
+			"shark_spec_",
+			"2012_UV",
+			"2012_uvic",
+			"2013_uvic",
+			"shark_spec",
+			"except",
+			"sites_import",
+			"site_import",
+			"sites_import",
+			"piece_import",
+			"piece",
+			"piece_imp",
+			"shark",
+			"state",
+			"packed_import",
+			"sample",
+			"collections",
+			"2011_KI",
+			"ki_pp",
+			"TREATMENT",
+			"sfu",
+			"PP_",
+			"site",
+			"ki_pp_collections",
+			"fish_pr",
+			"prepped",
+			"type_code",
+			"sampleID",
+			"lengthweight",
+			"delete",
+			"sampleTypes",
+			"sample_in",
+			"tray",
+			"exception",
+			"unique_together",
+			"uniuqe_together",
+			"packed",
+			"paked",
+			"method",
+			"spare",
+			"1",
+			"loc_",
+			"locations",
+			"dried",
+			"samp_lo",
+			"doesn",
+			"samp_import",
+			"spare",
+			"samp_i",
+			"samp_",
+			"physical",
+			"samp_import",
+			"BZ",
+			"sp_import",
+			"RT_dis",
+			"RT_disse",
+			"intet",
+			"does",
+			"[]",
+			"fmp_pk",
+			"samp_import",
+			"sp_import",
+			"call",
+			"objectdoes",
+			"decimal",
+			"verbose_name",
+			"'rb'",
+			"ID",
+			"method",
+			"habitat",
+			"[",
+			"fmp_locationID",
+			"sampleID",
+			"TL",
+			"add",
+			"auto",
+			"max_length",
+			"Unique",
+			"Species",
+			" wt",
+			"auriga,BI",
+			"ornatissimus,BI",
+			"textbf",
+			",*1",
+			"mon",
+			"pseoli035",
+			"pseoli",
+			"?",
+			"0",
+			"for"
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"sharkhhsjoins",
+			"SharkHhsJoins",
+			"sharkhhsjoins",
+			"SharkHhsJoins",
+			"sharkhhsjoins",
+			"SharkHhsJoins",
+			"EnteredBy",
+			"'rU'",
+			"row[",
+			"decimal_places",
+			" self.wt",
+			"auriga,C",
+			"ornatissimus,C",
+			"_1,",
+			"_1"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "03_func.r",
+					"settings":
+					{
+						"buffer_size": 30239,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9210,
+								9210
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/jillian/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+					"settings":
+					{
+						"buffer_size": 179,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								179,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 112.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"",
+				"02_clean.r"
+			],
+			[
+				"admin",
+				"apps/data/admin.py"
+			],
+			[
+				"species",
+				"apps/species/models.py"
+			],
+			[
+				"helper",
+				"apps/helpers/models.py"
+			],
+			[
+				"models",
+				"apps/data/models.py"
+			],
+			[
+				"help",
+				"apps/helpers/models.py"
+			],
+			[
+				"man",
+				"manage.py"
+			],
+			[
+				"shark",
+				"shark_data_SI_export.py"
+			],
+			[
+				"chema",
+				"schema/schema_May2013.dot"
+			],
+			[
+				"backup",
+				"fishdb/backup/models.py"
+			],
+			[
+				"backupad",
+				"fishdb/backup/admin.py"
+			],
+			[
+				"sharksadmin",
+				"apps/sharks/admin.py"
+			],
+			[
+				"fish",
+				"fishdb.dot"
+			],
+			[
+				"shark_data_export",
+				"shark_data_export.py"
+			],
+			[
+				"fishdb",
+				"fishdb.dot"
+			],
+			[
+				"sharks",
+				"apps/sharks/models.py"
+			],
+			[
+				"helpe",
+				"apps/helpers/models.py"
+			],
+			[
+				"datamodels",
+				"apps/data/models.py"
+			],
+			[
+				"datamoesl",
+				"venv/lib/python2.7/site-packages/data_exports/migrations/0004_auto__del_field_export_display_labels.py"
+			],
+			[
+				"speciesmodels",
+				"apps/species/models.py"
+			],
+			[
+				"data",
+				"apps/data/admin.py"
+			],
+			[
+				"helpersmod",
+				"apps/helpers/models.py"
+			],
+			[
+				"helpers",
+				"apps/helpers/admin.py"
+			],
+			[
+				"data/ad",
+				"apps/data/admin.py"
+			],
+			[
+				"query_scripts/",
+				"query_scripts/Pi_todo_list_export.py"
+			],
+			[
+				"manage",
+				"manage.py"
+			],
+			[
+				"urls",
+				"fishdb/urls.py"
+			],
+			[
+				"dataadmin",
+				"apps/data/admin.py"
+			],
+			[
+				"settings",
+				"fishdb/settings.py"
+			],
+			[
+				"na",
+				"NA_fish_submission_counts.py"
+			],
+			[
+				"sharksmodels",
+				"apps/sharks/models.py"
+			],
+			[
+				"speciesmoe",
+				"apps/species/models.py"
+			],
+			[
+				"speciesadmin",
+				"apps/species/admin.py"
+			],
+			[
+				"data/mod",
+				"apps/data/models.py"
+			],
+			[
+				"shark/mod",
+				"apps/sharks/models.py"
+			],
+			[
+				"apps/species/mod",
+				"apps/species/models.py"
+			],
+			[
+				"help/mod",
+				"apps/helpers/models.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 180.0,
+	"status_bar_visible": true
+}
