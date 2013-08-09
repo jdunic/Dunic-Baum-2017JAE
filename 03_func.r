@@ -61,7 +61,7 @@ write_sma_eqn <- function(df, y){
 
 write_group_sma_eqn <- function(sma_summary_df, group_column) {
   df <- sma_summary_df
-  m = matrix(data=NA, nrow=0, ncol=3)
+  m = matrix(data=NA, nrow=0, ncol=4)
   count <- length(group_column)
   for (i in (1:count)) {
     l <- list(slp = format(sma_summary_df$slope[i], digits=2),
@@ -69,32 +69,29 @@ write_group_sma_eqn <- function(sma_summary_df, group_column) {
               r2 = format(sma_summary_df$xy_r2[i], digits=2)
     )
     if (l$int >= 0) {
-      eqn <- substitute(italic(y) ==
-                          slp%.%italic(x) + int*~~italic(r)^2~"="~r2, l)
+      eqn_r2 <- substitute(~~~~~~~~atop(italic(r)^2~"="~r2, italic(y) ==
+                          slp%.%italic(x) + int), l)
+      eqn <- substitute(italic(y) == slp*italic(x) + int, l)
       r2 <- substitute(italic(r)^2~"="~r2, l)
     } else {
-        l <- list(slp = format(df[[3]][i], digits=2),
-                  int = format(abs(df[[2]][i]), digits=2), 
-                  r2 = format(df[[4]][i], digits=2)
+        l <- list(slp = format(sma_summary_df$slope[i], digits=2),
+                  int = format(abs(sma_summary_df$elev[i]), digits=2), 
+                  r2 = format(sma_summary_df$xy_r2[i], digits=2)
       )
-      eqn <- substitute(italic(y) ==
-                          slp%.% italic(x) - int*~~italic(r)^2~"="~r2, l)
+      eqn_r2 <- substitute(atop(~~~~~~~~italic(r)^2~"="~r2, italic(y) ==
+                          slp%.% italic(x) - int), l)
+      eqn <- substitute(italic(y) == slp*italic(x) - int, l)
       r2 <- substitute(italic(r)^2~"="~r2, l)
     }    
     #browser()
-    sma_eq <- as.character(as.expression(eqn)) 
-    r2_exp <- as.character(as.expression(r2))
-    m <- rbind(m, c(as.character(df[[1]][i]), sma_eq, r2_exp))
+    eqn_r2 <- as.character(as.expression(eqn_r2)) 
+    eqn    <- as.character(as.expression(eqn))
+    r2     <- as.character(as.expression(r2))
+    m <- rbind(m, c(as.character(df[[1]][i]), eqn_r2, eqn, r2))
     #m <- rbind(m, c(as.character(df[i,1]), lm_eq))
   }
   m <- as.data.frame(m)
 }
-
-expression(atop(lm_eq, "r"^2~"="))
-
-labs(x = expression(atop(,paste("Distribution of node ages, ", 
-italic(gamma)))))
-
 
 count_spp <- function(df) {
   ddply(.data = df, .(SpeciesCode), summarize, 
@@ -386,10 +383,11 @@ mk_smaSPP_graph_df <- function(sma_summary_df, num_spp, group_name) {
     midpoint_y <- sqrt(yfrom * yto)
     midpoint_x <- sqrt(from * to)
     ref_intercept <- log10(midpoint_y/(midpoint_x^2))
+    slope_test <- sma_summary_df[i, 3]
     
     row <- t(c(group=group, slp=slp, int=int, from=from, to=to, yfrom=yfrom,
                yto=yto, midpoint_x=midpoint_x, midpoint_y=midpoint_y, 
-               ref_intercept=ref_intercept)
+               ref_intercept=ref_intercept, slope_test = slope_test)
              )
     sma_graph_df <- rbind(sma_graph_df, row)
   }
@@ -402,6 +400,7 @@ mk_smaSPP_graph_df <- function(sma_summary_df, num_spp, group_name) {
   sma_graph_df[, 8]  <- as.numeric(as.character(sma_graph_df[, 8]))
   sma_graph_df[, 9]  <- as.numeric(as.character(sma_graph_df[, 9]))
   sma_graph_df[, 10] <- as.numeric(as.character(sma_graph_df[, 10]))
+  sma_graph_df[, 11] <- as.numeric(as.character(sma_graph_df[, 11]))
   names(sma_graph_df)[1] <- group_name
   return(sma_graph_df)
 }
@@ -450,12 +449,10 @@ mk_SMAplot <- function(df_points, df_lines, gapeType = c("gh", "gw", "ga"),
 
 
 mk_SMAfacets <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"), 
-    point_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
-    labels = c("dissected_by", "Region", "SpecimenID", "None"),
-    facetting = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"), 
-    facet_columns
-    ) {
-  
+  point_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
+  labels = c("dissected_by", "Region", "SpecimenID", "None"),
+  facetting = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"), 
+  facet_columns ) { 
   plot_base <- ggplot(data = df_points, aes_string(x = "SL", y = gapeType)) +
        geom_point( aes_string(colour = point_colour)) +
        geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
@@ -464,21 +461,18 @@ mk_SMAfacets <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"),
        scale_x_log10() +
        xlab("log(standard length, mm)") +
        theme_bw()
-  
   switch(gapeType,
     "gh" = { plot_base <- plot_base + ylab("log(vertical gape, mm)") },
       "gw" = { plot_base <- plot_base + ylab("log(horizontal gape, mm)") },
       "ga" = { plot_base <- plot_base + ylab(expression(
         paste("log(gape area ", mm^2, ")", sep= ""))) }
   )
-
   if (labels == "None") {
     plot1 <- plot_base
   } else {
     plot1 <- plot_base + geom_text(position = position_jitter(w = 0.02, 
       h = 0.02), aes_string(label = labels), size = 2)
   }
-
   plot1 + facet_wrap( as.formula(sprintf('~ %s', facetting)), ncol = facet_columns )
 }
 
@@ -500,9 +494,8 @@ mk_SMAfacets2 <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"),
     #point_colour = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"),
     labels = c("dissected_by", "Region", "SpecimenID", "None"),
     facetting = c("j_fg", "Family", "SpeciesCode", "Region", "dissected_by"), 
-    facet_columns
+    facet_columns, eqn_df
     ) {
-  
   plot_base <- ggplot(data = df_points, aes_string(x = "SL", y = gapeType)) +
        geom_point(shape = 1, colour = "grey") +
        geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
@@ -512,16 +505,20 @@ mk_SMAfacets2 <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"),
        xlab("log(standard length, mm)") +
        theme_classic() +
        theme(strip.background = element_blank(),
-        plot.background = element_blank(), 
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(), 
-        panel.border = element_blank(), 
-        panel.background = element_blank(),
-        axis.line = element_line(colour = "black"),
-        axis.line.x = element_line(colour = "black")
+         plot.background = element_blank(), 
+         panel.grid.major = element_blank(), 
+         panel.grid.minor = element_blank(), 
+         panel.border = element_blank(), 
+         panel.background = element_blank(),
+         axis.line = element_line(colour = "black"),
+         axis.line.x = element_line(colour = "black")
         ) +
         geom_point(aes(x = 10, y = 1), alpha = 0) +
-        geom_point(aes(x = 650, y = 12000), alpha = 0)
+        geom_point(aes(x = 650, y = 12000), alpha = 0) +
+        geom_text(data = eqn_df, aes(x=280, y=3.5, 
+          label=eqn), parse=TRUE, size = 3.5) +
+        geom_abline(data = df_lines, aes_string(intercept = "ref_intercept"), 
+          slope = 2, linetype = 2, colour = "grey50") 
   switch(gapeType,
     "gh" = { plot_base <- plot_base + ylab("log(vertical gape, mm)") },
       "gw" = { plot_base <- plot_base + ylab("log(horizontal gape, mm)") },
@@ -562,7 +559,12 @@ ggplot(data = point_df, aes_string(x = "SL", y = "ga")) +
 
 
 mk_multipanel_plots2 <- function(fg_point_df, spp_point_df, spp_line_df_row, 
-  ref_intercept_row, fg_line_df_row = NA) {
+  #ref_intercept_row, 
+  eqn_df, eqn_x, eqn_y, r2_x, r2_y, x_axis_labels=TRUE, 
+  y_axis_labels=TRUE, fg_line_intercept, y_axis_text = TRUE, x_axis_text = TRUE,
+  plot_title = "") 
+  {
+  plotTitle <- substitute(italic(plot_title), list(plot_title = plot_title))
   plot_base <- 
       ggplot(data = fg_point_df, aes_string(x = "SL", y = "ga")) +
         geom_point(shape = 1, colour = "grey") +
@@ -571,25 +573,48 @@ mk_multipanel_plots2 <- function(fg_point_df, spp_point_df, spp_line_df_row,
         geom_point(data = spp_point_df, colour = "black", shape = 1) +
         scale_y_log10() +
         scale_x_log10() +
-        theme(axis.title.x = element_blank()) +
-        theme(axis.title.y = element_blank()) +
         #xlab("log(standard length, mm)") +     
         #ylab(expression(paste("log(gape area ", mm^2, ")", sep= ""))) + 
-      geom_abline(intercept = ref_intercept_row, slope = 2, linetype = 2, 
+      #geom_abline(intercept = ref_intercept_row, slope = 2, linetype = 2, 
+       # colour = "darkgrey") +
+      geom_abline(intercept = fg_line_intercept, slope = 2, linetype = 2, 
         colour = "darkgrey") +
       theme_bw() +
-      theme( plot.background = element_blank(), 
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(), 
-        panel.border = element_blank(), 
-        panel.background = element_blank()
-      ) +
+      theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
       theme(axis.line = element_line(color = 'black')) +
-      theme(axis.text = element_blank())
+      geom_text(data = eqn_df, aes_string(x=eqn_x, y=eqn_y, 
+        label="eqn"), parse=TRUE, size = 3) +
+      geom_text(data = eqn_df, aes_string(x=r2_x, y=r2_y, 
+        label="r2"), parse=TRUE, size = 3) +
+      labs(title = bquote(plain(.(plotTitle)))) +
+      #labs(title = bquote(italic(.(plotTitle)))) +
+      theme(plot.title = element_text(size = 9)) +
+      theme(axis.text = element_text(size = 8)) +
+      theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
       #plot <- plot_base +
-       # geom_segment(data = fg_line_df_row, aes_string(x = "from", xend = "to", 
-        # y = "yfrom", yend = "yto"), colour = "grey")
-    plot_base
+  if (x_axis_labels == TRUE) {
+    plot1 <- plot_base + xlab("log(standard length, mm)") 
+  } else if (x_axis_labels == FALSE) {
+    plot1 <- plot_base + theme(axis.title.x = element_blank())
+  }
+  if (y_axis_labels == TRUE) {
+    plot2 <- plot1 + ylab(expression(paste("log(gape area ", mm^2, ")", sep= "")))
+  } else if (y_axis_labels == FALSE) {
+    plot2 <- plot1 + theme(axis.title.y = element_blank())
+  } 
+  if (y_axis_text == TRUE) {
+    plot3 <- plot2 + theme(axis.text.y = element_text())
+  } else if (y_axis_text == FALSE) {
+    plot3 <- plot2 + theme(axis.text.y = element_blank())
+  }
+  if (x_axis_text == TRUE) {
+    plot4 <- plot3
+  } else if (x_axis_text == FALSE) {
+    plot4 <- plot3 + theme(axis.text.x = element_blank())
+  }
+  plot4  
 }
 
 mk_SMAplot <- function(df_points, df_lines, facets = TRUE, x = "SL", gapeType = 
