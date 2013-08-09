@@ -6,10 +6,19 @@
 # size gradient
 # Which rows have PS.COOP and AC.TRIOS?
 psc <- which(fish$SpeciesCode==('PS.COOP'))
+ct_marg <- which(fish$SpeciesCode==('CT.MARG'))
+ch_auri <- which(fish$SpeciesCode == 'CH.AURI')
+me_nige <- which(fish$SpeciesCode == 'ME.NIGE')
+ch_marg <- which(fish$SpeciesCode == 'CH.MARG')
+
 
 #act <- which(fish$SpeciesCode==('AC.TRIOS')) 
 # removing these rows from fish:
-fish <- fish[-c(psc, act), ]
+fish <- fish[-c(psc, ch_marg, ch_auri, me_nige, ch_marg), ]
+
+# Remove fish where site == "Site Not Certain"
+#no_site <- which(fish$Site == "Site Not Certain")
+#fish <- fish[-no_site, ]
 
 # Including area and relative gape sizes:
 fish$ga <- with(fish, pi*(gh/2)*(gw/2))
@@ -19,6 +28,21 @@ fish$gw_ratio <- fish$gw/fish$SL
 fish$ga_ratio <- fish$ga/fish$SL
 
 
+fish$j_fg <- factor(fish$j_fg, levels = c("Pi", "BI", "ZP", "He", 
+                                          "C", "Om", "De"))
+# Correcting for low elevation of AO
+#Correction: difference = log(a1) – log(a2) = log(a1/a2)
+#Correction for raw data = 10^(a1/a2) = 10^(-1.116445/-4.200132)
+
+#10^(-1.116445/-4.200132)
+
+#for (i in 1:length(fish$SpecimenID)) {
+#  if (fish$dissected_by[i] == "AO" & fish$SpeciesCode[i] == "CE.UROD") {
+#    fish$ao_corrected[i] <- fish$ga[i] + 10^(-4.2/-1.116) #10^(-1.116445/-4.200132)
+#  } else {
+#    fish$ao_corrected[i] <- fish$ga[i]
+#  }
+#}
 
 ################################################################################
 ############             Organizing Piscivores                      ############
@@ -141,6 +165,13 @@ c$SpeciesCode <- factor(c$SpeciesCode, levels = c("CH.ORNA")
 
 # picking just Pi, He, BI, and ZP and ordering them:
 pento <- fish[fish$j_fg %in% c('Pi', 'He', 'BI', 'ZP', 'C'), ]
+ps_coop <- which(pento$SpeciesCode == "PS.COOP")
+ch_marg <- which(pento$SpeciesCode == "CH.MARG")
+ch_auri <- which(pento$SpeciesCode == "CH.AURI")
+me_nige <- which(pento$SpeciesCode == "ME.NIGE")
+ce_lori <- which(pento$SpeciesCode == "CE.LORI")
+
+pento <- pento[-c(ps_coop, ch_marg, ch_auri, me_nige, ce_lori), ]
 
 pento$j_fg <- factor(pento$j_fg, levels=c('Pi', 'BI', 'ZP', 'He', 'C'))
 
@@ -150,11 +181,11 @@ pento$Family <- factor(pento$Family, levels=c("Carangidae",
                                             "Cirrhitidae",
                                             "Lethrinidae",
                                             "Mullidae",
+                                            "Caesionidae",
+                                            "Pomacentridae",
                                             "Acanthuridae",
                                             "Pomacanthidae",
                                             "Scaridae",
-                                            "Caesionidae",
-                                            "Pomacentridae",
                                             "Chaetodontidae")
 )
 
@@ -168,26 +199,33 @@ pento$SpeciesCode <- factor(pento$SpeciesCode, levels = c("CA.MELA",
                                                         "PA.ARCA",
                                                         "MO.GRAN",
                                                         "PA.INSU",
-                                                        "AC.NIGR",
-                                                        "AC.OLIV",
-                                                        "CE.FLAV",
-                                                        "CH.SORD",
-                                                        "SC.FREN",
-                                                        "SC.RUBR",
                                                         "CA.TERE",
                                                         "PT.TILE",
                                                         "CH.VAND",
                                                         "PS.BART",
                                                         "PS.DISP",
                                                         "PS.OLIV",
+                                                        "AC.NIGR",
+                                                        "AC.OLIV",
+                                                        "CE.FLAV",
+                                                        "CH.SORD",
+                                                        "SC.FREN",
+                                                        "SC.RUBR",
                                                         "CH.ORNA")
 )
 
 pento_order <- c("CA.MELA", "AP.FURC", "LU.BOHA", "LU.KASM", "CE.ARGU",
                  "CE.UROD", "VA.LOUT", "PA.ARCA", "MO.GRAN", "PA.INSU",
-                 "AC.NIGR", "AC.OLIV", "CE.FLAV", "CH.SORD", "SC.FREN",
-                 "SC.RUBR", "CA.TERE", "PT.TILE", "CH.VAND", "PS.BART",
-                 "PS.DISP", "PS.OLIV", "CH.ORNA")
+                 "CA.TERE", "PT.TILE", "CH.VAND", "PS.BART", "PS.DISP", 
+                 "PS.OLIV", "CH.ORNA", "AC.NIGR", "AC.OLIV", "CE.FLAV", 
+                 "CH.SORD", "SC.FREN", "SC.RUBR")
+
+pento_order <- factor(pento_order, levels = pento_order)
+
+p_spp_dfs <- split(p, p$SpeciesCode, drop=TRUE)
+b_spp_dfs <- split(b, b$SpeciesCode, drop=TRUE)
+z_spp_dfs <- split(z, z$SpeciesCode, drop=TRUE)
+h_spp_dfs <- split(h, h$SpeciesCode, drop=TRUE)
 
 ################################################################################
 ############             Cleaning Prey Size Data                    ############
