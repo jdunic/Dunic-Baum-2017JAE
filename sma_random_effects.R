@@ -1,4 +1,3 @@
-
 # Corallivores
 cGA <- sma(ga~SL, data=c, log="xy", method="SMA", robust=T, slope.test=2)
 check_assump(cGA, "Co Gape Area All")
@@ -278,7 +277,6 @@ dev.off()
 #-------------------------------------------------------------------------------
 row_kif12_171 <- which(p_spp_dfs$CE.ARGU$SpecimenID == 'KIF12_171')
 
-
 ceargu <- sma(ga~SL, data=p_spp_dfs$CE.ARGU, log="xy", method="SMA", robust=T,
 	slope.test=2)
 check_assump(ceargu, "CE.ARGU Gape Area")
@@ -340,8 +338,12 @@ ceargu_byDis
 dev.off()
 
 #-------------------------------------------------------------------------------
-ceurod <- sma(ga~SL, data=p_spp_dfs$CE.UROD, log="xy", method="SMA", robust=T,
+ceurod <- sma(ao_corrected~SL, data=p_spp_dfs$CE.UROD, log="xy", method="SMA", robust=T,
 	slope.test=2)
+plot(ceurod, which = "residual")
+abline(h = 0, col = "red")
+
+
 check_assump(ceurod, "CE.UROD Gape Area")
 ceurod_summ <- mk_sma_summary(ceurod, 1)
 ceurod_graph_df <- mk_sma_graph_df(ceurod_summ, 1, "SpeciesCode")
@@ -399,6 +401,19 @@ ceurod_plot
 ceurod_byReg
 ceurod_byDis
 dev.off()
+
+# Taking CEUORD farther -- correcting for large and significantly lower 
+# elevations for measurements made by AO/Angeleen
+
+observer_grouping <- c(rep(1, 4), 2, rep(1, 5))
+observer_grouping <- data.frame(dissected_by, observer_grouping)
+ceurod_ao_sep <- merge(p_spp_dfs$CE.UROD, observer_grouping, by = "dissected_by")
+
+ceurod_2dis <- sma(ga~SL*observer_grouping, data = ceurod_ao_sep, log = "xy",
+	method = "SMA", robust = T, slope.test = 2)
+
+ceurod_2dis <- sma(ga~SL + observer_grouping, data = ceurod_ao_sep, log = "xy",
+	method = "SMA", robust = T, slope.test = 2)
 
 #-------------------------------------------------------------------------------
 valout <- sma(ga~SL, data=p_spp_dfs$VA.LOUT, log="xy", method="SMA", robust=T,
@@ -1600,6 +1615,19 @@ allGA_all <-
 mk_SMAplot(df_points = pento, df_lines = allGA_graph_df, gapeType = "ga", 
 	point_colour = "j_fg", line_colour = "j_fg", labels = "None")
 
+mk_SMAfacets(df_points = pento, df_lines = allGA_graph_df, gapeType = "ga", 
+	point_colour = "j_fg", labels = "None", facetting = "j_fg", facet_columns = 1)
+
+mk_SMAfacets2(df_points = pento, df_lines = allGA_graph_df, gapeType = "ga",
+	labels = "None", facetting = "j_fg", facet_columns = 5, eqn_df = fg_sma_eqns)
+
+mk_SMAfacets2(df_points = p, df_lines = spp_lines[1:7, ], gapeType = "ga",
+	labels = "None", facetting = "SpeciesCode", facet_columns = 1, 
+	eqn_df = spp_sma_eqns[1:7, ])
+
+
+
+
 allGA <- sma(ga~SL * SpeciesCode, data = pento, log = "xy", method = "SMA", robust = T, 
 	slope.test = 2, multcomp = T, multcompmethod = "adjusted")
 check_assump(allGA, "Species Gape Area All")
@@ -1625,12 +1653,18 @@ spp_lines$colour <-
 #-------------------------------------------------------------------------------
 # Functional groups
 #-------------------------------------------------------------------------------
+fg_sma_eqns <- write_group_sma_eqn(allGA_summ, allGA_summ$group)
+names(fg_sma_eqns) <- c("j_fg", "eqn_r2", "eqn", "r2")
+
+spp_sma_eqns <- write_group_sma_eqn(allGA_summ, allGA_summ$group)
+names(spp_sma_eqns) <- c("SpeciesCode", "eqn")
 
 pisc_plot <- 
 ggplot(data = p, aes_string(x = "SL", y = "ga")) +
+    #geom_point( aes_string(colour = "SpeciesCode") ) +
+    geom_point(shape = 1, colour = "grey") +
     geom_segment(data = fg_lines[1, ], aes_string(x = "from", xend = "to", 
-     y = "yfrom", yend = "yto")) +
-    geom_point( aes_string(colour = "SpeciesCode") ) +
+      y = "yfrom", yend = "yto")) +
     scale_y_log10() +
     scale_x_log10() +
     xlab("log(standard length, mm)") +     
@@ -1644,13 +1678,22 @@ ggplot(data = p, aes_string(x = "SL", y = "ga")) +
 		panel.border = element_blank(), 
 		panel.background = element_blank()
 	) +
-    theme(axis.line = element_line(color = 'black'))
+    theme(axis.line = element_line(color = 'black')) +
+    theme(legend.key.height = unit(1.5, "line")) +
+  	theme(legend.position = c(0.90, 0.35)) +
+  	theme(axis.title.x = element_blank()) +
+	theme(axis.title.y = element_blank()) +
+	labs(title = expression(italic(PI))) +
+  	theme(plot.title = element_text(size = 11)) +
+  	theme(axis.text.x = element_blank()) +
+  	theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "lines"))
 
 benth_plot <- 
 ggplot(data = b, aes_string(x = "SL", y = "ga")) +
+    geom_point(shape = 1, colour = "grey") +
     geom_segment(data = fg_lines[2, ], aes_string(x = "from", xend = "to", 
      y = "yfrom", yend = "yto")) +
-    geom_point( aes_string(colour = "SpeciesCode") ) +
+    #geom_point( aes_string(colour = "SpeciesCode") ) +
     scale_y_log10() +
     scale_x_log10() +
     xlab("log(standard length, mm)") +     
@@ -1664,13 +1707,23 @@ ggplot(data = b, aes_string(x = "SL", y = "ga")) +
 		panel.border = element_blank(), 
 		panel.background = element_blank()
 	) +
-    theme(axis.line = element_line(color = 'black'))
+    theme(axis.line = element_line(color = 'black')) +
+    theme(legend.key.height = unit(1.5, "line")) +
+  	theme(legend.position = c(0.90, 0.35)) +
+  	theme(axis.title.x = element_blank()) +
+  	theme(axis.title.y = element_blank()) +
+  	labs(title = expression(italic(BI))) +
+  	theme(plot.title = element_text(size = 11)) +
+  	theme(axis.text.x = element_blank()) +
+  	theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "lines"))
+
 
 zoop_plot <- 
 ggplot(data = z, aes_string(x = "SL", y = "ga")) +
+    geom_point(shape = 1, colour = "grey") +
     geom_segment(data = fg_lines[3, ], aes_string(x = "from", xend = "to", 
      y = "yfrom", yend = "yto")) +
-    geom_point( aes_string(colour = "SpeciesCode") ) +
+    #geom_point( aes_string(colour = "SpeciesCode") ) +
     scale_y_log10() +
     scale_x_log10() +
     xlab("log(standard length, mm)") +     
@@ -1684,13 +1737,22 @@ ggplot(data = z, aes_string(x = "SL", y = "ga")) +
 		panel.border = element_blank(), 
 		panel.background = element_blank()
 	) +
-    theme(axis.line = element_line(color = 'black'))
+    theme(axis.line = element_line(color = 'black')) +
+    theme(legend.key.height = unit(1.5, "line")) +
+  	theme(legend.position = c(0.90, 0.35)) +
+  	theme(axis.title.x = element_blank()) +
+  	theme(axis.title.y = element_blank()) +
+  	labs(title = expression(italic(ZP))) +
+  	theme(plot.title = element_text(size = 11)) +
+  	theme(axis.text.x = element_blank()) +
+  	theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "lines"))
+
 
 herb_plot <- 
 ggplot(data = h, aes_string(x = "SL", y = "ga")) +
+    geom_point(shape = 1, colour = "grey") +
     geom_segment(data = fg_lines[4, ], aes_string(x = "from", xend = "to", 
      y = "yfrom", yend = "yto")) +
-    geom_point( aes_string(colour = "SpeciesCode") ) +
     scale_y_log10() +
     scale_x_log10() +
     xlab("log(standard length, mm)") +     
@@ -1704,13 +1766,23 @@ ggplot(data = h, aes_string(x = "SL", y = "ga")) +
 		panel.border = element_blank(), 
 		panel.background = element_blank()
 	) +
-    theme(axis.line = element_line(color = 'black'))
+    theme(axis.line = element_line(color = 'black')) +
+    theme(legend.key.height = unit(1.5, "line")) +
+  	theme(legend.position = c(0.90, 0.35)) +
+  	theme(axis.title.x = element_blank()) +
+  	theme(axis.title.y = element_blank()) +
+  	labs(title = expression(italic(He))) +
+  	theme(plot.title = element_text(size = 11)) +
+  	theme(axis.text.x = element_blank()) +
+  	theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "lines"))
+
 
 coral_plot <-  
 ggplot(data = c, aes_string(x = "SL", y = "ga")) +
+    geom_point(shape = 1, colour = "grey") +
     geom_segment(data = fg_lines[5, ], aes_string(x = "from", xend = "to", 
      y = "yfrom", yend = "yto")) +
-    geom_point( aes_string(colour = "SpeciesCode") ) +
+    #geom_point( aes_string(colour = "SpeciesCode") ) +
     scale_y_log10() +
     scale_x_log10() +
     xlab("log(standard length, mm)") +     
@@ -1724,53 +1796,365 @@ ggplot(data = c, aes_string(x = "SL", y = "ga")) +
 		panel.border = element_blank(), 
 		panel.background = element_blank()
 	) +
-    theme(axis.line = element_line(color = 'black'))
+    theme(axis.line = element_line(color = 'black')) +
+    theme(axis.title.x = element_blank()) +
+  	theme(axis.title.y = element_blank()) +
+  	labs(title = expression(italic(Co))) +
+  	theme(plot.title = element_text(size = 11)) +
+  	theme(axis.text.x = element_blank()) +
+  	theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "lines"))
+
 
 #-------------------------------------------------------------------------------
 # Species
 #-------------------------------------------------------------------------------
 camela <- 
-mk_multipanel_plots(point_df = p_spp_dfs$CA.MELA, colour = "#F8766D",
+mk_multipanel_plots1(point_df = p_spp_dfs$CA.MELA, colour = "#F8766D",
  line_df_row = spp_lines[1, ], ref_intercept_row = spp_lines$ref_intercept[1])
 apfurc <- 
-mk_multipanel_plots(point_df = p_spp_dfs$AP.FURC, colour = "#C49A00", 
+mk_multipanel_plots1(point_df = p_spp_dfs$AP.FURC, colour = "#C49A00", 
 	line_df_row = spp_lines[2, ], ref_intercept_row = spp_lines$ref_intercept[2])
 luboha <- 
-mk_multipanel_plots(point_df = p_spp_dfs$LU.BOHA, colour = "#53B400", 
+mk_multipanel_plots1(point_df = p_spp_dfs$LU.BOHA, colour = "#53B400", 
 	line_df_row = spp_lines[3, ], ref_intercept_row = spp_lines$ref_intercept[3])
 lukasm <- 
-mk_multipanel_plots(point_df = p_spp_dfs$LU.KASM, colour = "#00C094", 
+mk_multipanel_plots1(point_df = p_spp_dfs$LU.KASM, colour = "#00C094", 
 	line_df_row = spp_lines[4, ], ref_intercept_row = spp_lines$ref_intercept[4])
 ceargu <- 
-mk_multipanel_plots(point_df = p_spp_dfs$CE.ARGU, colour = "#00B6EB",
+mk_multipanel_plots1(point_df = p_spp_dfs$CE.ARGU, colour = "#00B6EB",
 	line_df_row = spp_lines[5, ], ref_intercept_row = spp_lines$ref_intercept[5])
 ceurod <- 
-mk_multipanel_plots(point_df = p_spp_dfs$CE.UROD, colour = "#A58AFF",
+mk_multipanel_plots1(point_df = p_spp_dfs$CE.UROD, colour = "#A58AFF",
 	line_df_row = spp_lines[6, ], ref_intercept_row = spp_lines$ref_intercept[6])
 valout <- 
-mk_multipanel_plots(point_df = p_spp_dfs$VA.LOUT, colour = "#FB61D7",
+mk_multipanel_plots1(point_df = p_spp_dfs$VA.LOUT, colour = "#FB61D7",
 	line_df_row = spp_lines[7, ], ref_intercept_row = spp_lines$ref_intercept[7])
 
-blankPanel <- grid.rec(gp = gpar(col = "white"))
-grid.arrange(pisc_plot, camela, apfurc, luboha, lukasm, ceargu, ceurod, valout,
- ncol = 7)
-
-catere <- 
-mk_multipanel_plots(point_df = z_spp_dfs$CA.TERE, colour = "#F8766D", 
-	line_df_row = spp_lines[17, ], ref_intercept_row = spp_lines$ref_intercept[17])
-pttile <- 
-mk_multipanel_plots(point_df = b_spp_dfs$MO.GRAN, colour = "#C49A00", 
+paarca <- 
+mk_multipanel_plots1(point_df = b_spp_dfs$PA.ARCA, colour = "#F8766D", 
+	line_df_row = spp_lines[8, ], ref_intercept_row = spp_lines$ref_intercept[8])
+mogran <- 
+mk_multipanel_plots1(point_df = b_spp_dfs$MO.GRAN, colour = "#00BA38", 
 	line_df_row = spp_lines[9, ], ref_intercept_row = spp_lines$ref_intercept[9])
 painsu <-
-mk_multipanel_plots(point_df = b_spp_dfs$PAINSU, colour = "#53B400", 
+mk_multipanel_plots1(point_df = b_spp_dfs$PA.INSU, colour = "#619CFF", 
 	line_df_row = spp_lines[10, ], ref_intercept_row = spp_lines$ref_intercept[10])
 
+catere <- 
+mk_multipanel_plots1(point_df = z_spp_dfs$CA.TERE, colour = "#F8766D", 
+	line_df_row = spp_lines[11, ], ref_intercept_row = spp_lines$ref_intercept[11])
+pttile <- 
+mk_multipanel_plots1(point_df = z_spp_dfs$PT.TILE, colour = "#B79F00", 
+	line_df_row = spp_lines[12, ], ref_intercept_row = spp_lines$ref_intercept[12])
+chvand <-
+mk_multipanel_plots1(point_df = z_spp_dfs$CH.VAND, colour = "#00BA38", 
+	line_df_row = spp_lines[13, ], ref_intercept_row = spp_lines$ref_intercept[13])
+psbart <-
+mk_multipanel_plots1(point_df = z_spp_dfs$PS.BART, colour = "#00BFC4", 
+	line_df_row = spp_lines[14, ], ref_intercept_row = spp_lines$ref_intercept[14])
+psdisp <-
+mk_multipanel_plots1(point_df = z_spp_dfs$PS.DISP, colour = "#619CFF", 
+	line_df_row = spp_lines[15, ], ref_intercept_row = spp_lines$ref_intercept[15])
+psoliv <-
+mk_multipanel_plots1(point_df = z_spp_dfs$PS.OLIV, colour = "#F564E3", 
+	line_df_row = spp_lines[16, ], ref_intercept_row = spp_lines$ref_intercept[16])
 
+acnigr <- 
+mk_multipanel_plots1(point_df = h_spp_dfs$AC.NIGR, colour = "#F8766D", 
+	line_df_row = spp_lines[17, ], ref_intercept_row = spp_lines$ref_intercept[17])
+acoliv <- 
+mk_multipanel_plots1(point_df = h_spp_dfs$AC.OLIV, colour = "#B79F00", 
+	line_df_row = spp_lines[18, ], ref_intercept_row = spp_lines$ref_intercept[18])
+ceflav <-
+mk_multipanel_plots1(point_df = h_spp_dfs$CE.FLAV, colour = "#00BA38", 
+	line_df_row = spp_lines[19, ], ref_intercept_row = spp_lines$ref_intercept[19])
+chsord <-
+mk_multipanel_plots1(point_df = h_spp_dfs$CH.SORD, colour = "#00BFC4", 
+	line_df_row = spp_lines[20, ], ref_intercept_row = spp_lines$ref_intercept[20])
+scfren <-
+mk_multipanel_plots1(point_df = h_spp_dfs$SC.FREN, colour = "#619CFF", 
+	line_df_row = spp_lines[21, ], ref_intercept_row = spp_lines$ref_intercept[21])
+scrubr <-
+mk_multipanel_plots1(fg_point_df = h, spp_point_df = h_spp_dfs$SC.RUBR, colour = "#F564E3", 
+	line_df_row = spp_lines[22, ], ref_intercept_row = spp_lines$ref_intercept[22])
+
+chorna <- 
+mk_multipanel_plots1(point_df = c, colour = "#F8766D", 
+	line_df_row = spp_lines[23, ], ref_intercept_row = spp_lines$ref_intercept[23])
+
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA, 
+	line_df_row = spp_lines[1, ], ref_intercept_row = spp_lines$ref_intercept[1])
+
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC, 
+	line_df_row = spp_lines[2, ], ref_intercept_row = spp_lines$ref_intercept[2])
+
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA, 
+	line_df_row = spp_lines[3, ], ref_intercept_row = spp_lines$ref_intercept[3])
+
+
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA, 
+	spp_line_df_row = spp_lines[1, ], ref_intercept_row = spp_lines$ref_intercept[1],
+	fg_line_df_row = fg_lines[1, ])
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC, 
+	spp_line_df_row = spp_lines[2, ], ref_intercept_row = spp_lines$ref_intercept[2],
+	fg_line_df_row = fg_lines[1, ])
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA, 
+	spp_line_df_row = spp_lines[3, ], ref_intercept_row = spp_lines$ref_intercept[3],
+	fg_line_df_row = fg_lines[1, ])
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.KASM, 
+	spp_line_df_row = spp_lines[4, ], ref_intercept_row = spp_lines$ref_intercept[4],
+	fg_line_df_row = fg_lines[1, ])
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.ARGU, 
+	spp_line_df_row = spp_lines[5, ], ref_intercept_row = spp_lines$ref_intercept[5],
+	fg_line_df_row = fg_lines[1, ])
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD, 
+	spp_line_df_row = spp_lines[6, ], ref_intercept_row = spp_lines$ref_intercept[6],
+	fg_line_df_row = fg_lines[1, ])
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT, 
+	spp_line_df_row = spp_lines[7, ], ref_intercept_row = spp_lines$ref_intercept[7],
+	fg_line_df_row = fg_lines[1, ])
+
+################################################################################
+############  					Panel Plots 						############
+################################################################################
+
+# Functional group panel plot
+# Notes: in the mk_multipanel_plots2 functions the following text settings were
+# used. It may be best to add these as options in the function, but for now I'll
+# just leave things like this. 
+
+pisc_plot <- 
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = p, 
+	spp_line_df_row = fg_lines[1, ], eqn_df = fg_sma_eqns[1, ], eqn_x = 240, 
+	eqn_y = 1.25, r2_x = 320, r2_y = 3.25, fg_line_intercept = pento_line$ref_intercept, 
+	x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
+	y_axis_text = TRUE, plot_title = "Piscivores") + 
+	geom_point(data = p, aes(colour = dissected_by))
+benth_plot <- 
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = b, 
+	spp_line_df_row = fg_lines[2, ], eqn_df = fg_sma_eqns[2, ], eqn_x = 240, 
+	eqn_y = 1.25, r2_x = 320, r2_y = 3.25, fg_line_intercept = pento_line$ref_intercept, 
+	x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
+	y_axis_text = FALSE, plot_title = "Benthic Invertivores")
+zoop_plot <- 
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = z, 
+	spp_line_df_row = fg_lines[3, ], eqn_df = fg_sma_eqns[3, ], eqn_x = 240, 
+	eqn_y = 1.25, r2_x = 320, r2_y = 3.25, fg_line_intercept = pento_line$ref_intercept, 
+	x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
+	y_axis_text = FALSE, plot_title = "Zooplanktivores")
+herb_plot <- 
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = h, 
+	spp_line_df_row = fg_lines[4, ], eqn_df = fg_sma_eqns[4, ], eqn_x = 240, 
+	eqn_y = 1.25, r2_x = 320, r2_y = 3.25, fg_line_intercept = pento_line$ref_intercept, 
+	x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
+	y_axis_text = FALSE, plot_title = "Herbivores")
+coral_plot <- 
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = c, 
+	spp_line_df_row = fg_lines[5, ], eqn_df = fg_sma_eqns[5, ], eqn_x = 240, 
+	eqn_y = 1.25, r2_x = 320, r2_y = 3.25, fg_line_intercept = pento_line$ref_intercept, 
+	x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
+	y_axis_text = FALSE, plot_title = "Corallivore" )
+
+master_layout <- 
+grid.layout(nrow = 1, ncol = 5, 
+			widths = unit(c(1, 0.9, 0.9, 0.9, 0.9), "null"))
+
+grid.newpage()
+pushViewport(viewport(layout = master_layout))
+print(pisc_plot, vp = set_vp(1, 1))
+print(benth_plot, vp = set_vp(1, 2))
+print(zoop_plot, vp = set_vp(1, 3))
+print(herb_plot, vp = set_vp(1, 4))
+print(coral_plot, vp = set_vp(1, 5))
+
+
+dev.copy2pdf(device = quartz, file = "panel_plots/fg_plot.pdf")
+
+camela <- 
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA, 
+	spp_line_df_row = spp_lines[1, ], #ref_intercept_row = spp_lines$ref_intercept[1],
+	eqn_df = spp_sma_eqns[1, ], eqn_x = 280, eqn_y = 50, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[1], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "C. melampygus") +
+	geom_point(data = p_spp_dfs$CA.MELA, aes(colour = dissected_by), size = 3)
+apfurc <- 
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC, 
+	spp_line_df_row = spp_lines[2, ], #ref_intercept_row = spp_lines$ref_intercept[2], 
+	eqn_df = spp_sma_eqns[2, ], eqn_x = 280, eqn_y = 50, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[1], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "A. furca") +
+	geom_point(data = p_spp_dfs$AP.FURC, aes(colour = dissected_by), size = 3)
+luboha <- 
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA, 
+	spp_line_df_row = spp_lines[3, ], #ref_intercept_row = spp_lines$ref_intercept[3],
+	eqn_df = spp_sma_eqns[3, ], eqn_x = 280, eqn_y = 50, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[1], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "L. bohar") +
+	geom_point(data = p_spp_dfs$LU.BOHA, aes(colour = dissected_by), size = 3)
+# Thinking about leaving out... but then should drop from main pisc_plot
+#lukasm <- 
+#mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.KASM, 
+#	spp_line_df_row = spp_lines[4, ], ref_intercept_row = spp_lines$ref_intercept[4], 
+#	eqn_df = spp_sma_eqns[3, ], eqn_x = 280, eqn_y = 50, x_axis_labels = FALSE,
+#	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[1], 
+#   x_axis_text = FALSE, y_axis_text = FALSE, plot_title = )
+ceargu <-
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.ARGU, 
+	spp_line_df_row = spp_lines[5, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[5, ], eqn_x = 280, eqn_y = 50, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[1], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "C. argus") +
+	geom_point(data = p_spp_dfs$CE.ARGU, aes(colour = dissected_by), size = 3)
+ceurod <-
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD, 
+	spp_line_df_row = spp_lines[6, ], #ref_intercept_row = spp_lines$ref_intercept[6], 
+	eqn_df = spp_sma_eqns[6, ], eqn_x = 280, eqn_y = 50, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[1], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "C. urodeta") +
+	geom_point(data = p_spp_dfs$CE.UROD, aes(colour = dissected_by), size = 3)
+valout <-
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT, 
+	spp_line_df_row = spp_lines[7, ], #ref_intercept_row = spp_lines$ref_intercept[7],
+	eqn_df = spp_sma_eqns[7, ], eqn_x = 280, eqn_y = 50, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[1], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "V. louti") +
+	geom_point(data = p_spp_dfs$VA.LOUT, aes(colour = dissected_by), size = 3)
+
+grid.arrange(camela, apfurc, luboha, ceargu, ceurod, valout, ncol = 3,
+	left = textGrob(expression(atop("", paste("log(gape area ", mm^2, ")", sep= ""))), 
+		rot = 90), 
+	sub = "log(standard length, mm) \n")
+
+
+
+paarca <-
+mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.ARCA, 
+	spp_line_df_row = spp_lines[8, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[8, ], eqn_x = 200, eqn_y = 30, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[2], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "P. arcatus")
+mogran <-
+mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$MO.GRAN, 
+	spp_line_df_row = spp_lines[9, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[9, ], eqn_x = 200, eqn_y = 30, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[2], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "M. grandoculis")
 painsu <-
-mk_multipanel_plots(point_df = b_spp_dfs$PAINSU, colour = "#53B400", 
-	line_df_row = spp_lines[10, ], ref_intercept_row = spp_lines$ref_intercept[10])
+mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.INSU, 
+	spp_line_df_row = spp_lines[10, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[10, ], eqn_x = 200, eqn_y = 30, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[2], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "P. insularis")
 
 
+catere <-
+mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CA.TERE, 
+	spp_line_df_row = spp_lines[11, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[11, ], eqn_x = 125, eqn_y = 2.5, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[3], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "C. teres")
+pttile <-
+mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$PT.TILE, 
+	spp_line_df_row = spp_lines[12, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[12, ], eqn_x = 125, eqn_y = 2.5, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[3], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "P. tile")
+chvand <-
+mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CH.VAND, 
+	spp_line_df_row = spp_lines[13, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[13, ], eqn_x = 125, eqn_y = 2.5, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[3], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "C. vanderbilti")
+psbart <-
+mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.BART, 
+	spp_line_df_row = spp_lines[14, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[14, ], eqn_x = 125, eqn_y = 2.5, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[3], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "P. bartlettorum")
+psdisp <-
+mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.DISP, 
+	spp_line_df_row = spp_lines[15, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[15, ], eqn_x = 125, eqn_y = 2.5, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[3], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "P. dispar")
+psoliv <-
+mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.OLIV, 
+	spp_line_df_row = spp_lines[16, ], #ref_intercept_row = spp_lines$ref_intercept[5], 
+	eqn_df = spp_sma_eqns[16, ], eqn_x = 125, eqn_y = 2.5, x_axis_labels = FALSE,
+	y_axis_labels = FALSE, fg_line_intercept = fg_lines$ref_intercept[3], 
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "P. olivaceus")
+
+
+
+
+grid.arrange(paarca, mogran, painsu, ncol = 3,
+	left = textGrob(expression(atop("", paste("log(gape area ", mm^2, ")", sep= ""))), 
+		rot = 90), 
+	sub = "log(standard length, mm) \n")
+
+p_plot <- 
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = p, 
+	spp_line_df_row = fg_lines[1, ], ref_intercept_row = fg_lines$ref_intercept[1])
+b_plot <- 
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = b, 
+	spp_line_df_row = fg_lines[2, ], ref_intercept_row = fg_lines$ref_intercept[2])
+z_plot <-
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = z, 
+	spp_line_df_row = fg_lines[3, ], ref_intercept_row = fg_lines$ref_intercept[3])
+h_plot <- 
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = h, 
+	spp_line_df_row = fg_lines[4, ], ref_intercept_row = fg_lines$ref_intercept[4])
+c_plot <- 
+mk_multipanel_plots2(fg_point_df = pento, spp_point_df = c, 
+	spp_line_df_row = fg_lines[5, ], ref_intercept_row = fg_lines$ref_intercept[5])
+
+
+
+grid.arrange(p_plot, b_plot, z_plot, h_plot, c_plot, ncol = 1)
+grid.arrange(pisc_plot, benth_plot, zoop_plot, herb_plot, coral_plot, ncol = 5)
+
+grid.arrange(
+	camela, apfurc, luboha, lukasm, ceargu, ceurod, valout,
+	nrow = 1)
+
+blankPanel <- grid.rect(gp = gpar(col = "white"))
+grid.arrange(
+	pisc_plot, camela, apfurc, luboha, lukasm, 
+	  blankPanel, ceargu, ceurod, valout, blankPanel,
+	benth_plot, paarca, mogran, painsu, blankPanel,
+	zoop_plot, catere, pttile, chvand, psbart,
+	  blankPanel, psdisp, psoliv, blankPanel, blankPanel,
+	herb_plot, acnigr, acoliv, ceflav, blankPanel, 
+	  blankPanel, chsord, scfren, scrubr, blankPanel,
+	coral_plot,
+ 	ncol = 5, nrow = 8)
+
+grid.arrange(pisc_plot, benth_plot, zoop_plot, herb_plot,  coral_plot,
+			 camela,    paarca,     catere,    acnigr,     blankPanel,
+			 apfurc,    mogran,     pttile,    acoliv,     blankPanel, 
+			 luboha, ncol = 5)
+
+
+grid.arrange(
+	pisc_plot, camela, apfurc, luboha,  
+	  lukasm, ceargu, ceurod, valout, 
+	  ncol = 4, nrow = 2)
+
+grid.arrange(
+	benth_plot, paarca, mogran, painsu, 
+	  ncol = 4, nrow = 1)
+
+grid.arrange(
+	zoop_plot, catere, pttile, chvand, 
+	  blankPanel, psbart, psdisp, psoliv, 
+	  ncol = 4, nrow = 2)
+
+grid.arrange(
+	herb_plot, acnigr, acoliv, ceflav, 
+	  blankPanel, chsord, scfren, scrubr,
+	  ncol = 4, nrow = 2)
+
+coral_plot
 
 
 ggplot(data = p_spp_dfs$CA.MELA, aes_string(x = "SL", y = "ga")) +
