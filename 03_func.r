@@ -75,7 +75,7 @@ write_group_sma_eqn <- function(sma_summary_df, group_column) {
       r2 <- substitute(italic(r)^2~"="~r2, l)
     } else {
         l <- list(slp = format(sma_summary_df$slope[i], digits=2),
-                  int = format(abs(sma_summary_df$elev[i]), digits=2), 
+                  int = format(sma_summary_df$elev[i], digits=2),
                   r2 = format(sma_summary_df$xy_r2[i], digits=2)
       )
       eqn_r2 <- substitute(atop(~~~~~~~~italic(r)^2~"="~r2, italic(y) ==
@@ -802,7 +802,7 @@ write_lme_groups <- function(summ_df, variable) {
 # xlimits have been added to the final call for map() at the end of the function 
 # because they were causing islands in the pacific to disappear in first part of 
 # the function where the polygons are moved around. 
-plot.map<- function(database,center, xlimits, ...){
+plot.map <- function(database,center, xlimits, ...){
     Obj <- map(database,...,plot=F)
     coord <- cbind(Obj[[1]],Obj[[2]])
 
