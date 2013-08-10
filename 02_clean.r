@@ -10,11 +10,16 @@ ct_marg <- which(fish$SpeciesCode==('CT.MARG'))
 ch_auri <- which(fish$SpeciesCode == 'CH.AURI')
 me_nige <- which(fish$SpeciesCode == 'ME.NIGE')
 ch_marg <- which(fish$SpeciesCode == 'CH.MARG')
+ce_lori <- which(fish$SpeciesCode == 'CE.LORI')
+#extra_sites <- which(fish$Region == 'EXTRA')
+site_unknown <- which(fish$Site == 'Site Not Certain')
+lu_kasm <- which(fish$SpeciesCode == 'LU.KASM')
 
 
 #act <- which(fish$SpeciesCode==('AC.TRIOS')) 
 # removing these rows from fish:
-fish <- fish[-c(psc, ch_marg, ch_auri, me_nige, ch_marg), ]
+fish <- fish[-c(psc, ch_marg, ch_auri, me_nige, ch_marg, ce_lori, lu_kasm, 
+                site_unknown), ]
 
 # Remove fish where site == "Site Not Certain"
 #no_site <- which(fish$Site == "Site Not Certain")
@@ -30,19 +35,6 @@ fish$ga_ratio <- fish$ga/fish$SL
 
 fish$j_fg <- factor(fish$j_fg, levels = c("Pi", "BI", "ZP", "He", 
                                           "C", "Om", "De"))
-# Correcting for low elevation of AO
-#Correction: difference = log(a1) – log(a2) = log(a1/a2)
-#Correction for raw data = 10^(a1/a2) = 10^(-1.116445/-4.200132)
-
-#10^(-1.116445/-4.200132)
-
-#for (i in 1:length(fish$SpecimenID)) {
-#  if (fish$dissected_by[i] == "AO" & fish$SpeciesCode[i] == "CE.UROD") {
-#    fish$ao_corrected[i] <- fish$ga[i] + 10^(-4.2/-1.116) #10^(-1.116445/-4.200132)
-#  } else {
-#    fish$ao_corrected[i] <- fish$ga[i]
-#  }
-#}
 
 ################################################################################
 ############             Organizing Piscivores                      ############
@@ -62,13 +54,14 @@ p_fam <- factor(p_fam, levels=p_fam)
 p$SpeciesCode <- factor(p$SpeciesCode, levels = c("CA.MELA", 
                                                   "AP.FURC", 
                                                   "LU.BOHA",
-                                                  "LU.KASM",
+                                                  #"LU.KASM",
                                                   "CE.ARGU",
                                                   "CE.UROD",
                                                   "VA.LOUT")
 )
-p_spp <- c("CA.MELA", "AP.FURC", "LU.BOHA", "LU.KASM", "CE.ARGU", "CE.UROD", 
-           "VA.LOUT")
+#p_spp <- c("CA.MELA", "AP.FURC", "LU.BOHA", "LU.KASM", "CE.ARGU", "CE.UROD", 
+#           "VA.LOUT")
+p_spp <- c("CA.MELA", "AP.FURC", "LU.BOHA", "CE.ARGU", "CE.UROD", "VA.LOUT")
 p_spp <- factor(p_spp, levels=p_spp)
 
 ################################################################################
@@ -165,11 +158,11 @@ c$SpeciesCode <- factor(c$SpeciesCode, levels = c("CH.ORNA")
 
 # picking just Pi, He, BI, and ZP and ordering them:
 pento <- fish[fish$j_fg %in% c('Pi', 'He', 'BI', 'ZP', 'C'), ]
-ps_coop <- which(pento$SpeciesCode == "PS.COOP")
-ch_marg <- which(pento$SpeciesCode == "CH.MARG")
-ch_auri <- which(pento$SpeciesCode == "CH.AURI")
-me_nige <- which(pento$SpeciesCode == "ME.NIGE")
-ce_lori <- which(pento$SpeciesCode == "CE.LORI")
+#ps_coop <- which(pento$SpeciesCode == "PS.COOP")
+#ch_marg <- which(pento$SpeciesCode == "CH.MARG")
+#ch_auri <- which(pento$SpeciesCode == "CH.AURI")
+#me_nige <- which(pento$SpeciesCode == "ME.NIGE")
+#ce_lori <- which(pento$SpeciesCode == "CE.LORI")
 
 pento <- pento[-c(ps_coop, ch_marg, ch_auri, me_nige, ce_lori), ]
 
@@ -192,7 +185,7 @@ pento$Family <- factor(pento$Family, levels=c("Carangidae",
 pento$SpeciesCode <- factor(pento$SpeciesCode, levels = c("CA.MELA", 
                                                         "AP.FURC", 
                                                         "LU.BOHA",
-                                                        "LU.KASM",
+                                                        #"LU.KASM",
                                                         "CE.ARGU",
                                                         "CE.UROD",
                                                         "VA.LOUT",
@@ -214,11 +207,17 @@ pento$SpeciesCode <- factor(pento$SpeciesCode, levels = c("CA.MELA",
                                                         "CH.ORNA")
 )
 
-pento_order <- c("CA.MELA", "AP.FURC", "LU.BOHA", "LU.KASM", "CE.ARGU",
-                 "CE.UROD", "VA.LOUT", "PA.ARCA", "MO.GRAN", "PA.INSU",
-                 "CA.TERE", "PT.TILE", "CH.VAND", "PS.BART", "PS.DISP", 
-                 "PS.OLIV", "CH.ORNA", "AC.NIGR", "AC.OLIV", "CE.FLAV", 
-                 "CH.SORD", "SC.FREN", "SC.RUBR")
+#pento_order <- c("CA.MELA", "AP.FURC", "LU.BOHA", "LU.KASM", "CE.ARGU",
+#                 "CE.UROD", "VA.LOUT", "PA.ARCA", "MO.GRAN", "PA.INSU",
+#                 "CA.TERE", "PT.TILE", "CH.VAND", "PS.BART", "PS.DISP", 
+#                 "PS.OLIV", "CH.ORNA", "AC.NIGR", "AC.OLIV", "CE.FLAV", 
+#                 "CH.SORD", "SC.FREN", "SC.RUBR")
+
+pento_order <- c("CA.MELA", "AP.FURC", "LU.BOHA", "CE.ARGU", "CE.UROD", 
+                 "VA.LOUT", "PA.ARCA", "MO.GRAN", "PA.INSU", "CA.TERE", 
+                 "PT.TILE", "CH.VAND", "PS.BART", "PS.DISP", "PS.OLIV", 
+                 "CH.ORNA", "AC.NIGR", "AC.OLIV", "CE.FLAV", "CH.SORD", 
+                 "SC.FREN", "SC.RUBR")
 
 pento_order <- factor(pento_order, levels = pento_order)
 
@@ -289,42 +288,11 @@ freq_bp <- subset(freq1, (fg == 'Pi' | fg == 'BI') & is.na(freq1$invert)==FALSE)
 
 # including only species that were used in the quantile regression pred-prey 
 # size analysis (for honours)
-myspp <- freq_bp[freq_bp$SpeciesCode %in% c("CE.UROD", "CE.ARGU", "LU.BOHA", "LU.KASM",
+myspp <- freq_bp[freq_bp$SpeciesCode %in% c("CE.UROD", "CE.ARGU", "LU.BOHA", #"LU.KASM",
                                 "CA.MELA", "VA.LOUT", "MO.GRAN", "PA.INSU", 
                                 "PA.ARCA", "EP.MACU", "EP.HEXA", "EP.TAUV", 
                                 "EP.SPIL", "CA.ORTH", "AP.VIRE"), ]
 
-######################
-# Species specific dataframes:
-ac.nigr <- fish[(which(fish$SpeciesCode == "AC.NIGR")), ]
-ac.oliv <- fish[(which(fish$SpeciesCode == "AC.OLIV")), ]
-ac.trios <- fish[(which(fish$SpeciesCode == "AC.TRIOS")), ]
-ap.furc <- fish[(which(fish$SpeciesCode == "AP.FURC")), ]
-ca.mela <- fish[(which(fish$SpeciesCode == "CA.MELA")), ]
-ca.tere <- fish[(which(fish$SpeciesCode == "CA.TERE")), ]
-ce.argu <- fish[(which(fish$SpeciesCode == "CE.ARGU")), ]
-ce.flav <- fish[(which(fish$SpeciesCode == "CE.FLAV")), ]
-ce.urod <- fish[(which(fish$SpeciesCode == "CE.UROD")), ]
-ch.auri <- fish[(which(fish$SpeciesCode == "CH.AURI")), ]
-ch.orna <- fish[(which(fish$SpeciesCode == "CH.ORNA")), ]
-ch.sord <- fish[(which(fish$SpeciesCode == "CH.SORD")), ]
-ch.vand <- fish[(which(fish$SpeciesCode == "CH.VAND")), ]
-ct.marg <- fish[(which(fish$SpeciesCode == "CT.MARG")), ]
-lu.boha <- fish[(which(fish$SpeciesCode == "LU.BOHA")), ]
-lu.kasm <- fish[(which(fish$SpeciesCode == "LU.KASM")), ]
-me.nige <- fish[(which(fish$SpeciesCode == "ME.NIGE")), ]
-mo.gran <- fish[(which(fish$SpeciesCode == "MO.GRAN")), ]
-pa.arca <- fish[(which(fish$SpeciesCode == "PA.ARCA")), ]
-pa.insu <- fish[(which(fish$SpeciesCode == "PA.INSU")), ]
-pl.dick <- fish[(which(fish$SpeciesCode == "PL.DICK")), ]
-ps.bart <- fish[(which(fish$SpeciesCode == "PS.BART")), ]
-ps.coop <- fish[(which(fish$SpeciesCode == "PS.COOP")), ]
-ps.disp <- fish[(which(fish$SpeciesCode == "PS.DISP")), ]
-ps.oliv <- fish[(which(fish$SpeciesCode == "PS.OLIV")), ]
-pt.tile <- fish[(which(fish$SpeciesCode == "PT.TILE")), ]
-sc.fren <- fish[(which(fish$SpeciesCode == "SC.FREN")), ]
-sc.rubr <- fish[(which(fish$SpeciesCode == "SC.RUBR")), ]
-va.lout <- fish[(which(fish$SpeciesCode == "VA.LOUT")), ]
 
 
 
