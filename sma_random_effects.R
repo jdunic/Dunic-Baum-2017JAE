@@ -406,6 +406,7 @@ dev.off()
 # elevations for measurements made by AO/Angeleen
 
 observer_grouping <- c(rep(1, 4), 2, rep(1, 5))
+dissected_by <- unique(p_spp_dfs$CE.UROD$dissected_by)
 observer_grouping <- data.frame(dissected_by, observer_grouping)
 ceurod_ao_sep <- merge(p_spp_dfs$CE.UROD, observer_grouping, by = "dissected_by")
 
