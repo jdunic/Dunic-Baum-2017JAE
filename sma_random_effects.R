@@ -1690,7 +1690,7 @@ ggplot(data = sort_by_maxL) +
 # Functional groups
 #-------------------------------------------------------------------------------
 fg_sma_eqns <- write_group_sma_eqn(allGA_summ, allGA_summ$group)
-names(fg_sma_eqns) <- c("j_fg", "eqn_r2", "eqn", "r2")
+names(fg_sma_eqns) <- c("j_fg", "eqn_r2", "eqn", "r2", "n")
 
 spp_sma_eqns <- write_group_sma_eqn(allGA_bySPP_summ, allGA_bySPP_summ$group)
 names(spp_sma_eqns) <- c("SpeciesCode", "eqn_r2", "eqn", "r2")
@@ -1708,7 +1708,7 @@ names(spp_sma_eqns) <- c("SpeciesCode", "eqn_r2", "eqn", "r2")
 pisc_plot <- 
 	mk_multipanel_plots2(fg_point_df = pento, spp_point_df = p, 
 		spp_line_df_row = fg_lines[1, ], eqn_df = fg_sma_eqns[1, ], eqn_x = 240, 
-		eqn_y = 1.25, r2_x = 320, r2_y = 3.25, 
+		eqn_y = 1.25, r2_x = 320, r2_y = 3.15, 
 		fg_line_intercept = pento_line$ref_intercept, 
 		x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
 		y_axis_text = TRUE, plot_title = "Piscivores") #+ 
@@ -1716,28 +1716,28 @@ pisc_plot <-
 benth_plot <- 
 mk_multipanel_plots2(fg_point_df = pento, spp_point_df = b, 
 	spp_line_df_row = fg_lines[2, ], eqn_df = fg_sma_eqns[2, ], eqn_x = 240, 
-	eqn_y = 1.25, r2_x = 320, r2_y = 3.25, 
+	eqn_y = 1.25, r2_x = 320, r2_y = 3.15, 
 	fg_line_intercept = pento_line$ref_intercept, 
 	x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
 	y_axis_text = FALSE, plot_title = "Benthic Invertivores")
 zoop_plot <- 
 mk_multipanel_plots2(fg_point_df = pento, spp_point_df = z, 
 	spp_line_df_row = fg_lines[3, ], eqn_df = fg_sma_eqns[3, ], eqn_x = 240, 
-	eqn_y = 1.25, r2_x = 320, r2_y = 3.25, 
+	eqn_y = 1.25, r2_x = 320, r2_y = 3.15, 
 	fg_line_intercept = pento_line$ref_intercept, 
 	x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
 	y_axis_text = FALSE, plot_title = "Zooplanktivores")
 herb_plot <- 
 mk_multipanel_plots2(fg_point_df = pento, spp_point_df = h, 
 	spp_line_df_row = fg_lines[4, ], eqn_df = fg_sma_eqns[4, ], eqn_x = 240, 
-	eqn_y = 1.25, r2_x = 320, r2_y = 3.25, 
+	eqn_y = 1.25, r2_x = 320, r2_y = 3.15, 
 	fg_line_intercept = pento_line$ref_intercept, 
 	x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
 	y_axis_text = FALSE, plot_title = "Herbivores")
 coral_plot <- 
 mk_multipanel_plots2(fg_point_df = pento, spp_point_df = c, 
 	spp_line_df_row = fg_lines[5, ], eqn_df = fg_sma_eqns[5, ], eqn_x = 240, 
-	eqn_y = 1.25, r2_x = 320, r2_y = 3.25, 
+	eqn_y = 1.25, r2_x = 275, r2_y = 3.15, 
 	fg_line_intercept = pento_line$ref_intercept, 
 	x_axis_labels = FALSE, x_axis_text = TRUE, y_axis_labels = FALSE, 
 	y_axis_text = FALSE, plot_title = "Corallivore" )
@@ -1765,7 +1765,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA,
 	eqn_df = spp_sma_eqns[1, ], eqn_x = 280, eqn_y = 50, r2_x = 310, r2_y = 80, 
 	x_axis_labels = FALSE, y_axis_labels = FALSE, 
 	fg_line_intercept = fg_lines$ref_intercept[1], 
-	x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "C. melampygus") #+
+	x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "Caranx melampygus") #+
 	#geom_point(data = p_spp_dfs$CA.MELA, aes(colour = dissected_by), size = 3)
 apfurc <- 
 mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC, 
@@ -1773,7 +1773,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC,
 	eqn_df = spp_sma_eqns[2, ], eqn_x = 280, eqn_y = 50, r2_x = 310, r2_y = 80, 
 	x_axis_labels = FALSE, y_axis_labels = FALSE, 
 	fg_line_intercept = fg_lines$ref_intercept[1], 
-	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "A. furca") #+
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Aphareus furca") #+
 	#geom_point(data = p_spp_dfs$AP.FURC, aes(colour = dissected_by), size = 3)
 luboha <- 
 mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA, 
@@ -1781,7 +1781,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA,
 	eqn_df = spp_sma_eqns[3, ], eqn_x = 280, eqn_y = 50, r2_x = 310, r2_y = 80, 
 	x_axis_labels = FALSE, y_axis_labels = FALSE, 
 	fg_line_intercept = fg_lines$ref_intercept[1], 
-	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "L. bohar") #+
+	x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Lutjanus bohar") #+
 	#geom_point(data = p_spp_dfs$LU.BOHA, aes(colour = dissected_by), size = 3)
 # Thinking about leaving out... but then should drop from main pisc_plot
 #lukasm <- 
@@ -1797,7 +1797,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.ARGU,
 	eqn_df = spp_sma_eqns[4, ], eqn_x = 280, eqn_y = 50, r2_x = 310, r2_y = 80, 
 	x_axis_labels = FALSE, y_axis_labels = FALSE, 
 	fg_line_intercept = fg_lines$ref_intercept[1], 
-	x_axis_text = TRUE, y_axis_text = TRUE, plot_title = "C. argus") #+
+	x_axis_text = TRUE, y_axis_text = TRUE, plot_title = "Cephalopholis argus") #+
 	#geom_point(data = p_spp_dfs$CE.ARGU, aes(colour = dissected_by), size = 3)
 ceurod <-
 mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD, 
@@ -1805,7 +1805,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD,
 	eqn_df = spp_sma_eqns[5, ], eqn_x = 280, eqn_y = 50, r2_x = 310, r2_y = 80, 
 	x_axis_labels = FALSE, y_axis_labels = FALSE, 
 	fg_line_intercept = fg_lines$ref_intercept[1], 
-	x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "C. urodeta") #+
+	x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Cephalopholis urodeta") #+
 	#geom_point(data = p_spp_dfs$CE.UROD, aes(colour = dissected_by), size = 3)
 valout <-
 mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT, 
@@ -1813,30 +1813,8 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT,
 	eqn_df = spp_sma_eqns[6, ], eqn_x = 280, eqn_y = 50, r2_x = 310, r2_y = 80, 
 	x_axis_labels = FALSE, y_axis_labels = FALSE, 
 	fg_line_intercept = fg_lines$ref_intercept[1], 
-	x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "V. louti") #+
+	x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Variola louti") #+
 	#geom_point(data = p_spp_dfs$VA.LOUT, aes(colour = dissected_by), size = 3)
-
-# Plotting all piscivores
-master_layout <- 
-grid.layout(nrow = 2, ncol = 3, 
-			widths = unit(c(1, 0.9, 0.9), "null"))
-grid.newpage()
-pushViewport(viewport(layout = master_layout))
-print(camela, vp = set_vp(1, 1))
-print(apfurc, vp = set_vp(1, 2))
-print(luboha, vp = set_vp(1, 3))
-print(ceargu, vp = set_vp(2, 1))
-print(ceurod, vp = set_vp(2, 2))
-print(valout, vp = set_vp(2, 3))
-
-
-grid.arrange(camela, apfurc, luboha, ceargu, ceurod, valout, ncol = 3,
-	left = textGrob(expression(atop("", paste("log(gape area ", mm^2, ")", sep= ""))), 
-		rot = 90), 
-	sub = "log(standard length, mm) \n")
-
-dev.copy2pdf(device = quartz, file = "panel_plots/pisc_panel.pdf")
-
 
 paarca <-
 mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.ARCA, 
@@ -1862,6 +1840,42 @@ mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.INSU,
 	fg_line_intercept = fg_lines$ref_intercept[2], x_axis_text = TRUE, 
 	y_axis_text = FALSE, plot_title = "P. insularis") + 
 	geom_point(data = b_spp_dfs$PA.INSU, aes(colour = dissected_by))
+
+# Plotting multipanel piscivores and benthic invertivores
+master_layout <- 
+grid.layout(nrow = 3, ncol = 4, 
+			widths = unit(c(0.1, 1, 0.9, 0.9), "null"),
+			heights = unit(c(1, 1, 0.1), "null"))
+grid.newpage()
+pushViewport(viewport(layout = master_layout))
+print(camela, vp = set_vp(1, 2))
+print(apfurc, vp = set_vp(1, 3))
+print(luboha, vp = set_vp(1, 4))
+print(ceargu, vp = set_vp(2, 2))
+print(ceurod, vp = set_vp(2, 3))
+print(valout, vp = set_vp(2, 4))
+grid.text(
+	expression( paste("log(gape area ", mm^2, ")", sep = "") ), 
+	vp = viewport(layout.pos.row = 1:2, layout.pos.col = 1),
+	rot = 90, gp = gpar(fontsize = 9)
+	)
+grid.text(
+	"log(standard length, mm)",
+	vp = viewport(layout.pos.row = 3, layout.pos.col = 2:4),
+	vjust = 0, gp = gpar(fontsize = 9))
+
+
+
+dev.copy2eps(device = quartz, file = "panel_plots/pisc_panel.eps")
+
+
+grid.arrange(camela, apfurc, luboha, ceargu, ceurod, valout, ncol = 3,
+	left = textGrob(expression(atop("", paste("log(gape area ", mm^2, ")", sep= ""))), 
+		rot = 90), 
+	sub = "log(standard length, mm) \n")
+
+dev.copy2pdf(device = quartz, file = "panel_plots/pisc_panel.pdf")
+
 
 # Plotting all benthic invertivores
 master_layout <- 
