@@ -2,6 +2,9 @@
 ############            Gape Size ~ Body Size Analysis              ############
 ################################################################################
 
+# Count number of fish per each species in df = fish
+ddply(fish, .(SpeciesCode), summarize, n = length(SpeciesCode))
+
 # Functional group level linear models:
 fg_gh <- groupwise_lm_gh(pento, pento$j_fg)
 fg_gw <- groupwise_lm_gw(pento, pento$j_fg)
@@ -861,6 +864,10 @@ library('ggplot2')
 library(gridExtra)
 library(plyr)
 
+# Count number of fish per each species in df = preyX
+ddply(prey5, .(SpeciesCode), summarize, n = length(SpeciesCode))
+ddply(prey6, .(SpeciesCode), summarize, n = length(SpeciesCode))
+
 # prey3 is a data.frame with just Pi, BI, ZP.
 sl <- ggplot(prey2, aes(x = sl, y = psize)) +
   geom_point(aes(colour = ptype, shape = ptype)) +
@@ -940,6 +947,7 @@ df.n <- ddply(.data=na.omit(prey3), .(fg), summarize, n=paste("n ==", length(fg)
 
 fgs <- list('Pi' = "Piscivore",
             'BI' = "Benthic Invertivore")
+
 fg_labeller <- function(variable,value){
   return(fgs[value])
 }
@@ -973,34 +981,127 @@ dev.off()
 
 grid.arrange(gh, gw, ga)
 
-df.n <- ddply(.data=prey3, .(fg), summarize, n=paste("n ==", length(fg)))
+df.n <- ddply(.data=prey5, .(fg), summarize, n=paste("n ==", length(fg)))
 
 ggplot(na.omit(prey3), aes(x = sl, y = psize)) +
-  geom_point(aes(colour = species)) +
+  geom_point(aes(colour = SpeciesCode)) +
   geom_text(data = df.n, aes( x= 200, y = 200, label = n), parse = TRUE) +
-  geom_smooth(method = "lm") +
+  #geom_smooth(method = "lm") +
   stat_quantile(geom = "quantile", quantiles = c(0.10, 0.90), method = "rq") +
   facet_wrap(~ fg)
 
+# Graphs for manuscript:
+# Graph of just piscivores stomach contents:
+ggplot(na.omit(prey5), aes(x = pi*((gh/2)+ (gw/2)), y = psize)) +
+  geom_point(aes(shape = ptype)) +
+  scale_shape_manual(values=c(1, 19)) +
+  #geom_text(data = df.n, aes(x = 100, y = 200, label = n), parse = TRUE) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  theme(axis.line = element_line(color = 'black')) +
+  #geom_smooth(method = "lm") +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") +
+  theme(axis.ticks.length = unit(-0.2, "cm")) +
+  theme(axis.ticks.margin = unit(0.3, "cm")) +
+  xlab(expression(paste("gape area (", mm^2, ")", sep= ""))) +
+  ylab("prey total length (mm)")
+
+# Graph of benthic invertivore and piscivores:
+df.n <- ddply(.data=prey5, .(fg), summarize, n=paste("n ==", length(fg)))
+pisc_prey <-
+ggplot(na.omit(prey5), aes(x = pi*((gh/2)+ (gw/2)), y = psize)) +
+  geom_point(aes(shape = ptype)) +
+  scale_shape_manual(values=c(1, 19)) +
+  geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+            size = 3, hjust = 0) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  theme(axis.line = element_line(color = 'black')) +
+  theme(legend.position = "none") +
+  theme(axis.title = element_blank()) +
+  #geom_smooth(method = "lm") +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") +
+  theme(axis.ticks.length = unit(-0.2, "cm")) +
+  theme(axis.ticks.margin = unit(0.3, "cm")) +
+  xlab(expression(paste("gape area (", mm^2, ")", sep= ""))) +
+  ylab("prey total length (mm)")
+
+df.n <- ddply(.data=prey6, .(fg), summarize, n=paste("n ==", length(fg)))
+benth_prey <-
+ggplot(na.omit(prey6), aes(x = pi*((gh/2)+ (gw/2)), y = psize)) +
+  geom_point(aes(shape = ptype)) +
+  geom_point(aes(x = 293.7, y = 258), alpha = 0.0) +
+  scale_shape_manual(values=c(1, 19)) +
+  geom_text(data = df.n, aes(x = 50, y = 230, label = n), parse = TRUE, 
+            size = 3, hjust = 0) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  theme(axis.line = element_line(color = 'black')) +
+  theme(legend.position = "none") +
+  theme(axis.title = element_blank()) +
+  #geom_smooth(method = "lm") +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") +
+  theme(axis.ticks.length = unit(-0.2, "cm")) +
+  theme(axis.ticks.margin = unit(0.3, "cm")) +
+  xlab(expression(paste("gape area (", mm^2, ")", sep= ""))) #+
+  #ylab("prey total length (mm)")
+
+
+master_layout <- 
+grid.layout(nrow = 2, ncol = 3, 
+      widths = unit(c(0.1, 1, 1), "null"),
+      heights = unit(c(1, 0.1), "null"))
+grid.newpage()
+pushViewport(viewport(layout = master_layout))
+print(pisc_prey, vp = set_vp(1, 2))
+print(benth_prey, vp = set_vp(1, 3))
+grid.text(
+  expression( paste("Gape area (", mm^2, ")", sep = "") ), 
+  vp = viewport(layout.pos.row = 2, layout.pos.col = 2:3), 
+  gp = gpar(fontsize = 10), vjust = -0.25
+  )
+grid.text(
+  "Prey total length (mm)",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 2
+  )
+
+grid.text(
+  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -7
+  )
+grid.text(
+  "b)", vp = viewport(layout.pos.row = 4, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -7
+  )
+
+dev.copy2eps(device = quartz, file = "panel_plots/pred_prey_size.eps")
+
+
+
+
 bi_qr <- rq(data = subset(prey3, prey3$fg == 'BI'), psize ~ sl, 
             tau = c(0.10, 0.50, 0.90))
+bi_90 <- rq(data = subset(prey3, prey3$fg =='BI'), psize~gh, tau = 0.90)
+bi_50 <- rq(data = subset(prey3, prey3$fg =='BI'), psize~gh, tau = 0.50)
+bi_10 <- rq(data = subset(prey3, prey3$fg =='BI'), psize~gh, tau = 0.10)
 
-bi_90 <- summary(rq(data = subset(prey3, prey3$fg =='BI'), psize~gh,
+p_90 <- rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl,
                     tau = 0.90), se = "nid")
 
-bi_50 <- summary(rq(data = subset(prey3, prey3$fg =='BI'), psize~gh,
+p_50 <- rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl,
                     tau = 0.50), se = "nid")
 
-bi_10 <- summary(rq(data = subset(prey3, prey3$fg =='BI'), psize~gh,
-                    tau = 0.10), se = "nid")
-
-p_90 <- summary(rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl,
-                    tau = 0.90), se = "nid")
-
-p_50 <- summary(rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl,
-                    tau = 0.50), se = "nid")
-
-p_10 <- summary(rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl,
+p_10 <- rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl,
                     tau = 0.10), se = "nid")
 
 
@@ -1422,8 +1523,8 @@ min_spp$y <- as.numeric(seq(1:23))
 
 ggplot(data = spp_order, aes(x=min, y=y, colour = fg)) +
   geom_segment(aes(xend=max, yend = y), lineend = "round", size=0.8) +
-  geom_segement(data = maxL, aes(x=))
-geom_point(aes(x=max, y=y), size=2, shape=19) + 
+  geom_segement(data = maxL, aes(x=)) +
+  geom_point(aes(x=max, y=y), size=2, shape=19) + 
   geom_point(aes(x=min, y=y), size=2, shape=19) +
   xlim(-50, 720) +
   xlab("Size Range Sampled (mm)") +

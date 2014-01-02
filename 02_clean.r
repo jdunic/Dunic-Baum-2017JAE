@@ -5,21 +5,29 @@
 # Remove PS.COOP and AC.TRIOS because low n, but more so because there is no 
 # size gradient
 # Which rows have PS.COOP and AC.TRIOS?
-psc <- which(fish$SpeciesCode==('PS.COOP'))
+ps_coop <- which(fish$SpeciesCode==('PS.COOP'))
 ct_marg <- which(fish$SpeciesCode==('CT.MARG'))
 ch_auri <- which(fish$SpeciesCode == 'CH.AURI')
 me_nige <- which(fish$SpeciesCode == 'ME.NIGE')
 ch_marg <- which(fish$SpeciesCode == 'CH.MARG')
+ct_marg <- which(fish$SpeciesCode == 'CT.MARG')
+ct_stri <- which(fish$SpeciesCode == 'CT.STRI')
 ce_lori <- which(fish$SpeciesCode == 'CE.LORI')
+pl_dick <- which(fish$SpeciesCode == 'PL.DICK')
 #extra_sites <- which(fish$Region == 'EXTRA')
 site_unknown <- which(fish$Site == 'Site Not Certain')
 lu_kasm <- which(fish$SpeciesCode == 'LU.KASM')
+kif12_130 <- which(fish$SpecimenID == 'KIF12_130')
+kif11_319 <- which(fish$SpecimenID == 'KIF11_319')
+kif12_050 <- which(fish$SpecimenID == "KIF12_050") # obvious outlier
+ao <- which(fish$dissected_by == "AO" | fish$dissected_by == "angeleen")
 
 
 #act <- which(fish$SpeciesCode==('AC.TRIOS')) 
 # removing these rows from fish:
-fish <- fish[-c(psc, ch_marg, ch_auri, me_nige, ch_marg, ce_lori, lu_kasm, 
-                site_unknown), ]
+fish <- fish[-c(ps_coop, ch_marg, ch_auri, me_nige, ct_marg, ct_stri, ce_lori, 
+                lu_kasm, site_unknown, kif12_130, kif11_319, kif12_050, ao, 
+                pl_dick), ]
 
 # Remove fish where site == "Site Not Certain"
 #no_site <- which(fish$Site == "Site Not Certain")
@@ -35,6 +43,9 @@ fish$ga_ratio <- fish$ga/fish$SL
 
 fish$j_fg <- factor(fish$j_fg, levels = c("Pi", "BI", "ZP", "He", 
                                           "C", "Om", "De"))
+
+# To allow observers to be referenced anonymously
+fish$observer_id <- as.character(as.numeric(fish$dissected_by))
 
 ################################################################################
 ############             Organizing Piscivores                      ############
@@ -268,6 +279,10 @@ prey_gh <- subset(prey3, is.na(prey3$gh)==FALSE)
 
 prey4 <- subset(prey2, fg == 'Pi' | fg == 'BI' | fg == 'ZP' | fg == 'Om')
 
+prey5 <- subset(prey2, fg == 'Pi')
+
+prey6 <- subset(prey2, fg == 'BI')
+
 
 # Cleaning prey frequency data ####
 # selecting just BI and PI from all data:
@@ -292,28 +307,4 @@ myspp <- freq_bp[freq_bp$SpeciesCode %in% c("CE.UROD", "CE.ARGU", "LU.BOHA", #"L
                                 "CA.MELA", "VA.LOUT", "MO.GRAN", "PA.INSU", 
                                 "PA.ARCA", "EP.MACU", "EP.HEXA", "EP.TAUV", 
                                 "EP.SPIL", "CA.ORTH", "AP.VIRE"), ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -1,16 +1,6 @@
 ################################################################################
 ########                Individual functional group SMAs                ########
 ################################################################################
-A2 <- par(mfrow = c(1, 1))
-B2 <- par(mfrow = c(2, 1))
-C2 <- par(mfrow = c(3, 2))
-
-A3 <- par(mfrow = c(1, 1))
-B3 <- par(mfrow = c(2, 1))
-C3 <- par(mfrow = c(3, 2))
-
-xh
-
 # Piscivores
 pGH <- sma(gh~SL, data=p, log="xy", method="SMA", robust=T, slope.test=1)
 pGW <- sma(gw~SL, data=p, log="xy", method="SMA", robust=T, slope.test=1)
@@ -19,7 +9,7 @@ pGA <- sma(ga~SL, data=p, log="xy", method="SMA", robust=T, slope.test=2)
 # verifying SMA assumptions
 check_assump(pGH)
 check_assump(pGW)
-check_assump(pGA)
+check_assump(pGA, "Pi Gape Area")
 
 # Benthic Invertivores
 bGH <- sma(gh~SL, data=b, log="xy", method="SMA", robust=T, slope.test=1)
@@ -29,10 +19,10 @@ bGA <- sma(ga~SL, data=b, log="xy", method="SMA", robust=T, slope.test=2)
 # verifying SMA assumptions
 check_assump(bGH)
 check_assump(bGW)
-check_assump(bGA)
+check_assump(bGA, "BI Gape Area")
 
 # Zooplanktivores
-zGH <- sma(gh~SL, data=zp, log="xy", method="SMA", robust=T, slope.test=1)
+zGH <- sma(gh~SL, data=zp, log="xy", method="SMA", robust=T, slope.test=1)  
 zGW <- sma(gw~SL, data=zp, log="xy", method="SMA", robust=T, slope.test=1)
 zGA <- sma(ga~SL, data=zp, log="xy", method="SMA", robust=T, slope.test=2)
 zGH
@@ -40,23 +30,23 @@ zGH
 # verifying SMA assumptions
 check_assump(zGH)
 check_assump(zGW)
-check_assump(zGA)
+check_assump(zGA, "Zp Gape Area")
 
 # Herbivores
 hGH <- sma(gh~SL, data=h, log="xy", method="SMA", robust=T, slope.test=1)
 hGW <- sma(gw~SL, data=h, log="xy", method="SMA", robust=T, slope.test=1)
-hGA <- sma(ga~SL, data=h, log="xy", method="SMA", robust=T, slope.test=2)
+hGA <- sma(ga~SL*Region, data=h, log="xy", method="SMA", robust=T, slope.test=2)
 hGH
 
 # verifying SMA assumptions
 check_assump(hGH)
 check_assump(hGW)
-check_assump(hGA)
+check_assump(hGA, "He Gape Area by Region")
 
 # Corallivores
 cGH <- sma(gh~SL, data=c, log="xy", method="SMA", robust=T, slope.test=1)
 cGW <- sma(gw~SL, data=c, log="xy", method="SMA", robust=T, slope.test=1)
-cGA <- sma(ga~SL, data=c, log="xy", method="SMA", robust=T, slope.test=2)
+cGA <- sma(ga~SL*Region, data=c, log="xy", method="SMA", robust=T, slope.test=2)
 cGH
 
 plot(cGH)
@@ -64,7 +54,7 @@ plot(cGH)
 # verifying SMA assumptions
 check_assump(cGH)
 check_assump(cGW)
-check_assump(cGA)
+check_assump(cGA, "Co Gape Area by Region")
 
 
 ################################################################################
@@ -274,12 +264,12 @@ write.csv(c_width, "c_family_gw.csv")
 # Piscivores families:
 carangidae_ga <- sma(ga~SL, data=p[which(p$Family=="Carangidae"), ], log="xy", 
                      method="SMA", robust=F, slope.test=2)
-lutjanidae_ga <- sma(ga~SL, data=p[which(p$Family=="Lutjanidae"), ], log="xy",
+lutjanidae_ga <- sma(ga~SL*Region, data=p[which(p$Family=="Lutjanidae"), ], log="xy",
                      method="SMA", robust=F, slope.test=2)
 p_serranidae_ga <- sma(ga~SL, data=p[which(p$Family=="Serranidae"), ], log="xy",
                      method="SMA", robust=F, slope.test=2)
 check_assump(carangidae_ga)
-check_assump(lutjanidae_ga)
+check_assump(lutjanidae_ga, "Lutjanidae by Region")
 check_assump(p_serranidae_ga)
 
 # Benthic invertivore families/species:
@@ -360,9 +350,6 @@ gh_sma <- function(df) {
 p_famGH <- dlply(p, .(Family), gh_sma)
 z_famGH <- dlply(z, .(Family), gh_sma)
 h_famGH <- dlply(h, .(Family), gh_sma)
-
-p_famGH_summ <- ldply(p_famGH, .fun=mk_sma_summary(z, 
-  group=as.character())))
 
 p_famGH_assump <- l_ply(p_famGH, .fun=check_assump)
 z_famGH_assump <- l_ply(z_famGH, .fun=check_assump)
@@ -473,7 +460,7 @@ write.csv(h_sppGW_summ, "h_spp_gwSMA.csv")
 # GA -----------------------------------------
 
 ga_sma <- function(df) {
-  sma(ga~SL, data=df, log="xy", method="SMA", robust=F, slope.test=2)
+  sma(ga~SL, data=df, log="xy", method="SMA", robust=T, slope.test=2)
 }
 
 p_sppGA <- dlply(p, .(SpeciesCode), ga_sma)
@@ -512,13 +499,13 @@ write.csv(h_sppGA_summ, "h_spp_gaSMA.csv")
 library(ggplot2)
 library(gridExtra)
 
-height_df <- mk_sma_graph_df(fg_height) 
+height_df <- mk_sma_graph_df(fg_height, 5) 
 height_df$j_fg <- j_fg
 
-width_df <- mk_sma_graph_df(fg_width)
+width_df <- mk_sma_graph_df(fg_width, 5)
 width_df$j_fg <- j_fg
 
-area_df <- mk_sma_graph_df(fg_area)
+area_df <- mk_sma_graph_df(fg_area, 5)
 area_df$j_fg <- j_fg
 
 fg_gh_plot <- mk_ghFG_SMAplot(pento, height_df)
@@ -827,11 +814,64 @@ ggplot(data = c, aes(x = SL, y = gh, colour=Region)) +
   geom_segment(data = cGH_reg_graphing, aes(x = from, xend = to, y = yfrom, yend = yto)) 
 
 
+# Parameter plots
+df with maxL, fish name, lower CI, upper CI, estimated slope,
+horizontal line at x = 2
+
+spp_gaSMA <- ga_sma <- function(df) {
+  sma(ga~SL, data=df, log="xy", method="SMA", robust=T, slope.test=2)
+}
+all_spp <- dlply(pento, .(SpeciesCode), spp_gaSMA)
+spp_summ_df <- mk_spp_summary(all_spp, num_spp=23, grouping=F)
+spp_summ_df$SpeciesCode <- pento_order
+
+spp_parm_df <- merge(maxL, spp_summ_df, by = "SpeciesCode")
+
+spp_parm_byMax <- spp_parm_df[with(spp_parm_df, order(maxL)), ]
+spp_parm_byMax$y <- seq(1, 23, 1)
+
+spp_parm_byFG <- spp_parm_df[with(spp_parm_df, rev(j_fg)), ]
+spp_parm_byFG$y <- seq(1, 23, 1)
+
+# Slope estimates ordered by maxL spaced by y = seq(1, 1, 1)
+ggplot(data = spp_parm_byMax) +
+  geom_segment(aes(x = lower, xend = upper, y = y, yend = y, colour=j_fg),
+    size=0.8) +
+  xlim(0, 6) +
+  xlab("SMA slope estimate") +
+  ylab("Order of max length") +
+  geom_vline(xintercept = 2) +
+  geom_text(data=spp_parm_byMax, aes(x= (lower+upper)/2, y = y + 0.5, 
+    label = SpeciesCode), size = 3) +
+  geom_text(data=spp_parm_byMax, aes(x = (lower + upper)/2 + 0.8, y = y + 0.5, 
+    label = as.character(maxL)), size = 3)
+
+dev.copy2pdf(device=quartz, file = "slopes_by_maxL_jitter.pdf", 
+  width=dev.size()[1], height=dev.size()[2])
+
+ggplot(data = spp_parm_byMax) +
+  geom_segment(aes(x = lower, xend = upper, y = maxL, yend = maxL, colour=j_fg),
+    size=0.8, position = position_jitter(height = 15)) +
+  xlim(0, 6) +
+  xlab("SMA slope estimate") +
+  ylab("Order of max length") +
+  geom_vline(xintercept = 2) +
+  geom_text(data=spp_parm_byMax, aes(x= (lower+upper)/2, y = maxL + 0.5, 
+    label = SpeciesCode), size = 2, position = position_jitter(height = 15)) #+
+  #geom_text(data=spp_parm_byMax, aes(x = (lower + upper)/2 + 0.6, y = maxL + 0.5, 
+   # label = as.character(maxL)), size = 2, position = position_jitter(height = 10))
 
 
-
-
-
+ggplot(data = spp_order, aes(x=min, y=y, colour = fg)) +
+  geom_segment(aes(xend=max, yend = y), lineend = "round", size=0.8) +
+  geom_segement(data = maxL, aes(x=))
+geom_point(aes(x=max, y=y), size=2, shape=19) + 
+  geom_point(aes(x=min, y=y), size=2, shape=19) +
+  xlim(-50, 720) +
+  xlab("Size Range Sampled (mm)") +
+  theme(axis.title.y=element_blank()) +
+  theme(axis.ticks.y = element_blank(), axis.text.y = element_blank()) +
+  geom_text(data=spp_order, aes(x=((min+max)/2), y=y+0.5, label=SpeciesCode))
 
 
 
