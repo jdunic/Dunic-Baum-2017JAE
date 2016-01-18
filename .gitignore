@@ -1,12 +1,15 @@
 .Rproj.user
 .Rhistory
-*.RData
+*.RData*
+.Rapp.history
 
 .DS_Store
 
 Plots/.DS_Store
 
 Gape_body_plots_old/.DS_Store
+
+KI_maps/
 
 *.csv
 *.eps
