@@ -1,9 +1,10 @@
-setwd("/Users/jillian/R_projects/Allometry")
+#setwd("/Users/jillian/R_projects/Allometry")
 #load(".RData")
 library("ggplot2")
 library('plyr')
 library('gridExtra')
-library(sig)
+library(grid)
+library(doMC)
 library(smatr)
 library(quantreg)
 
@@ -19,6 +20,11 @@ library(quantreg)
 # This file will be used for the manuscript
 fish <- read.csv('Allometry Data/gape_data_for_MS_Jul11_cleaned.csv', 
 	header=TRUE)
+
+#prey <- 
+#    read.csv(
+#        'Allometry Data/pred_prey_data_for_MS_Jul11.csv', 
+#        header = TRUE, skip = 3)
 
 # Data for prey size analysis:
 prey <- 
