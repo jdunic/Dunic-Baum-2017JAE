@@ -1,9 +1,15 @@
 .Rproj.user
 .Rhistory
-.RData
+*.RData
 
 .DS_Store
 
 Plots/.DS_Store
 
 Gape_body_plots_old/.DS_Store
+
+*.csv
+*.eps
+*.pdf
+*.xlsx
+*.pptx
