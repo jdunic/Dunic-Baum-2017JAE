@@ -96,16 +96,48 @@ for (i in (1:3)) {
   lines[i,3] <- eqn
 }
 lines
+lines$colour <- c("#56B4E9", "#009E73", "#D55E00")
+
+# Colour blind-friendly palette
+#               Blue       Green     Dark Blue   Red
+cbPalette <- c("#56B4E9", "#009E73", "#0072B2", "#D55E00")
 
 ggplot() +
-  scale_x_continuous(name = "log(x)", limits = c(-1, 30)) +
-  scale_y_continuous(name = "log(y)", limits = c(-1, 100)) +
-  geom_abline(data=lines, mapping=aes(slope=slope, intercept=int, colour=text),
+  scale_x_continuous(name = "log(standard length)", limits = c(-1, 30)) +
+  scale_y_continuous(name = "log(gape area)", limits = c(-4, 100)) +
+  geom_abline(data=lines, mapping=aes(slope=slope, intercept=int, colour = text),
               size = 2) +
+  scale_color_manual(values=c("#56B4E9", "#009E73", "#D55E00")) +
   geom_vline(xintercept=0) +
   geom_hline(yintercept=0) +
+  theme(plot.title = element_text(hjust= -0.16, vjust= -1)) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  theme(axis.ticks = element_blank()) +
+  theme(axis.text = element_blank()) +
+  geom_text(label = c("10", "20", "30"), aes(x = c(10, 20, 30), y = -4), size = 4) +
+  geom_text(label = c("25", "50", "75", "100"), aes(x = c(-1), y = c(25, 50, 75, 100)), size = 4) +
+  geom_segment(aes(x = c(10, 20, 30), xend = c(10, 20, 30), y = -1, yend = 1)) +
+  geom_segment(aes(x = -0.3, xend = 0.3, y = c(25, 50, 75, 100), yend = c(25, 50, 75, 100))) 
+
+
+
+
+
+ggplot() +
+  #scale_x_continuous(name = "log(x)", limits = c(-1, 30)) +
+  #scale_y_continuous(name = "log(y)", limits = c(-1, 100)) +
+  scale_x_log10(limits = c(0.1, 10000)) +
+  scale_y_log10(limits = c(0.1, 1000)) +
+  geom_abline(data=lines, mapping=aes(slope=slope, intercept=int, colour=text),
+              size = 2) +
+  geom_vline(xintercept=1) +
+  geom_hline(yintercept=1) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  #theme(axis.line = element_line(color = 'black')) +
   theme(plot.title = element_text(hjust= -0.16, vjust= -1))
-
-
-
-
