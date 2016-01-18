@@ -1,3 +1,7 @@
+source('01_load.r')
+source('02_clean.r')
+source('03_func.r')
+
 #===============================================================================
 # Gape height multipanel plot with functional group and species
 #===============================================================================
