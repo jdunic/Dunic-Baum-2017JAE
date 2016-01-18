@@ -1095,14 +1095,9 @@ bi_90 <- rq(data = subset(prey3, prey3$fg =='BI'), psize~gh, tau = 0.90)
 bi_50 <- rq(data = subset(prey3, prey3$fg =='BI'), psize~gh, tau = 0.50)
 bi_10 <- rq(data = subset(prey3, prey3$fg =='BI'), psize~gh, tau = 0.10)
 
-p_90 <- rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl,
-                    tau = 0.90), se = "nid")
-
-p_50 <- rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl,
-                    tau = 0.50), se = "nid")
-
-p_10 <- rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl,
-                    tau = 0.10), se = "nid")
+p_90 <- rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl, tau = 0.90)
+p_50 <- rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl, tau = 0.50)
+p_10 <- rq(data = subset(prey3, prey3$fg =='Pi'), psize~sl, tau = 0.10)
 
 
 p <- subset(prey3, prey3$fg == 'Pi')
