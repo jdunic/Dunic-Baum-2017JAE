@@ -1,0 +1,441 @@
+if (getwd() != '/Users/jillian/R_projects/Allometry') setwd('Allometry')
+
+source('01_load.r')
+source('02_clean.r')
+source('03_func.r')
+
+library(ape)
+library(nlme)
+library(multcomp)
+library(beepr)
+
+
+
+#-------------------------------------------------------------------------------
+# Bootstrap SMA allometric coefficient estimates for each species
+#-------------------------------------------------------------------------------
+# Resample species with replacement
+resample_spp <- function(data) {
+    len <- length(data[[1]])
+    N <- 1:len
+    samp <- data[sample(N, size = len, replace = TRUE, prob = NULL), ]
+    return(samp)
+}
+
+# Get 100 resamples - for now. This should be bumped up to 10 000
+n <- 10000
+spp_resamples <- rlply(.n = n, ddply(pento, .(SpeciesCode), resample_spp), .progress = 'text') 
+
+# Species bootstrap commented out so that I don't accidentally do it again.
+
+# Run an SMA for each species
+# Learned how to use tryCatch because there are cases where model convergence 
+# fails and these need to be passed over.
+# http://stackoverflow.com/questions/12193779/how-to-write-trycatch-in-r
+#boot_spp_SMA_gh <- llply(spp_resamples, function(x) {
+#  spp_sma <- tryCatch(
+#        sma(gh ~ SL * SpeciesCode, data = x, log = "xy", 
+#                       method = "SMA", robust = T, slope.test = 2 ), 
+#        error = function(e) e, 
+#        warning = function(w) w
+#    )
+#    if (inherits(spp_sma, 'try-error')) { next }
+#    return(spp_sma)
+#   }, .progress = 'text')
+
+#boot_spp_SMA_gw <- llply(spp_resamples, function(x) {
+#  spp_sma <- tryCatch(
+#        sma(gw ~ SL * SpeciesCode, data = x, log = "xy", 
+#                       method = "SMA", robust = T, slope.test = 1), 
+#        error = function(e) e, 
+#        warning = function(w) w
+#    )
+#    if (inherits(spp_sma, 'try-error')) { next }
+#    return(spp_sma)
+#   }, .progress = 'text')
+#beep()
+
+boot_spp_SMA_gh_mass <- llply(spp_resamples[1:1000], function(x) {
+  spp_sma <- tryCatch(
+        sma(gw ~ wt * SpeciesCode, data = x, log = "xy", 
+                       method = "SMA", robust = T, slope.test = 3), 
+        error = function(e) e, 
+        warning = function(w) w
+    )
+    if (inherits(spp_sma, 'try-error')) { next }
+    return(spp_sma)
+   }, .progress = 'text')
+
+#save(boot_spp_SMA_gh, file = "boot_spp_SMA_gh_10000.RData")
+#save(boot_spp_SMA_gw, file = "boot_spp_SMA_gw_10000.RData")
+
+
+load('boot_spp_SMA_gw_10000.RData')
+
+# Get the summary dataframe
+boot_spp_summ_list <- list()
+for (i in 1:length(boot_spp_SMA)) {
+    summ <- boot_spp_SMA[[i]]$groupsummary
+    if (is.null(summ)) {
+        next
+    }
+    boot_spp_summ_list[[i]] <- summ
+    
+}
+
+
+boot_spp_summ_list_gh <- list()
+for (i in 1:length(boot_spp_SMA_gh)) {
+    summ <- boot_spp_SMA_gh[[i]]$groupsummary
+    if (is.null(summ)) {
+        next
+    }
+    boot_spp_summ_list_gh[[i]] <- summ
+    
+}
+
+boot_spp_summ_list_gw <- list()
+for (i in 1:length(boot_spp_SMA_gw)) {
+    summ <- boot_spp_SMA_gw[[i]]$groupsummary
+    if (is.null(summ)) {
+        next
+    }
+    boot_spp_summ_list_gw[[i]] <- summ  
+}
+
+boot_spp_summary <- rbind.fill(boot_spp_summ_list)
+
+boot_spp_summary_gh <- rbind.fill(boot_spp_summ_list_gh)
+boot_spp_summary_gw <- rbind.fill(boot_spp_summ_list_gw)
+
+#write.csv(boot_spp_summary, 'species_bootstrapped_coefficients_10000.csv')
+#write.csv(boot_spp_summary_gh, 'gape_height_species_bootstrapped_coefficients_10000.csv')
+#write.csv(boot_spp_summary_gw, 'gape_width_species_bootstrapped_coefficients_10000.csv')
+
+#-------------------------------------------------------------------------------
+# Prepare phylogenetic tree and bootstrapped species data for analysis
+#-------------------------------------------------------------------------------
+boot_spp_summary <- read.csv('species_bootstrapped_coefficients_10000.csv')
+
+boot_spp_summary_gh <- 
+  read.csv('gape_height_species_bootstrapped_coefficients_10000.csv')
+
+boot_spp_summary_gw <- 
+  read.csv('gape_width_species_bootstrapped_coefficients_10000.csv')
+
+# Read in Jon's tree
+fishTree <- read.tree('Jillian tree.txt')
+
+# drop outgroup
+fishTree_no_out <- drop.tip(fishTree, "OUTGROUP_Myxine_glutinosa")
+fishTree_no_out <- drop.tip(fishTree_no_out, "Chaetodon_ornatissimus")
+
+spp_names <- fishTree_no_out$tip.label
+spp_codes <- c('AC.NIGR', 'AC.OLIV', 'AP.FURC', 'LU.BOHA', 'CA.TERE', 
+               'PT.TILE', 'PS.DISP', 'PS.OLIV', 'CE.ARGU', 'CE.UROD', 
+               'VA.LOUT', 'CH.VAND', 'MO.GRAN', 'CH.SORD', 'SC.FREN', 
+               'SC.RUBR', 'PA.ARCA', 'CA.MELA', 'PA.INSU', 'CE.FLAV')#, 
+               #'CH.ORNA')
+
+# Create lookup dataframes
+fg_lookup <- unique(data.frame('codes' = pento$Species, 'fg' = pento$j_fg))
+spp_lookup_df <- data.frame('species' = spp_names, 'codes' = spp_codes)
+fam_lookup <- ddply(fish, .(SpeciesCode), summarise, 'Family' = unique(Family), 
+                    'Order' = unique(Order))
+spp_lookup_df <- merge(spp_lookup_df, fg_lookup)
+
+# Gape area
+all_spp_summ_df <- merge(fam_lookup, boot_spp_summary, 
+                         by.x = 'SpeciesCode', by.y = 'group')
+all_spp_summ_df <- merge(spp_lookup_df, all_spp_summ_df, by.x = 'codes', 
+                         by.y = 'SpeciesCode')
+
+mean_spp_summ <- ddply(all_spp_summ_df, .(codes), summarise, 
+                       'slope' = mean(Slope), 
+                       'fg' = unique(fg), 
+                       'species' = unique(species), 
+                       'se' = sd(Slope))
+row.names(mean_spp_summ) <- mean_spp_summ$species
+
+# Gape height
+all_spp_summ_df_gh <- merge(fam_lookup, boot_spp_summary_gh, 
+                         by.x = 'SpeciesCode', by.y = 'group')
+all_spp_summ_df_gh <- merge(spp_lookup_df, all_spp_summ_df_gh, by.x = 'codes', 
+                         by.y = 'SpeciesCode')
+
+mean_spp_summ_gh <- ddply(all_spp_summ_df_gh, .(codes), summarise, 
+                       'slope' = mean(Slope), 
+                       'fg' = unique(fg), 
+                       'species' = unique(species), 
+                       'se' = sd(Slope))
+row.names(mean_spp_summ_gh) <- mean_spp_summ_gh$species
+
+# Gape height
+all_spp_summ_df_gw <- merge(fam_lookup, boot_spp_summary_gw, 
+                         by.x = 'SpeciesCode', by.y = 'group')
+all_spp_summ_df_gw <- merge(spp_lookup_df, all_spp_summ_df_gw, by.x = 'codes', 
+                         by.y = 'SpeciesCode')
+
+mean_spp_summ_gw <- ddply(all_spp_summ_df_gw, .(codes), summarise, 
+                       'slope' = mean(Slope), 
+                       'fg' = unique(fg), 
+                       'species' = unique(species), 
+                       'se' = sd(Slope))
+row.names(mean_spp_summ_gw) <- mean_spp_summ_gw$species
+
+#-------------------------------------------------------------------------------
+# Prepare phylogenetic information (excluding PS.BART for now)
+#-------------------------------------------------------------------------------
+
+# Make tree ultrametric
+chronos_tree1 <- chronos(fishTree_no_out, lambda = 1)
+#chronos_tree0 <- chronos(fishTree_no_out, lambda = 0)
+
+#-------------------------------------------------------------------------------
+# Fit pgls and account for intraspecies variation
+#-------------------------------------------------------------------------------
+
+# Need to filter out the CH.ORNA data otherwise the calculation of the likelihood
+# solution fails to converge. Must be removed from both the mean_spp_summ and 
+# the design matrix.
+mean_spp_summ <- dplyr::filter(mean_spp_summ, codes != 'CH.ORNA')
+# Gape area
+design_mat <- model.matrix(~ fg - 1, data = dplyr::filter(mean_spp_summ, codes != 'CH.ORNA'))[, -5]
+slopes <- setNames(mean_spp_summ$slope, mean_spp_summ$species)
+ses <- setNames(mean_spp_summ$se, mean_spp_summ$species)
+
+# Gape height
+mean_spp_summ_gh <- dplyr::filter(mean_spp_summ_gh, codes != 'CH.ORNA')
+design_mat_gh <- model.matrix(~ fg - 1, data = dplyr::filter(mean_spp_summ_gh, codes != 'CH.ORNA'))[, -5]
+slopes_gh <- setNames(mean_spp_summ_gh$slope, mean_spp_summ_gh$species)
+ses_gh <- setNames(mean_spp_summ_gh$se, mean_spp_summ_gh$species)
+
+# Gape height
+mean_spp_summ_gw <- dplyr::filter(mean_spp_summ_gw, codes != 'CH.ORNA')
+design_mat_gw <- model.matrix(~ fg - 1, data = dplyr::filter(mean_spp_summ_gw, codes != 'CH.ORNA'))[, -5]
+slopes_gw <- setNames(mean_spp_summ_gw$slope, mean_spp_summ_gw$species)
+ses_gw <- setNames(mean_spp_summ_gw$se, mean_spp_summ_gw$species)
+
+
+# Custom function to calculate the error that includes phylogenetic correlation
+# and measurement error (from bootstrap).
+# Measurement error is set to NULL as the default, such that using pgls using 
+# the covariance matrix calculated in this function or using just the plain
+# phylogenetic correlation structure should give the same answer.
+lk <- function (sig2, y, X, C, v=NULL, opt=TRUE) {
+    n <- nrow(C)
+
+    if (is.null(v)) { v <- rep(0, n) }
+    
+    V <- sig2 * C + diag(v)
+    beta <- solve(t(X) %*% solve(V) %*% X) %*% (t(X) %*% 
+        solve(V) %*% y)
+    logL <- -(1/2) * t(y - X %*% beta) %*% solve(V) %*% 
+        (y - X %*% beta) - (1/2) * determinant(V, 
+        logarithm = TRUE)$modulus - (n / 2) * log(2 * pi)
+    
+    if (opt == TRUE) { 
+        return(-logL)
+        } else { 
+            return(list(beta = beta, sig2e = sig2, logL = logL))
+        }
+}
+
+# Gape area fit model
+fit.lk <- optimize(lk, c(0, 1000), y = slopes, X = design_mat, C = vcv(chronos_tree1), v = ses)
+fitted <- lk(fit.lk$minimum, y = slopes, X = design_mat, C = vcv(chronos_tree1), v = ses, opt = FALSE)
+fitted
+
+# Gape height fit model
+fit.lk_gh <- optimize(lk, c(0, 1000), y = slopes_gh, X = design_mat_gh, C = vcv(chronos_tree1), v = ses_gh)
+fitted_gh <- lk(fit.lk_gh$minimum, y = slopes_gh, X = design_mat_gh, C = vcv(chronos_tree1), v = ses_gh, opt = FALSE)
+fitted_gh
+
+# Gape width fit model
+fit.lk_gw <- optimize(lk, c(0, 1000), y = slopes_gw, X = design_mat_gw, C = vcv(chronos_tree1), v = ses_gw)
+fitted_gw <- lk(fit.lk_gw$minimum, y = slopes_gw, X = design_mat_gw, C = vcv(chronos_tree1), v = ses_gw, opt = FALSE)
+fitted_gw
+
+
+
+# From Liam's blog post: 
+# http://blog.phytools.org/2015/05/pgls-with-measurement-or-sampling-error.html
+# "Now, it also turns out that after we have optimized sig2e we can actually 
+# coerce gls into giving us the correct fitted model & likelihood. Here, I do 
+# this by distorting the edge lengths of our tree to take into account the 
+# fitted sig2e and within-species errors in y."
+
+# Gape area Coerce tree
+tt <- chronos_tree1
+tt$edge.length <- tt$edge.length * fitted$sig2e
+for(i in 1:length(ses)){
+    tip <- which(tt$tip.label == names(ses)[i])
+    ii <- which(tt$edge[,2] == tip)
+    tt$edge.length[ii] <- tt$edge.length[ii] + ses[i]
+}
+vv <- diag(vcv(tt))
+w <- varFixed(~vv)
+fit.gls <- gls(slopes ~ fg - 1, data = dplyr::filter(mean_spp_summ, codes != 'CH.ORNA'), correlation = corBrownian(1, tt), method = "ML", weights = w)
+fit.gls
+summary(fit.gls)
+
+# Gape height Coerce tree
+tt <- chronos_tree1
+tt$edge.length <- tt$edge.length * fitted$sig2e
+for(i in 1:length(ses_gh)){
+    tip <- which(tt$tip.label == names(ses_gh)[i])
+    ii <- which(tt$edge[,2] == tip)
+    tt$edge.length[ii] <- tt$edge.length[ii] + ses_gh[i]
+}
+vv <- diag(vcv(tt))
+w <- varFixed(~vv)
+fit.gls_gh <- gls(slopes_gh ~ fg - 1, data = mean_spp_summ_gh, correlation = corBrownian(1, tt), method = "ML", weights = w)
+fit.gls_gh
+summary(fit.gls_gh)
+
+# Gape width Coerce tree
+tt <- chronos_tree1
+tt$edge.length <- tt$edge.length * fitted$sig2e
+for(i in 1:length(ses_gw)){
+    tip <- which(tt$tip.label == names(ses_gw)[i])
+    ii <- which(tt$edge[,2] == tip)
+    tt$edge.length[ii] <- tt$edge.length[ii] + ses_gw[i]
+}
+vv <- diag(vcv(tt))
+w <- varFixed(~vv)
+fit.gls_gw <- gls(slopes_gw ~ fg - 1, data = mean_spp_summ_gw, correlation = corBrownian(1, tt), method = "ML", weights = w)
+fit.gls_gw
+summary(fit.gls_gw)
+
+
+# Test for isometry
+#-------------------------------------------------------------------------------
+spp_err_iso <- glht(fit.gls, linfct = c('fgPi = 2', 
+                                        'fgBI = 2', 
+                                        'fgZP = 2', 
+                                        'fgHe = 2'))#, 
+                                        #'fgC  = 2'))
+summary(spp_err_iso)
+
+spp_err_iso_gh <- glht(fit.gls_gh, linfct = c('fgPi = 1', 
+                                              'fgBI = 1', 
+                                              'fgZP = 1', 
+                                              'fgHe = 1'))#, 
+                                              #'fgC  = 1'))
+summary(spp_err_iso_gh)
+
+spp_err_iso_gw <- glht(fit.gls_gw, linfct = c('fgPi = 1', 
+                                              'fgBI = 1', 
+                                              'fgZP = 1', 
+                                              'fgHe = 1'))#, 
+                                              #'fgC  = 1'))
+summary(spp_err_iso_gw)
+
+
+# Multiple comparisons
+#-------------------------------------------------------------------------------
+# Functions from: 
+# http://rstudio-pubs-static.s3.amazonaws.com/13472_0daab9a778f24d3dbf38d808952455ce.html
+
+model.matrix.gls <- function(object, ...) {
+    model.matrix(terms(object), data = getData(object), ...)
+}
+model.frame.gls <- function(object, ...) {
+    model.frame(formula(object), data = getData(object), ...)
+}
+terms.gls <- function(object, ...) {
+    terms(model.frame(object), ...)
+}
+
+# The line below gives pairwise comparisons now.  Note that the above
+# performs t-tests for all pairwise differences.
+multCompTukey <- glht(fit.gls, linfct = mcp(fg = "Tukey"))
+
+multCompTukey <- glht(fit.gls_gh, mcp(fg = "Tukey"))
+
+summary(multCompTukey)
+
+
+multCompTukey <- glht(fit.gls_gw, mcp(fg = "Tukey"))
+
+summary(multCompTukey)
+
+
+#-------------------------------------------------------------------------------
+# Double check that our modified pgls with y-error matches under the test case
+# that the y-error = 0.
+#-------------------------------------------------------------------------------
+design_mat <- model.matrix(~ fg - 1, data = mean_spp_summ)
+slopes <- setNames(mean_spp_summ$slope, mean_spp_summ$species)
+#ses <- setNames(mean_spp_summ$se, mean_spp_summ$species)
+ses <- setNames(rep(0, 21), mean_spp_summ$species)
+
+fit.lk <- optimize(lk, c(0, 1000),y = slopes, X = design_mat, C = vcv(chronos_tree1), v = NULL)
+fitted <- lk(fit.lk$minimum, y = slopes, X = design_mat, C = vcv(chronos_tree1), v = NULL, opt = FALSE)
+fitted
+
+# Coerce tree:
+tt <- chronos_tree1
+tt$edge.length <- tt$edge.length * fitted$sig2e
+for(i in 1:length(ses)){
+    tip <- which(tt$tip.label == names(ses)[i])
+    ii <- which(tt$edge[,2] == tip)
+    tt$edge.length[ii] <- tt$edge.length[ii] + ses[i]
+}
+vv <- diag(vcv(tt))
+w <- varFixed(~vv)
+
+fit.gls <- gls(slopes ~ fg - 1, data = mean_spp_summ, correlation = corBrownian(1, tt), method = "ML", weights = w)
+fit.gls
+summary(fit.gls)
+
+# Regular pgls using the chronos_tree1
+fit.gls.test <- gls(slopes ~ fg - 1, data = mean_spp_summ, correlation = corBrownian(1, chronos_tree1), method = "ML")
+fit.gls.test
+
+# Woohoo!
+all.equal(coef(fit.gls), coef(fit.gls.test))
+all.equal(fit.gls$varBeta, fit.gls.test$varBeta)
+
+
+# vis reg attempt
+library(visreg)
+
+fit.gls$data <- dplyr::filter(mean_spp_summ, codes != 'CH.ORNA')
+visreg(fit.gls)
+
+v <- visreg(fit.gls)
+
+v$fit$visregLwr <- as.data.frame(confint(fit.gls, param.CI=0.95))[[1]]
+v$fit$visregUpr <- as.data.frame(confint(fit.gls, param.CI=0.95))[[2]]
+
+plot(v, ylab = 'Slope', xlab = 'Functional Group', 
+     points.par = (list(col = 'black', cex = 0.5)), par(new = T))
+abline(h = 2, lty = 'dashed', col = 'red')
+
+
+
+# Gape height
+fit.gls_gh$data <- dplyr::filter(mean_spp_summ_gh, codes != 'CH.ORNA')
+
+v <- visreg(fit.gls_gh)
+
+v$fit$visregLwr <- as.data.frame(confint(fit.gls_gh, param.CI=0.95))[[1]]
+v$fit$visregUpr <- as.data.frame(confint(fit.gls_gh, param.CI=0.95))[[2]]
+
+plot(v, ylab = 'Slope', xlab = 'Functional Group', main = "Gape Height",
+     points.par = (list(col = 'black', cex = 0.5)), par(new = T))
+abline(h = 1, lty = 'dashed', col = 'red')
+
+
+# Gape width
+fit.gls_gw$data <- dplyr::filter(mean_spp_summ_gw, codes != 'CH.ORNA')
+
+v <- visreg(fit.gls_gw)
+
+v$fit$visregLwr <- as.data.frame(confint(fit.gls_gw, param.CI=0.95))[[1]]
+v$fit$visregUpr <- as.data.frame(confint(fit.gls_gw, param.CI=0.95))[[2]]
+
+plot(v, ylab = 'Slope', xlab = 'Functional Group', main = "Gape Width", 
+     points.par = (list(col = 'black', cex = 0.5)), par(new = T))
+abline(h = 1, lty = 'dashed', col = 'red')
