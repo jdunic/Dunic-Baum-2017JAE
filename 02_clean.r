@@ -2,32 +2,50 @@
 ############             Entering and Cleaning Data                 ############
 ################################################################################
 
+# BAD CLEANING STRATEGY:
+# using row indices instead of actual field values means that good rows were 
+# deleted as the dataframe row indices changed with each 'deletion'
 # Remove PS.COOP and AC.TRIOS because low n, but more so because there is no 
 # size gradient
 # Which rows have PS.COOP and AC.TRIOS?
-ps_coop <- which(fish$SpeciesCode==('PS.COOP'))
-ct_marg <- which(fish$SpeciesCode==('CT.MARG'))
-ch_auri <- which(fish$SpeciesCode == 'CH.AURI')
-me_nige <- which(fish$SpeciesCode == 'ME.NIGE')
-ch_marg <- which(fish$SpeciesCode == 'CH.MARG')
-ct_marg <- which(fish$SpeciesCode == 'CT.MARG')
-ct_stri <- which(fish$SpeciesCode == 'CT.STRI')
-ce_lori <- which(fish$SpeciesCode == 'CE.LORI')
-pl_dick <- which(fish$SpeciesCode == 'PL.DICK')
-#extra_sites <- which(fish$Region == 'EXTRA')
-site_unknown <- which(fish$Site == 'Site Not Certain')
-lu_kasm <- which(fish$SpeciesCode == 'LU.KASM')
-kif12_130 <- which(fish$SpecimenID == 'KIF12_130')
-kif11_319 <- which(fish$SpecimenID == 'KIF11_319')
-kif12_050 <- which(fish$SpecimenID == "KIF12_050") # obvious outlier
-ao <- which(fish$dissected_by == "AO" | fish$dissected_by == "angeleen")
+#ps_coop <- which(fish$SpeciesCode==('PS.COOP'))
+#ct_marg <- which(fish$SpeciesCode==('CT.MARG'))
+#ch_auri <- which(fish$SpeciesCode == 'CH.AURI')
+#me_nige <- which(fish$SpeciesCode == 'ME.NIGE')
+#ch_marg <- which(fish$SpeciesCode == 'CH.MARG')
+#ct_marg <- which(fish$SpeciesCode == 'CT.MARG')
+#ct_stri <- which(fish$SpeciesCode == 'CT.STRI')
+#ce_lori <- which(fish$SpeciesCode == 'CE.LORI')
+#pl_dick <- which(fish$SpeciesCode == 'PL.DICK')
+##extra_sites <- which(fish$Region == 'EXTRA')
+#site_unknown <- which(fish$Site == 'Site Not Certain')
+#lu_kasm <- which(fish$SpeciesCode == 'LU.KASM')
+#kif12_130 <- which(fish$SpecimenID == 'KIF12_130')
+#kif11_319 <- which(fish$SpecimenID == 'KIF11_319')
+#kif12_050 <- which(fish$SpecimenID == "KIF12_050") # obvious outlier
+#ao <- which(fish$dissected_by == "AO" | fish$dissected_by == "angeleen")
+
+# BAD BAD BAD BAD BAD
+#fish <- fish[-c(ps_coop, ch_marg, ch_auri, me_nige, ct_marg, ct_stri, ce_lori, 
+#                lu_kasm, site_unknown, kif12_130, kif11_319, kif12_050, ao, 
+#                pl_dick), ]
+
+# More robust system
+excluded_spp <- c('PS.COOP', 'CT.MARG', 'CH.AURI', 'ME.NIGE', 'CH.MARG', 'CT.STRI', 
+                  'CE.LORI', 'PL.DICK', 'LU.KASM')
+excluded_ids <- c('KIF12_130', 'KIF11_319', 'KIF12_050')
+excluded_sites <- c('Site Not Certain')
+excluded_obs <- c('AO', 'angeleen')
 
 
-#act <- which(fish$SpeciesCode==('AC.TRIOS')) 
-# removing these rows from fish:
-fish <- fish[-c(ps_coop, ch_marg, ch_auri, me_nige, ct_marg, ct_stri, ce_lori, 
-                lu_kasm, site_unknown, kif12_130, kif11_319, kif12_050, ao, 
-                pl_dick), ]
+fish <- fish[!fish$SpeciesCode %in% excluded_spp, ]
+fish <- fish[!fish$SpecimenID %in% excluded_ids, ]
+fish <- fish[!fish$Site %in% excluded_sites, ]
+fish <- fish[!fish$dissected_by %in% excluded_obs, ]
+
+# setting site 26 which is currently noted as EXTRA to LP.MF
+fish[which(fish$Site == 26), ]$Region <- "LP.MF"
+
 
 # Remove fish where site == "Site Not Certain"
 #no_site <- which(fish$Site == "Site Not Certain")
@@ -38,7 +56,7 @@ fish$ga <- with(fish, pi*(gh/2)*(gw/2))
 
 fish$gh_ratio <- fish$gh/fish$SL
 fish$gw_ratio <- fish$gw/fish$SL
-fish$ga_ratio <- fish$ga/fish$SL
+fish$ga_ratio <- fish$ga/(fish$SL^2)
 
 
 fish$j_fg <- factor(fish$j_fg, levels = c("Pi", "BI", "ZP", "He", 
@@ -169,13 +187,7 @@ c$SpeciesCode <- factor(c$SpeciesCode, levels = c("CH.ORNA")
 
 # picking just Pi, He, BI, and ZP and ordering them:
 pento <- fish[fish$j_fg %in% c('Pi', 'He', 'BI', 'ZP', 'C'), ]
-#ps_coop <- which(pento$SpeciesCode == "PS.COOP")
-#ch_marg <- which(pento$SpeciesCode == "CH.MARG")
-#ch_auri <- which(pento$SpeciesCode == "CH.AURI")
-#me_nige <- which(pento$SpeciesCode == "ME.NIGE")
-#ce_lori <- which(pento$SpeciesCode == "CE.LORI")
 
-pento <- pento[-c(ps_coop, ch_marg, ch_auri, me_nige, ce_lori), ]
 
 pento$j_fg <- factor(pento$j_fg, levels=c('Pi', 'BI', 'ZP', 'He', 'C'))
 
@@ -240,16 +252,40 @@ h_spp_dfs <- split(h, h$SpeciesCode, drop=TRUE)
 ################################################################################
 ############             Cleaning Prey Size Data                    ############
 ################################################################################
+ddply(pento[which(pento$SpeciesCode %in% c("CE.UROD", "CE.ARGU")), ], .(SpeciesCode), summarise, mean_gw_ratio = mean(gw_ratio))
 
-to_remove <- which(prey$Prey!=('y'))
-no_zps <- which(prey$j_fg==('ZP'))
-prey$j_fg <- factor(prey$j_fg, levels=c('Pi', 'BI', 'ZP', 'C', 'He'))
+prey$ga <- with(prey, pi*(gh/2)*(gw/2))
+prey <- prey[, !(colnames(prey) %in% c("PreySize", "CollectionNotes", "StomachContents", "DissectionNotes"))]
 
+#pTypeNA <- which(is.na(prey$PreySize) == TRUE)
+
+dim(prey)
+prey1 <- prey[which(is.na(prey$pSize) == FALSE), ]
+dim(prey1)
+prey_PiBI <- prey1[which(prey1$j_fg %in% c('Pi', 'BI')), ]
+dim(prey_PiBI)
+# remove KIF11_171 - CA.FURC because the note suggests that this fish is in fact 
+# CA.FERD
+prey_PiBI <- prey_PiBI[which(prey_PiBI$SpecimenID!="KIF11_171"), ]
 # remove the EPITAU005A which I haven't figured out what its prey note should be:
 # had a cephalopod beak, but presumably the original animal was bigger than the
 # beak
-epitau5 <- which(prey$SpecimenID==('EPITAU005A'))
-prey_zps <- prey[-c(to_remove, epitau5, no_zps), ]
+prey_PiBI <- prey_PiBI[which(prey_PiBI$SpecimenID!='EPITAU005A'), ]
+
+prey_PiBI$SL <- as.numeric(as.character(prey_PiBI$SL))
+
+P_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'Pi'), ]
+B_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'BI'), ]
+
+
+prey_gh <- prey_PiBI[which(is.na(prey_PiBI$gh)==FALSE), ]
+prey_gw <- prey_PiBI[which(is.na(prey_PiBI$gw)==FALSE), ]
+prey_ga <- prey_PiBI[which(is.na(prey_PiBI$ga)==FALSE), ]
+
+unique(prey_ga$SpeciesCode)
+
+
+prey_zps <- prey[which(prey$j_fg %in% c('Pi', 'BI')), ]
 
 prey1 <- data.frame(specimen = prey$SpecimenID,
                             SpeciesCode = prey$SpeciesCode,
@@ -280,8 +316,11 @@ prey_gh <- subset(prey3, is.na(prey3$gh)==FALSE)
 prey4 <- subset(prey2, fg == 'Pi' | fg == 'BI' | fg == 'ZP' | fg == 'Om')
 
 prey5 <- subset(prey2, fg == 'Pi')
+prey5 <- prey5[which(is.na(prey5$psize) == FALSE & is.na(prey5$gh) == FALSE), ]
+
 
 prey6 <- subset(prey2, fg == 'BI')
+prey6 <- prey6[which(is.na(prey6$psize) == FALSE & is.na(prey6$gh) == FALSE), ]
 
 
 # Cleaning prey frequency data ####
