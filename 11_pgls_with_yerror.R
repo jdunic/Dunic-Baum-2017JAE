@@ -1,118 +1,12 @@
 if (getwd() != '/Users/jillian/R_projects/Allometry') setwd('Allometry')
 
-source('01_load.r')
-source('02_clean.r')
-source('03_func.r')
-
 library(ape)
 library(nlme)
 library(multcomp)
 library(beepr)
+library(visreg)
+library(dplyr)
 
-
-
-#-------------------------------------------------------------------------------
-# Bootstrap SMA allometric coefficient estimates for each species
-#-------------------------------------------------------------------------------
-# Resample species with replacement
-resample_spp <- function(data) {
-    len <- length(data[[1]])
-    N <- 1:len
-    samp <- data[sample(N, size = len, replace = TRUE, prob = NULL), ]
-    return(samp)
-}
-
-# Get 100 resamples - for now. This should be bumped up to 10 000
-n <- 10000
-spp_resamples <- rlply(.n = n, ddply(pento, .(SpeciesCode), resample_spp), .progress = 'text') 
-
-# Species bootstrap commented out so that I don't accidentally do it again.
-
-# Run an SMA for each species
-# Learned how to use tryCatch because there are cases where model convergence 
-# fails and these need to be passed over.
-# http://stackoverflow.com/questions/12193779/how-to-write-trycatch-in-r
-#boot_spp_SMA_gh <- llply(spp_resamples, function(x) {
-#  spp_sma <- tryCatch(
-#        sma(gh ~ SL * SpeciesCode, data = x, log = "xy", 
-#                       method = "SMA", robust = T, slope.test = 2 ), 
-#        error = function(e) e, 
-#        warning = function(w) w
-#    )
-#    if (inherits(spp_sma, 'try-error')) { next }
-#    return(spp_sma)
-#   }, .progress = 'text')
-
-#boot_spp_SMA_gw <- llply(spp_resamples, function(x) {
-#  spp_sma <- tryCatch(
-#        sma(gw ~ SL * SpeciesCode, data = x, log = "xy", 
-#                       method = "SMA", robust = T, slope.test = 1), 
-#        error = function(e) e, 
-#        warning = function(w) w
-#    )
-#    if (inherits(spp_sma, 'try-error')) { next }
-#    return(spp_sma)
-#   }, .progress = 'text')
-#beep()
-
-boot_spp_SMA_gh_mass <- llply(spp_resamples[1:1000], function(x) {
-  spp_sma <- tryCatch(
-        sma(gw ~ wt * SpeciesCode, data = x, log = "xy", 
-                       method = "SMA", robust = T, slope.test = 3), 
-        error = function(e) e, 
-        warning = function(w) w
-    )
-    if (inherits(spp_sma, 'try-error')) { next }
-    return(spp_sma)
-   }, .progress = 'text')
-
-#save(boot_spp_SMA_gh, file = "boot_spp_SMA_gh_10000.RData")
-#save(boot_spp_SMA_gw, file = "boot_spp_SMA_gw_10000.RData")
-
-
-load('boot_spp_SMA_gw_10000.RData')
-
-# Get the summary dataframe
-boot_spp_summ_list <- list()
-for (i in 1:length(boot_spp_SMA)) {
-    summ <- boot_spp_SMA[[i]]$groupsummary
-    if (is.null(summ)) {
-        next
-    }
-    boot_spp_summ_list[[i]] <- summ
-    
-}
-
-
-boot_spp_summ_list_gh <- list()
-for (i in 1:length(boot_spp_SMA_gh)) {
-    summ <- boot_spp_SMA_gh[[i]]$groupsummary
-    if (is.null(summ)) {
-        next
-    }
-    boot_spp_summ_list_gh[[i]] <- summ
-    
-}
-
-boot_spp_summ_list_gw <- list()
-for (i in 1:length(boot_spp_SMA_gw)) {
-    summ <- boot_spp_SMA_gw[[i]]$groupsummary
-    if (is.null(summ)) {
-        next
-    }
-    boot_spp_summ_list_gw[[i]] <- summ  
-}
-
-boot_spp_summary <- rbind.fill(boot_spp_summ_list)
-
-boot_spp_summary_gh <- rbind.fill(boot_spp_summ_list_gh)
-boot_spp_summary_gw <- rbind.fill(boot_spp_summ_list_gw)
-
-#write.csv(boot_spp_summary, 'species_bootstrapped_coefficients_10000.csv')
-#write.csv(boot_spp_summary_gh, 'gape_height_species_bootstrapped_coefficients_10000.csv')
-#write.csv(boot_spp_summary_gw, 'gape_width_species_bootstrapped_coefficients_10000.csv')
-
-#-------------------------------------------------------------------------------
 # Prepare phylogenetic tree and bootstrapped species data for analysis
 #-------------------------------------------------------------------------------
 boot_spp_summary <- read.csv('species_bootstrapped_coefficients_10000.csv')
@@ -337,73 +231,69 @@ summary(spp_err_iso_gw)
 # Functions from: 
 # http://rstudio-pubs-static.s3.amazonaws.com/13472_0daab9a778f24d3dbf38d808952455ce.html
 
-model.matrix.gls <- function(object, ...) {
-    model.matrix(terms(object), data = getData(object), ...)
-}
-model.frame.gls <- function(object, ...) {
-    model.frame(formula(object), data = getData(object), ...)
-}
-terms.gls <- function(object, ...) {
-    terms(model.frame(object), ...)
-}
+#model.matrix.gls <- function(object, ...) {
+#    model.matrix(terms(object), data = getData(object), ...)
+#}
+#model.frame.gls <- function(object, ...) {
+#    model.frame(formula(object), data = getData(object), ...)
+#}
+#terms.gls <- function(object, ...) {
+#    terms(model.frame(object), ...)
+#}
 
 # The line below gives pairwise comparisons now.  Note that the above
 # performs t-tests for all pairwise differences.
-multCompTukey <- glht(fit.gls, linfct = mcp(fg = "Tukey"))
+#multCompTukey <- glht(fit.gls, linfct = mcp(fg = "Tukey"))
 
-multCompTukey <- glht(fit.gls_gh, mcp(fg = "Tukey"))
+#multCompTukey <- glht(fit.gls_gh, mcp(fg = "Tukey"))
 
-summary(multCompTukey)
+#summary(multCompTukey)
 
 
-multCompTukey <- glht(fit.gls_gw, mcp(fg = "Tukey"))
+#multCompTukey <- glht(fit.gls_gw, mcp(fg = "Tukey"))
 
-summary(multCompTukey)
+#summary(multCompTukey)
 
 
 #-------------------------------------------------------------------------------
 # Double check that our modified pgls with y-error matches under the test case
 # that the y-error = 0.
 #-------------------------------------------------------------------------------
-design_mat <- model.matrix(~ fg - 1, data = mean_spp_summ)
-slopes <- setNames(mean_spp_summ$slope, mean_spp_summ$species)
+#design_mat <- model.matrix(~ fg - 1, data = mean_spp_summ)
+#slopes <- setNames(mean_spp_summ$slope, mean_spp_summ$species)
 #ses <- setNames(mean_spp_summ$se, mean_spp_summ$species)
-ses <- setNames(rep(0, 21), mean_spp_summ$species)
+#ses <- setNames(rep(0, 21), mean_spp_summ$species)
 
-fit.lk <- optimize(lk, c(0, 1000),y = slopes, X = design_mat, C = vcv(chronos_tree1), v = NULL)
-fitted <- lk(fit.lk$minimum, y = slopes, X = design_mat, C = vcv(chronos_tree1), v = NULL, opt = FALSE)
-fitted
+#fit.lk <- optimize(lk, c(0, 1000),y = slopes, X = design_mat, C = vcv(chronos_tree1), v = NULL)
+#fitted <- lk(fit.lk$minimum, y = slopes, X = design_mat, C = vcv(chronos_tree1), v = NULL, opt = FALSE)
+#fitted
 
 # Coerce tree:
-tt <- chronos_tree1
-tt$edge.length <- tt$edge.length * fitted$sig2e
-for(i in 1:length(ses)){
-    tip <- which(tt$tip.label == names(ses)[i])
-    ii <- which(tt$edge[,2] == tip)
-    tt$edge.length[ii] <- tt$edge.length[ii] + ses[i]
-}
-vv <- diag(vcv(tt))
-w <- varFixed(~vv)
+#tt <- chronos_tree1
+#tt$edge.length <- tt$edge.length * fitted$sig2e
+#for(i in 1:length(ses)){
+#    tip <- which(tt$tip.label == names(ses)[i])
+#    ii <- which(tt$edge[,2] == tip)
+#    tt$edge.length[ii] <- tt$edge.length[ii] + ses[i]
+#}
+#vv <- diag(vcv(tt))
+#w <- varFixed(~vv)
 
-fit.gls <- gls(slopes ~ fg - 1, data = mean_spp_summ, correlation = corBrownian(1, tt), method = "ML", weights = w)
-fit.gls
-summary(fit.gls)
+#fit.gls <- gls(slopes ~ fg - 1, data = mean_spp_summ, correlation = corBrownian(1, tt), method = "ML", weights = w)
+#fit.gls
+#summary(fit.gls)
 
 # Regular pgls using the chronos_tree1
-fit.gls.test <- gls(slopes ~ fg - 1, data = mean_spp_summ, correlation = corBrownian(1, chronos_tree1), method = "ML")
-fit.gls.test
+#fit.gls.test <- gls(slopes ~ fg - 1, data = mean_spp_summ, correlation = corBrownian(1, chronos_tree1), method = "ML")
+#fit.gls.test
 
 # Woohoo!
-all.equal(coef(fit.gls), coef(fit.gls.test))
-all.equal(fit.gls$varBeta, fit.gls.test$varBeta)
+#all.equal(coef(fit.gls), coef(fit.gls.test))
+#all.equal(fit.gls$varBeta, fit.gls.test$varBeta)
 
-
-# vis reg attempt
-library(visreg)
+# Slope comparison plots for MS
 
 fit.gls$data <- dplyr::filter(mean_spp_summ, codes != 'CH.ORNA')
-visreg(fit.gls)
-
 v <- visreg(fit.gls)
 
 v$fit$visregLwr <- as.data.frame(confint(fit.gls, param.CI=0.95))[[1]]
@@ -417,7 +307,6 @@ abline(h = 2, lty = 'dashed', col = 'red')
 
 # Gape height
 fit.gls_gh$data <- dplyr::filter(mean_spp_summ_gh, codes != 'CH.ORNA')
-
 v <- visreg(fit.gls_gh)
 
 v$fit$visregLwr <- as.data.frame(confint(fit.gls_gh, param.CI=0.95))[[1]]
