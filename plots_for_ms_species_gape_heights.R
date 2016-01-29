@@ -299,7 +299,7 @@ grid.text(
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
 
-dev.copy2eps(device = quartz, file = "panel_plots/benth_pisc_zoop_panel_figure_label.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/gh_benth_pisc_zoop_panel_figure_label.eps")
 
 #-------------------------------------------------------------------------------
 # Multipanel herbivores
@@ -411,7 +411,7 @@ grid.text(
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
 
-dev.copy2eps(device = quartz, file = "panel_plots/herb_panel_figure_label.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/gh_herb_panel_figure_label.eps")
 
 #===============================================================================
 # Relative gape size
