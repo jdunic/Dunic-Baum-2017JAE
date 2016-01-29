@@ -384,14 +384,14 @@ mk_smaSPP_graph_df <- function(sma_summary_df, num_spp, group_name) {
     yfrom <- 10^(slp*log10(from) + int)
     yto   <- 10^(slp*log10(to) + int)
     group <- as.character(sma_summary_df[i, 1])
-    midpoint_y <- sqrt(yfrom * yto)
-    midpoint_x <- sqrt(from * to)
-    ref_intercept <- log10(midpoint_y/(midpoint_x^2))
+    midpoint_y <- (yfrom + yto) / 2
+    midpoint_x <- (from + to) / 2
+    ref_intercept_iso <- log10(midpoint_y/(midpoint_x))
     slope_test <- sma_summary_df[i, 3]
     
     row <- t(c(group=group, slp=slp, int=int, from=from, to=to, yfrom=yfrom,
                yto=yto, midpoint_x=midpoint_x, midpoint_y=midpoint_y, 
-               ref_intercept=ref_intercept, slope_test = slope_test)
+               ref_intercept_iso=ref_intercept_iso, slope_test = slope_test)
              )
     sma_graph_df <- rbind(sma_graph_df, row)
   }
@@ -527,22 +527,18 @@ mk_multipanel_plots2 <- function(fg_point_df, spp_point_df, spp_line_df_row,
   #ref_intercept_row, 
   eqn_df, eqn_x, eqn_y, r2_x, r2_y, n_x, n_y, x_axis_labels=TRUE, 
   y_axis_labels=TRUE, fg_line_intercept, y_axis_text = TRUE, x_axis_text = TRUE,
-  plot_title = "") 
+  plot_title = "", y_value) 
   {
   plotTitle <- substitute(italic(plot_title), list(plot_title = plot_title))
   plot_base <- 
-      ggplot(data = fg_point_df, aes_string(x = "SL", y = "ga")) +
+      ggplot(data = fg_point_df, aes_string(x = "SL", y = "gh")) +
         geom_point(shape = 1, colour = "grey") +
         geom_segment(data = spp_line_df_row, aes_string(x = "from", xend = "to", 
          y = "yfrom", yend = "yto")) +
         geom_point(data = spp_point_df, colour = "black", shape = 1) +
         scale_y_log10() +
         scale_x_log10() +
-        #xlab("log(standard length, mm)") +     
-        #ylab(expression(paste("log(gape area ", mm^2, ")", sep= ""))) + 
-      #geom_abline(intercept = ref_intercept_row, slope = 2, linetype = 2, 
-       # colour = "darkgrey") +
-      geom_abline(intercept = fg_line_intercept, slope = 2, linetype = 2, 
+      geom_abline(intercept = fg_line_intercept, slope = 1, linetype = 2, 
         colour = "darkgrey") +
       theme_bw() +
       theme(panel.border = element_blank(),
@@ -556,12 +552,11 @@ mk_multipanel_plots2 <- function(fg_point_df, spp_point_df, spp_line_df_row,
       geom_text(data = eqn_df, aes_string(x = n_x, y = n_y, 
         label = "n"), parse = TRUE, size = 3, hjust = 1) +
       labs(title = bquote(plain(.(plotTitle)))) +
-      #labs(title = bquote(italic(.(plotTitle)))) +
-      theme(plot.title = element_text(size = 9)) +
-      theme(axis.text = element_text(size = 8)) +
-      theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
-      theme(axis.ticks.length = unit(-0.1, "cm")) +
-      theme(axis.ticks.margin = unit(0.3, "cm"))
+      theme(plot.title = element_text(size = 9), 
+            axis.text = element_text(size = 8),
+            axis.ticks.length = unit(-0.1, "cm"),
+            axis.text.y = element_text(margin = margin(0, 5, 0, 0)), 
+            axis.text.x = element_text(margin = margin(5, 0, 0, 0), vjust = 1))
       #plot <- plot_base +
   if (x_axis_labels == TRUE) {
     plot1 <- plot_base + xlab("standard length, mm")
@@ -569,7 +564,7 @@ mk_multipanel_plots2 <- function(fg_point_df, spp_point_df, spp_line_df_row,
     plot1 <- plot_base + theme(axis.title.x = element_blank())
   }
   if (y_axis_labels == TRUE) {
-    plot2 <- plot1 + ylab(expression(paste("gape area, ", mm^2, "", sep= "")))
+    plot2 <- plot1 + ylab(expression(paste("gape height, ", mm, "", sep= "")))
   } else if (y_axis_labels == FALSE) {
     plot2 <- plot1 + theme(axis.title.y = element_blank())
   } 
