@@ -12,6 +12,10 @@ Gape_body_plots_old/.DS_Store
 
 KI_maps/
 
+!dissection_data_for_prey_size_2013_03_10_cleaned.csv
+!dissection_data_for_prey_size_2013_03_10_invert_fish_freq.csv
+!gape_data_for_MS_Jul11_cleaned.csv
+
 *.csv
 *.eps
 *.pdf
