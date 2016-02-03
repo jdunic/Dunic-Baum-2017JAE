@@ -2,6 +2,7 @@
 .Rhistory
 *.RData*
 .Rapp.history
+allometry.sublime-workspace
 
 .DS_Store
 
