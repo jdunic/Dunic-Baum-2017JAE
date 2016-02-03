@@ -54,7 +54,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC,
     eqn_x = 700, eqn_y = 20, r2_x = 700, r2_y = 25.8,
     n_x = 700, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[1], 
-    x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "Aphareus furca") +
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Aphareus furca") +
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
@@ -76,7 +76,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT,
     eqn_x = 700, eqn_y = 20, r2_x = 700, r2_y = 25.8, 
     n_x = 700, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
-    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Variola louti") +
+    x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "Variola louti") +
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
@@ -155,7 +155,7 @@ mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.BART,
     eqn_x = 290, eqn_y = 1.8, r2_x = 290, r2_y = 2.625, 
     n_x = 290, n_y = 3.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[3], 
-    x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "Pseudanthias bartlettorum") +
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Pseudanthias bartlettorum") +
     geom_abline(data = all_fg_GH_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250))
@@ -175,7 +175,7 @@ mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.DISP,
     eqn_x = 290, eqn_y = 1.8, r2_x = 290, r2_y = 2.625, 
     n_x = 290, n_y = 3.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[3], x_axis_text = FALSE, 
-    y_axis_text = FALSE, plot_title = "Pseudanthias dispar") +
+    y_axis_text = TRUE, plot_title = "Pseudanthias dispar") +
     geom_abline(data = all_fg_GH_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250))
@@ -211,12 +211,12 @@ mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CH.VAND,
     scale_x_log10(breaks = c(50, 100, 250))
 
 # Plotting multipanel piscivores and benthic invertivores   
-dev.new(height = 10, width = 7)
-master_layout <- 
-grid.layout(nrow = 8, ncol = 4, 
-            widths = unit(c(0.2, 1, 0.9, 0.9), "null"),
-            heights = unit(c(1, 1, 0.1, 1, 0.1, 1, 1, 0.1), "null"))
-grid.newpage()
+#dev.new(height = 10, width = 7)
+#master_layout <- 
+#grid.layout(nrow = 8, ncol = 4, 
+#            widths = unit(c(0.2, 1, 0.9, 0.9), "null"),
+#            heights = unit(c(1, 1, 0.1, 1, 0.1, 1, 1, 0.1), "null"))
+#grid.newpage()
 
 # With "Figure" labelled
 master_layout <- 
@@ -228,9 +228,9 @@ dev.new(height = 10, width = 7)
 grid.newpage()
 pushViewport(viewport(layout = master_layout))
 # piscs
-print(apfurc, vp = set_vp(1, 2))
+print(valout, vp = set_vp(1, 2))
 print(luboha, vp = set_vp(1, 3))
-print(valout, vp = set_vp(1, 4))
+print(apfurc, vp = set_vp(1, 4))
 print(ceargu, vp = set_vp(2, 2))
 print(ceurod, vp = set_vp(2, 3))
 print(camela, vp = set_vp(2, 4))
@@ -239,9 +239,9 @@ print(paarca, vp = set_vp(4, 2))
 print(painsu, vp = set_vp(4, 3))
 print(mogran, vp = set_vp(4, 4))
 # zoops
-print(psbart, vp = set_vp(6, 2))
+print(psdisp, vp = set_vp(6, 2))
 print(catere, vp = set_vp(6, 3))
-print(psdisp, vp = set_vp(6, 4))
+print(psbart, vp = set_vp(6, 4))
 print(psoliv, vp = set_vp(7, 2))
 print(pttile, vp = set_vp(7, 3))
 print(chvand, vp = set_vp(7, 4))
@@ -307,10 +307,10 @@ dev.copy2eps(device = quartz, file = "panel_plots/gh_benth_pisc_zoop_panel_figur
 acnigr <-
 mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.NIGR, 
     spp_line_df_row = spp_lines[16, ], eqn_df = spp_sma_eqns[16, ], 
-    eqn_x = 440, eqn_y = 3.7, r2_x = 440, r2_y = 5.05,
-    n_x = 440, n_y = 6.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
-    x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "Acanthurus nigricans") +
+    x_axis_text = TRUE, y_axis_text = TRUE, plot_title = "Acanthurus nigricans") +
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
@@ -318,10 +318,10 @@ mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.NIGR,
 ceflav <-
 mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$CE.FLAV, 
     spp_line_df_row = spp_lines[18, ], eqn_df = spp_sma_eqns[18, ], 
-    eqn_x = 440, eqn_y = 3.5, r2_x = 440, r2_y = 5.05,
-    n_x = 440, n_y = 6.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    eqn_x = 440, eqn_y = 3.45, r2_x = 440, r2_y = 5.1,
+    n_x = 440, n_y = 6.6, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
-    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Centropyge flavissima") +
+    x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "Centropyge flavissima") +
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
@@ -329,8 +329,8 @@ mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$CE.FLAV,
 chsord <-
 mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$CH.SORD, 
     spp_line_df_row = spp_lines[19, ], eqn_df = spp_sma_eqns[19, ], 
-    eqn_x = 440, eqn_y = 3.5, r2_x = 440, r2_y = 5.05,
-    n_x = 440, n_y = 6.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
     x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Chlororus sordidus") +
     geom_abline(data = all_fg_GH_graph_df[4, ], 
@@ -340,10 +340,10 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$CH.SORD,
 scrubr <-
 mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.RUBR, 
     spp_line_df_row = spp_lines[21, ], eqn_df = spp_sma_eqns[21, ], 
-    eqn_x = 440, eqn_y = 3.5, r2_x = 440, r2_y = 5.05,
-    n_x = 440, n_y = 6.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
-    x_axis_text = TRUE, y_axis_text = TRUE, plot_title = "Scarus rubroviolaceus") +
+    x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Scarus rubroviolaceus") +
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
@@ -351,10 +351,10 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.RUBR,
 acoliv <-
 mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.OLIV, 
     spp_line_df_row = spp_lines[17, ], eqn_df = spp_sma_eqns[17, ], 
-    eqn_x = 440, eqn_y = 3.5, r2_x = 440, r2_y = 5.05,
-    n_x = 440, n_y = 6.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
-    x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Acanthurus olivaceus") +
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Acanthurus olivaceus") +
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
@@ -362,8 +362,8 @@ mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.OLIV,
 scfren <-
 mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.FREN, 
     spp_line_df_row = spp_lines[20, ], eqn_df = spp_sma_eqns[20, ], 
-    eqn_x = 440, eqn_y = 3.5, r2_x = 440, r2_y = 5.05,
-    n_x = 440, n_y = 6.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
     x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Scarus frenatus") +
     geom_abline(data = all_fg_GH_graph_df[4, ], 
@@ -371,39 +371,38 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.FREN,
     scale_x_log10(breaks = c(50, 100, 250)) + 
     geom_point(aes(x = 40, y = 5), alpha = 0)
 
-dev.new(height = 4, width = 7)
-master_layout <- 
-grid.layout(nrow = 3, ncol = 4, 
-            widths = unit(c(0.2, 1, 0.9, 0.9), "null"),
-            heights = unit(c(1, 1, 0.2), "null"))
-grid.newpage()
+#dev.new(height = 4, width = 7)
+#master_layout <- 
+#grid.layout(nrow = 3, ncol = 4, 
+#            widths = unit(c(0.2, 1, 0.9, 0.9), "null"),
+#            heights = unit(c(1, 1, 0.2), "null"))
+#grid.newpage()
 
 # With "Figure" label
 dev.new(height = 4, width = 7)
 master_layout <- 
 grid.layout(nrow = 3, ncol = 4, 
             widths = unit(c(0.2, 1, 0.9, 0.9), "null"),
-            heights = unit(c(1, 1, 0.2), "null"))
+            heights = unit(c(1, 1.05, 0.2), "null"))
 grid.newpage()
 
 
 pushViewport(viewport(layout = master_layout))
-print(acnigr, vp = set_vp(1, 2))
-print(ceflav, vp = set_vp(1, 3))
-print(chsord, vp = set_vp(1, 4))
-print(scrubr, vp = set_vp(2, 2))
-print(acoliv, vp = set_vp(2, 3))
-print(scfren, vp = set_vp(2, 4))
+print(ceflav, vp = set_vp(1, 2))
+print(chsord, vp = set_vp(1, 3))
+print(acoliv, vp = set_vp(1, 4))
+print(acnigr, vp = set_vp(2, 2))
+print(scfren, vp = set_vp(2, 3))
+print(scrubr, vp = set_vp(2, 4))
 
 # Figure label
 grid.text("Figure 5", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
     gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
-
 grid.text(
     expression( paste("gape height (", mm, ")", sep = "") ), 
     vp = viewport(layout.pos.row = 1:2, layout.pos.col = 1),
     rot = 90, gp = gpar(fontsize = 9), 
-    vjust = 1
+    vjust = 2
     )
 grid.text(
     "standard length (mm)",
@@ -416,23 +415,20 @@ dev.copy2eps(device = quartz, file = "panel_plots/gh_herb_panel_figure_label.eps
 #===============================================================================
 # Relative gape size
 #===============================================================================
-
 # Pento factored by functional group then slope
-SpeciesCode <- c("AP.FURC", "LU.BOHA", "VA.LOUT", "CA.MELA", "CE.ARGU", "CE.UROD",
+SpeciesCode <- c("VA.LOUT", "AP.FURC", "LU.BOHA", "CE.ARGU", "CE.UROD", "CA.MELA",
                  "PA.ARCA", "PA.INSU", "MO.GRAN",
-                 "PS.BART", "CA.TERE", "PS.DISP", "PS.OLIV", "PT.TILE", "CH.VAND",
-                 "AC.NIGR", "AC.OLIV", "CE.FLAV", "CH.SORD", "SC.FREN", "SC.RUBR", 
+                 "PS.DISP", "CA.TERE", "PS.BART", "PS.OLIV", "PT.TILE", "CH.VAND",
+                 "CE.FLAV", "CH.SORD", "AC.OLIV", "AC.NIGR", "SC.FREN", "SC.RUBR", 
                  "CH.ORNA"
                  )
 
 sp_name_by_slope <- 
-    c("Aphareus furca", "Lutjanus bohar", "Variola louti", "Caranx melampygus", 
-      "Cephalopholis argus", "Cephalopholis urodeta", 
+    c("Variola louti", "Aphareus furca", "Lutjanus bohar", "Cephalopholis argus", "Cephalopholis urodeta", "Caranx melampygus", 
       "Paracirrhites arcatus", "Parupeneus insularis", "Monotaxis grandoculis", 
-      "Pseudanthias bartlettorum", "Caesio teres", "Pseudanthias dispar", 
+      "Pseudanthias dispar", "Caesio teres", "Pseudanthias bartlettorum", 
       "Pseudanthias olivaceus", "Pterocaesio tile", "Chromis vanderbilti", 
-      "Acanthurus nigricans", "Acanthurus olivaceus", "Centropyge flavissima", 
-      "Chlororus sordidus", "Scarus frenatus", "Scarus rubroviolaceus", 
+      "Centropyge flavissima", "Chlororus sordidus", "Acanthurus olivaceus", "Acanthurus nigricans", "Scarus frenatus", "Scarus rubroviolaceus", 
       "Chaetodon ornatissimus"
       )
 
