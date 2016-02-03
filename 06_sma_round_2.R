@@ -46,7 +46,7 @@ check_assump(hGA, "He Gape Area by Region")
 # Corallivores
 cGH <- sma(gh~SL, data=c, log="xy", method="SMA", robust=T, slope.test=1)
 cGW <- sma(gw~SL, data=c, log="xy", method="SMA", robust=T, slope.test=1)
-cGA <- sma(ga~SL*Region, data=c, log="xy", method="SMA", robust=T, slope.test=2)
+cGA <- sma(ga~SL, data=c, log="xy", method="SMA", robust=T, slope.test=2)
 cGH
 
 plot(cGH)
