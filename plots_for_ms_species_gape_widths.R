@@ -33,6 +33,10 @@ all_spp_GW <- sma(gw ~ SL * SpeciesCode, data = pento, log = "xy",
 allGW_bySPP_summ <- mk_spp_summary(all_spp_GW, 22, grouping=TRUE)
 allGW_bySPP_graph_df <- mk_smaSPP_graph_df(allGW_bySPP_summ, 22, "SpeciesCode")
 
+rbind_all(list(mutate(allGH_bySPP_summ, gape = 'GH'), dplyr::mutate(allGW_bySPP_summ, gape = 'GW'))) %>% 
+  readr::write_csv(., 'gape_height_width_species_summary.csv')
+
+
 
 
 #-------------------------------------------------------------------------------
@@ -280,13 +284,13 @@ grid.text(
     gp = gpar(fontsize = 9), vjust = -8
     )
 grid.text(
-    expression( paste("gape width (", mm, ")", sep = "") ), 
+    expression( paste("Gape width (", mm, ")", sep = "") ), 
     vp = viewport(layout.pos.row = 1:2, layout.pos.col = 1),
     rot = 90, gp = gpar(fontsize = 9), 
     vjust = 1
     )
 grid.text(
-    "standard length (mm)",
+    "Standard length (mm)",
     vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
@@ -296,13 +300,13 @@ grid.text(
     gp = gpar(fontsize = 9), vjust = -10
     )
 grid.text(
-    expression( paste("gape width (", mm, ")", sep = "") ), 
+    expression( paste("Gape width (", mm, ")", sep = "") ), 
     vp = viewport(layout.pos.row = 4, layout.pos.col = 1),
     rot = 90, gp = gpar(fontsize = 9), 
     vjust = 1
     )
 grid.text(
-    "standard length (mm)",
+    "Standard length (mm)",
     vp = viewport(layout.pos.row = 5, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
@@ -312,13 +316,13 @@ grid.text(
     gp = gpar(fontsize = 9), vjust = -8
     )
 grid.text(
-    expression( paste("gape width (", mm, ")", sep = "") ), 
+    expression( paste("Gape width (", mm, ")", sep = "") ), 
     vp = viewport(layout.pos.row = 6:7, layout.pos.col = 1),
     rot = 90, gp = gpar(fontsize = 9), 
     vjust = 1
     )
 grid.text(
-    "standard length (mm)",
+    "Standard length (mm)",
     vp = viewport(layout.pos.row = 8, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
@@ -422,13 +426,13 @@ grid.text("Figure 5", vp = viewport(layout.pos.row = 3, layout.pos.col = 1),
     gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 
 grid.text(
-    expression( paste("gape width (", mm, ")", sep = "") ), 
+    expression( paste("Gape width (", mm, ")", sep = "") ), 
     vp = viewport(layout.pos.row = 1:2, layout.pos.col = 1),
     rot = 90, gp = gpar(fontsize = 9), 
     vjust = 2
     )
 grid.text(
-    "standard length (mm)",
+    "Standard length (mm)",
     vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
@@ -622,231 +626,3 @@ grid.text("Figure 6", vp = viewport(layout.pos.row = 2, layout.pos.col = 1),
 
 dev.copy2eps(device = quartz, file = "panel_plots/pred_prey_SL_figure_label.eps")
 
-#===============================================================================
-# Quantile Regressions
-#===============================================================================
-# Quantile regression for prey size ~ prey SL relationships
-p_10_SL <- rq(data = P_prey_SL, pSize~SL, tau = 0.1)
-p_50_SL <- rq(data = P_prey_SL, pSize~SL, tau = 0.5)
-p_90_SL <- rq(data = P_prey_SL, pSize~SL, tau = 0.9)
-
-summary(p_10_SL)
-#Call: rq(formula = pSize ~ SL, tau = 0.1, data = P_prey_SL)
-#tau: [1] 0.1
-#Coefficients:
-#            coefficients lower bd  upper bd 
-#(Intercept) -11.87179    -17.07483   7.80187
-#SL            0.10256     -0.00543   0.12278
-# SL CI contains zero - not significant relationship
-summary(p_50_SL)
-#Call: rq(formula = pSize ~ SL, tau = 0.5, data = P_prey_SL)
-#tau: [1] 0.5
-#Coefficients:
-#            coefficients lower bd  upper bd 
-#(Intercept) -11.39259    -23.02733   7.37066
-#SL            0.22963      0.07650   0.29805
-# ga CI does not contain zero - significant relationship
-#summary(p_90_SL)
-#Call: rq(formula = pSize ~ SL, tau = 0.9, data = P_prey_SL)
-#tau: [1] 0.9
-#Coefficients:
-#            coefficients lower bd  upper bd 
-#(Intercept)  10.26230    -15.00095  26.65528
-#SL            0.32787      0.24871   0.51036
-# ga CI does not contain zero - significant relationship
-
-
-# Quantile regression for Bethic Invertivores Gape Area
-b_10_SL <- rq(data = B_prey_SL, pSize~SL, tau = 0.1)
-b_50_SL <- rq(data = B_prey_SL, pSize~SL, tau = 0.5)
-b_90_SL <- rq(data = B_prey_SL, pSize~SL, tau = 0.9)
-
-summary(b_10_SL)
-#Call: rq(formula = pSize ~ SL, tau = 0.1, data = B_prey_SL)
-#tau: [1] 0.1
-#Coefficients:
-#            coefficients lower bd  upper bd 
-#(Intercept)  -1.03306    -15.93614   5.41412
-#SL            0.02479     -0.00727   0.09538
-# ga CI contains zero - not significant relationship
-summary(b_50_SL)
-#Call: rq(formula = pSize ~ ga, tau = 0.5, data = B_prey_SL)
-#tau: [1] 0.5
-#Coefficients:
-#            coefficients lower bd upper bd
-#(Intercept)  9.36709      3.24418 28.11570
-#ga           0.00323     -0.01891  0.01193
-# ga CI contains zero - not significant relationship
-summary(b_90_SL)
-#Call: rq(formula = pSize ~ SL, tau = 0.9, data = B_prey_SL)
-#tau: [1] 0.9
-#Coefficients:
-#            coefficients lower bd upper bd
-#(Intercept) 41.77647     22.21822 60.66797
-#SL          -0.01176     -0.12021  0.06571
-# ga CI contains zero - not significant relationship
-
-# Quantile regression for prey size ~ prey GA relationships
-p_10_ga <- rq(data = P_prey_GA, pSize~ga, tau = 0.1)
-p_50_ga <- rq(data = P_prey_GA, pSize~ga, tau = 0.5)
-p_90_ga <- rq(data = P_prey_GA, pSize~ga, tau = 0.9)
-
-summary(p_10_ga)
-#Call: rq(formula = pSize ~ ga, tau = 0.1, data = P_prey_GA)
-#tau: [1] 0.1
-#Coefficients:
-#            coefficients lower bd  upper bd 
-#(Intercept)  -1.19193    -15.23673   0.30247
-#ga            0.00815      0.00505   0.00950
-# ga CI does not contain zero - significant relationship (though marginally)
-summary(p_50_ga)
-#Call: rq(formula = pSize ~ ga, tau = 0.5, data = P_prey_GA)
-#tau: [1] 0.5
-#Coefficients:
-#            coefficients lower bd upper bd
-#(Intercept)  1.72908     -0.30403  9.37498
-#ga           0.01724      0.01059  0.01956
-# ga CI does not contain zero - significant relationship
-summary(p_90_ga)
-#Call: rq(formula = pSize ~ ga, tau = 0.9, data = P_prey_GA)
-#tau: [1] 0.9
-#Coefficients:
-#            coefficients lower bd upper bd
-#(Intercept) 34.26744      8.39304 86.76394
-#ga           0.03420      0.01374  0.04846
-# ga CI does not contain zero - significant relationship
-
-
-# Quantile regression for Bethic Invertivores Gape Area
-b_10_ga <- rq(data = B_prey_GA, pSize~ga, tau = 0.1)
-b_50_ga <- rq(data = B_prey_GA, pSize~ga, tau = 0.5)
-b_90_ga <- rq(data = B_prey_GA, pSize~ga, tau = 0.9)
-
-summary(b_10_ga)
-#Call: rq(formula = pSize ~ ga, tau = 0.1, data = B_prey_GA)
-#tau: [1] 0.1
-#Coefficients:
-#            coefficients lower bd upper bd
-#(Intercept)  0.55458     -4.87786  3.71942
-#ga           0.00591     -0.00213  0.01307
-# ga CI contains zero - not significant relationship
-summary(b_50_ga)
-#Call: rq(formula = pSize ~ ga, tau = 0.5, data = B_prey_GA)
-#tau: [1] 0.5
-#Coefficients:
-#            coefficients lower bd upper bd
-#(Intercept)  9.36709      3.24418 28.11570
-#ga           0.00323     -0.01891  0.01193
-# ga CI contains zero - not significant relationship
-summary(b_90_ga)
-#Call: rq(formula = pSize ~ ga, tau = 0.9, data = B_prey_GA)
-#tau: [1] 0.9
-#Coefficients:
-#            coefficients lower bd upper bd
-#(Intercept) 50.53799     36.24255 93.15310
-#ga          -0.01379     -0.03299  0.00143
-# ga CI contains zero - not significant relationship
-
-p_10_SL <- rq(data = prey3[(which(prey3$fg=='Pi')), ], psize~sl, tau = 0.1)
-p_50_SL <- rq(data = prey3[(which(prey3$fg=='Pi')), ], psize~sl, tau = 0.5)
-p_90_SL <- rq(data = prey3[(which(prey3$fg=='Pi')), ], psize~sl, tau = 0.9)
-
-
-p_90_SL <- rq(data = P_prey_GA, pSize~SL, tau = 0.9)
-
-P_prey_GA$
-
-#===============================================================================
-# GAPE AREA PRED - PREY
-# Piscivores stomach contents for predator GAPE AREA
-P_prey_GA <- prey_ga[which(prey_ga$j_fg == "Pi"), ]
-# Graph of just piscivores stomach contents:
-df.n <- ddply(.data=P_prey_GA, .(j_fg), summarize, n=paste("n ==", length(j_fg)))
-pisc_prey <-
-ggplot(data = P_prey_GA, aes(x = ga, y = pSize)) +
-  geom_point(aes(shape = pType)) +
-  scale_shape_manual(values=c(1, 19)) +
-  geom_text(data = df.n, aes(x = 800, y = 230, label = n), parse = TRUE, 
-            size = 3, hjust = 0) +
-  theme_bw() +
-  theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
-  theme(axis.line = element_line(color = 'black')) +
-  theme(legend.position = "none") +
-  theme(axis.title = element_blank()) +
-  #geom_smooth(method = "lm") +
-  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
-                colour = "black") +
-  theme(axis.ticks.length = unit(-0.2, "cm")) +
-  theme(axis.ticks.margin = unit(0.3, "cm"))
-
-# Benthic invertivore stomach contents for predator GAPE AREA
-B_prey_GA <- prey_ga[which(prey_ga$j_fg == "BI"), ]
-# Graph of just benthic invertivore stomach contents:
-df.n <- ddply(.data=B_prey_GA, .(j_fg), summarize, n=paste("n ==", length(j_fg)))
-benth_prey <- 
-ggplot(data = B_prey_GA, aes(x = ga, y = pSize)) +
-  geom_point(aes(shape = pType)) +
-  geom_point(aes(x = 293.7, y = 258), alpha = 0.0) +
-  scale_shape_manual(values=c(1, 19)) +
-  geom_text(data = df.n, aes(x = 400, y = 230, label = n), parse = TRUE, 
-            size = 3, hjust = 0) +
-  theme_bw() +
-  theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
-  theme(axis.line = element_line(color = 'black')) +
-  theme(legend.position = "none") +
-  theme(axis.title = element_blank()) +
-  #geom_smooth(method = "lm") +
-  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
-                colour = "black") +
-  theme(axis.ticks.length = unit(-0.2, "cm")) +
-  theme(axis.ticks.margin = unit(0.3, "cm")) +
-  scale_x_continuous(limits = c(0, 3000)) 
-
-
-dev.new(height = 3.2, width = 7.5)
-
-master_layout <- 
-grid.layout(nrow = 2, ncol = 4, 
-      widths = unit(c(0.1, 1, 0.1, 1), "null"),
-      heights = unit(c(1, 0.15), "null"))
-grid.newpage()
-pushViewport(viewport(layout = master_layout))
-print(pisc_prey, vp = set_vp(1, 2))
-print(benth_prey, vp = set_vp(1, 4))
-grid.text(
-  expression( paste("Gape area (", mm^2, ")", sep = "") ), 
-  vp = viewport(layout.pos.row = 2, layout.pos.col = 2:4), 
-  gp = gpar(fontsize = 10), vjust = -0.25
-  )
-grid.text(
-  "Prey total length (mm)",
-  vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
-  gp = gpar(fontsize = 10), rot = 90, vjust = 2
-  )
-grid.text(
-  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
-  gp = gpar(fontsize = 9), vjust = -13
-  )
-grid.text(
-  "b)", vp = viewport(layout.pos.row = 1, layout.pos.col = 3), 
-  gp = gpar(fontsize = 9), vjust = -13
-  )
-
-dev.copy2eps(device = quartz, file = "panel_plots/pred_prey_GA.eps")
-
-# Quantile regression for prey size ~ prey GA relationships
-b_10 <- rq(formula = pSize ~ ga, tau = 0.1, data = B_prey_GA)
-b_50 <- rq(formula = pSize ~ ga, tau = 0.5, data = B_prey_GA)
-b_90 <- rq(formula = pSize ~ ga, tau = 0.9, data = B_prey_GA)
-
-anova(b_10, b_50, b_90)
-
-p_10 <- rq(formula = pSize ~ ga, tau = 0.1, data = P_prey_GA)
-p_50 <- rq(formula = pSize ~ ga, tau = 0.5, data = P_prey_GA)
-p_90 <- rq(formula = pSize ~ ga, tau = 0.9, data = P_prey_GA)
-
-anova(p_10, p_50, p_90)

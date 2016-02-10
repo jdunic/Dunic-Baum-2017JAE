@@ -256,13 +256,13 @@ grid.text(
     gp = gpar(fontsize = 9), vjust = -8
     )
 grid.text(
-    expression( paste("gape height (", mm, ")", sep = "") ), 
+    expression( paste("Gape height (", mm, ")", sep = "") ), 
     vp = viewport(layout.pos.row = 1:2, layout.pos.col = 1),
     rot = 90, gp = gpar(fontsize = 9), 
     vjust = 1
     )
 grid.text(
-    "standard length (mm)",
+    "Standard length (mm)",
     vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
@@ -272,13 +272,13 @@ grid.text(
     gp = gpar(fontsize = 9), vjust = -10
     )
 grid.text(
-    expression( paste("gape height (", mm, ")", sep = "") ), 
+    expression( paste("Gape height (", mm, ")", sep = "") ), 
     vp = viewport(layout.pos.row = 4, layout.pos.col = 1),
     rot = 90, gp = gpar(fontsize = 9), 
     vjust = 1
     )
 grid.text(
-    "standard length (mm)",
+    "Standard length (mm)",
     vp = viewport(layout.pos.row = 5, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
@@ -288,13 +288,13 @@ grid.text(
     gp = gpar(fontsize = 9), vjust = -8
     )
 grid.text(
-    expression( paste("gape height (", mm, ")", sep = "") ), 
+    expression( paste("Gape height (", mm, ")", sep = "") ), 
     vp = viewport(layout.pos.row = 6:7, layout.pos.col = 1),
     rot = 90, gp = gpar(fontsize = 9), 
     vjust = 1
     )
 grid.text(
-    "standard length (mm)",
+    "Standard length (mm)",
     vp = viewport(layout.pos.row = 8, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
@@ -399,13 +399,13 @@ print(scrubr, vp = set_vp(2, 4))
 grid.text("Figure 5", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
     gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 grid.text(
-    expression( paste("gape height (", mm, ")", sep = "") ), 
+    expression( paste("Gape height (", mm, ")", sep = "") ), 
     vp = viewport(layout.pos.row = 1:2, layout.pos.col = 1),
     rot = 90, gp = gpar(fontsize = 9), 
     vjust = 2
     )
 grid.text(
-    "standard length (mm)",
+    "Standard length (mm)",
     vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
