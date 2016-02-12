@@ -32,7 +32,23 @@ all_spp_GH <- sma(gh ~ SL * SpeciesCode, data = pento, log = "xy",
                   multcomp = F, multcompmethod = "adjusted")
 #check_assump(allGA, "Species Gape Area All")
 allGH_bySPP_summ <- mk_spp_summary(all_spp_GH, 22, grouping=TRUE)
+
+allometry <- NA
+for (i in seq_along(allGH_bySPP_summ[[1]])) {
+  allometry[i] <- get_allometry(slope = allGH_bySPP_summ$slope[i], 
+                                p_val = allGH_bySPP_summ$slp_p_val[i])
+}
+
+sig <- NA
+for (i in seq_along(allGH_bySPP_summ[[1]])) {
+  sig[i] <- get_sig(p_val = allGH_bySPP_summ$slp_p_val[i])
+}
+
+allGH_bySPP_summ$allometry <- allometry
+allGH_bySPP_summ$sig <- sig
+
 allGH_bySPP_graph_df <- mk_smaSPP_graph_df(allGH_bySPP_summ, 22, "SpeciesCode")
+allGH_bySPP_graph_df$allometry <- allometry
 
 
 #-------------------------------------------------------------------------------
@@ -58,7 +74,9 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC,
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
-    geom_point(aes(x = 100, y = 95), alpha = 0)
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[2, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 luboha <- 
 mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA, 
     spp_line_df_row = spp_lines[3, ], eqn_df = spp_sma_eqns[3, ], 
@@ -69,7 +87,9 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA,
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
-    geom_point(aes(x = 100, y = 95), alpha = 0)
+    geom_point(aes(x = 100, y = 95), alpha = 0) +
+    geom_text(data = allGH_bySPP_graph_df[3, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 valout <-
 mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT, 
     spp_line_df_row = spp_lines[6, ], eqn_df = spp_sma_eqns[6, ], 
@@ -80,7 +100,9 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT,
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
-    geom_point(aes(x = 100, y = 95), alpha = 0)
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[6, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 ceargu <-
 mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.ARGU, 
     spp_line_df_row = spp_lines[4, ], eqn_df = spp_sma_eqns[4, ], 
@@ -91,7 +113,9 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.ARGU,
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
-    geom_point(aes(x = 100, y = 95), alpha = 0)
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[4, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 ceurod <-
 mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD, 
     spp_line_df_row = spp_lines[5, ], eqn_df = spp_sma_eqns[5, ], 
@@ -102,7 +126,9 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD,
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
-    geom_point(aes(x = 100, y = 95), alpha = 0)
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[5, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 camela <- 
 mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA, 
     spp_line_df_row = spp_lines[1, ], eqn_df = spp_sma_eqns[1, ], 
@@ -113,7 +139,9 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA,
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
-    geom_point(aes(x = 100, y = 95), alpha = 0)
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[1, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 # Benthic invertivores
 paarca <-
 mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.ARCA, 
@@ -125,7 +153,9 @@ mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.ARCA,
     geom_abline(data = all_fg_GH_graph_df[2, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) +
-    geom_point(aes(x = 100, y = 7), alpha = 0)
+    geom_point(aes(x = 100, y = 7), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[7, ], aes_string(x = 50, y = 60, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 painsu <-
 mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.INSU, 
     spp_line_df_row = spp_lines[9, ], eqn_df = spp_sma_eqns[9, ], 
@@ -136,7 +166,9 @@ mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.INSU,
     geom_abline(data = all_fg_GH_graph_df[2, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) +
-    geom_point(aes(x = 100, y = 7), alpha = 0)
+    geom_point(aes(x = 100, y = 7), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[9, ], aes_string(x = 50, y = 60, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 mogran <-
 mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$MO.GRAN, 
     spp_line_df_row = spp_lines[8, ], eqn_df = spp_sma_eqns[8, ], 
@@ -147,7 +179,9 @@ mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$MO.GRAN,
     geom_abline(data = all_fg_GH_graph_df[2, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) +
-    geom_point(aes(x = 100, y = 7), alpha = 0)
+    geom_point(aes(x = 100, y = 7), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[8, ], aes_string(x = 50, y = 60, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 # Zooplanktivores
 psbart <-
 mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.BART, 
@@ -158,7 +192,9 @@ mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.BART,
     x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Pseudanthias bartlettorum") +
     geom_abline(data = all_fg_GH_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250))
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    geom_text(data = allGH_bySPP_graph_df[13, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 catere <-
 mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CA.TERE, 
     spp_line_df_row = spp_lines[10, ], eqn_df = spp_sma_eqns[10, ], 
@@ -168,7 +204,9 @@ mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CA.TERE,
     y_axis_text = FALSE, plot_title = "Caesio teres") +
     geom_abline(data = all_fg_GH_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250))
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    geom_text(data = allGH_bySPP_graph_df[10, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 psdisp <-
 mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.DISP, 
     spp_line_df_row = spp_lines[14, ], eqn_df = spp_sma_eqns[14, ], 
@@ -178,7 +216,9 @@ mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.DISP,
     y_axis_text = TRUE, plot_title = "Pseudanthias dispar") +
     geom_abline(data = all_fg_GH_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250))
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    geom_text(data = allGH_bySPP_graph_df[14, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 psoliv <-
 mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.OLIV, 
     spp_line_df_row = spp_lines[15, ], eqn_df = spp_sma_eqns[15, ], 
@@ -188,7 +228,9 @@ mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.OLIV,
     y_axis_text = TRUE, plot_title = "Pseudanthias olivaceus") +
     geom_abline(data = all_fg_GH_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250))
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    geom_text(data = allGH_bySPP_graph_df[15, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 pttile <-
 mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$PT.TILE, 
     spp_line_df_row = spp_lines[11, ], eqn_df = spp_sma_eqns[11, ], 
@@ -198,7 +240,9 @@ mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$PT.TILE,
     y_axis_text = FALSE, plot_title = "Pterocaesio tile") +
     geom_abline(data = all_fg_GH_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250))
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    geom_text(data = allGH_bySPP_graph_df[11, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 chvand <-
 mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CH.VAND, 
     spp_line_df_row = spp_lines[12, ], eqn_df = spp_sma_eqns[12, ], 
@@ -208,7 +252,9 @@ mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CH.VAND,
     y_axis_text = FALSE, plot_title = "Chromis vanderbilti") +
     geom_abline(data = all_fg_GH_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250))
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    geom_text(data = allGH_bySPP_graph_df[12, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 
 # Plotting multipanel piscivores and benthic invertivores   
 #dev.new(height = 10, width = 7)
@@ -314,7 +360,9 @@ mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.NIGR,
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
-    geom_point(aes(x = 40, y = 5), alpha = 0)
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[16, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 ceflav <-
 mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$CE.FLAV, 
     spp_line_df_row = spp_lines[18, ], eqn_df = spp_sma_eqns[18, ], 
@@ -325,7 +373,9 @@ mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$CE.FLAV,
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
-    geom_point(aes(x = 40, y = 5), alpha = 0)
+    geom_point(aes(x = 40, y = 5), alpha = 0) +
+    geom_text(data = allGH_bySPP_graph_df[18, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 chsord <-
 mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$CH.SORD, 
     spp_line_df_row = spp_lines[19, ], eqn_df = spp_sma_eqns[19, ], 
@@ -336,7 +386,9 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$CH.SORD,
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
-    geom_point(aes(x = 40, y = 5), alpha = 0)
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[19, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 scrubr <-
 mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.RUBR, 
     spp_line_df_row = spp_lines[21, ], eqn_df = spp_sma_eqns[21, ], 
@@ -347,7 +399,9 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.RUBR,
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
-    geom_point(aes(x = 40, y = 5), alpha = 0)
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[21, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 acoliv <-
 mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.OLIV, 
     spp_line_df_row = spp_lines[17, ], eqn_df = spp_sma_eqns[17, ], 
@@ -358,7 +412,9 @@ mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.OLIV,
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
-    geom_point(aes(x = 40, y = 5), alpha = 0)
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[17, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 scfren <-
 mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.FREN, 
     spp_line_df_row = spp_lines[20, ], eqn_df = spp_sma_eqns[20, ], 
@@ -369,7 +425,9 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.FREN,
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
-    geom_point(aes(x = 40, y = 5), alpha = 0)
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[20, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 
 #dev.new(height = 4, width = 7)
 #master_layout <- 
@@ -416,7 +474,7 @@ dev.copy2eps(device = quartz, file = "panel_plots/gh_herb_panel_figure_label.eps
 # Relative gape size
 #===============================================================================
 # Pento factored by functional group then slope
-SpeciesCode <- c("VA.LOUT", "AP.FURC", "LU.BOHA", "CE.ARGU", "CE.UROD", "CA.MELA",
+SpeciesCode <- c("VA.LOUT", "LU.BOHA", "AP.FURC", "CE.ARGU", "CE.UROD", "CA.MELA",
                  "PA.ARCA", "PA.INSU", "MO.GRAN",
                  "PS.DISP", "CA.TERE", "PS.BART", "PS.OLIV", "PT.TILE", "CH.VAND",
                  "CE.FLAV", "CH.SORD", "AC.OLIV", "AC.NIGR", "SC.FREN", "SC.RUBR", 
@@ -424,7 +482,7 @@ SpeciesCode <- c("VA.LOUT", "AP.FURC", "LU.BOHA", "CE.ARGU", "CE.UROD", "CA.MELA
                  )
 
 sp_name_by_slope <- 
-    c("Variola louti", "Aphareus furca", "Lutjanus bohar", "Cephalopholis argus", "Cephalopholis urodeta", "Caranx melampygus", 
+    c("Variola louti", "Lutjanus bohar", "Aphareus furca", "Cephalopholis argus", "Cephalopholis urodeta", "Caranx melampygus", 
       "Paracirrhites arcatus", "Parupeneus insularis", "Monotaxis grandoculis", 
       "Pseudanthias dispar", "Caesio teres", "Pseudanthias bartlettorum", 
       "Pseudanthias olivaceus", "Pterocaesio tile", "Chromis vanderbilti", 
