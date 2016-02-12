@@ -543,11 +543,11 @@ mk_multipanel_plots2 <- function(fg_point_df, spp_point_df, spp_line_df_row,
   #ref_intercept_row, 
   eqn_df, eqn_x, eqn_y, r2_x, r2_y, n_x, n_y, x_axis_labels=TRUE, 
   y_axis_labels=TRUE, fg_line_intercept, y_axis_text = TRUE, x_axis_text = TRUE,
-  plot_title = "", y_value) 
+  plot_title = "", y_value, gape_dim = 'gh') 
   {
   plotTitle <- substitute(italic(plot_title), list(plot_title = plot_title))
   plot_base <- 
-      ggplot(data = fg_point_df, aes_string(x = "SL", y = "gh")) +
+      ggplot(data = fg_point_df, aes_string(x = "SL", y = gape_dim)) +
         geom_point(shape = 1, colour = "grey") +
         geom_segment(data = spp_line_df_row, aes_string(x = "from", xend = "to", 
          y = "yfrom", yend = "yto")) +
