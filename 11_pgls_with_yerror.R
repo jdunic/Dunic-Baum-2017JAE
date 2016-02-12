@@ -293,7 +293,7 @@ summary(spp_err_iso_gw)
 
 # Slope comparison plots for MS
 fit.gls$data <- dplyr::filter(mean_spp_summ, codes != 'CH.ORNA')
-v <- visreg(fit.gls)
+#v <- visreg(fit.gls)
 
 v$fit$visregLwr <- as.data.frame(confint(fit.gls, param.CI=0.95))[[1]]
 v$fit$visregUpr <- as.data.frame(confint(fit.gls, param.CI=0.95))[[2]]
@@ -448,3 +448,150 @@ grid.text("Figure 2", vp = viewport(layout.pos.row = 4, layout.pos.col = 1:3),
     gp = gpar(fontsize = 9), vjust = 0, hjust = 1.5)
 
 dev.copy2eps(device = quartz, file = "panel_plots/phylogenetically_corrected_allometrice_slope_estimates.eps")
+
+
+#------------------------------------------------------------------------------
+# Non-phylogenetically corrected comparisons of slopes
+#------------------------------------------------------------------------------
+gls_gh_no_cor <- gls(slopes_gh ~ fg - 1, data = mean_spp_summ_gh, method = "ML", weights = varFixed(~ ses_gh))
+vgh_no_cor <- visreg(gls_gh_no_cor)
+vgh_no_cor$fit$visregLwr <- as.data.frame(confint(gls_gh_no_cor, param.CI=0.95))[[1]]
+vgh_no_cor$fit$visregUpr <- as.data.frame(confint(gls_gh_no_cor, param.CI=0.95))[[2]]
+
+gls_gw_no_cor <- gls(slopes_gw ~ fg - 1, data = mean_spp_summ_gw, method = "ML", weights = varFixed(~ ses_gw))
+vgw_no_cor <- visreg(gls_gw_no_cor)
+vgw_no_cor$fit$visregLwr <- as.data.frame(confint(gls_gw_no_cor, param.CI=0.95))[[1]]
+vgw_no_cor$fit$visregUpr <- as.data.frame(confint(gls_gw_no_cor, param.CI=0.95))[[2]]
+
+
+mean_spp_summ_gh2 <- left_join(mean_spp_summ_gh, vgh_no_cor$fit) %>% 
+  mutate(id = as.numeric(codes)) %>% 
+  mutate(fg = factor(fg, levels = levels(mean_spp_summ_gh$fg))) %>% 
+  arrange(., fg)
+
+spacing <- c(seq(0, 1, length.out = 6), seq(0, 1, length.out = 3), 
+             seq(0, 1, length.out = 5), seq(0, 1, length.out = 6))
+mean_spp_summ_gh2$spacing <- spacing
+
+line_fits_gh <- 
+  mean_spp_summ_gh2 %>% group_by(fg, visregLwr, visregUpr, visregFit) %>% summarise(count = length(fg)) %>% as.data.frame
+
+gh_plot <- 
+ggplot(mean_spp_summ_gh2) +
+  geom_rect(data = line_fits_gh, aes(xmin = -0.05, xmax = 1.05, ymin = visregLwr, ymax = visregUpr), fill = "gray85") +
+  geom_point(aes(x = -0.2, y = 1), alpha = 0) +
+  geom_point(aes(x = spacing, y = slope), size = 1, colour = "gray50") + 
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(panel.margin = unit(0, "cm")) +
+  theme(panel.border = element_blank()) +
+  theme(plot.margin = unit(c(1.5,0.5,0.5,0.5), "lines")) +
+  theme(strip.background = element_rect(fill = "white", colour = "white")) +
+  theme(axis.line = element_line()) +
+  theme(strip.text.x = element_blank()) +
+  theme(axis.text.x = element_blank(), 
+        axis.text.y = element_text(margin = margin(0, 6, 0, 0)), 
+        #axis.ticks.x=element_blank(), 
+        axis.title.x=element_blank(),
+        axis.title.y = element_blank(), 
+        axis.ticks.length = unit(-0.1, "cm")) +
+  geom_segment(data=line_fits_gh, aes(y = visregFit, yend = visregFit, x = -0.05, xend = 1.05), colour = '#099DFFFF', size = 1, lineend = 'round') +
+  geom_hline(aes(yintercept = 1), colour = 'red', linetype = 2) +
+  scale_x_continuous(breaks = 0.5) +
+  scale_y_continuous(breaks = c(0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0), lim =c(0.6, 2)) +
+  facet_grid(. ~ fg) 
+
+mean_spp_summ_gw2 <- left_join(mean_spp_summ_gw, vgw_no_cor$fit) %>% 
+  mutate(id = as.numeric(codes)) %>% 
+  mutate(fg = factor(fg, levels = levels(mean_spp_summ_gw$fg))) %>% 
+  arrange(., fg)
+
+spacing <- c(seq(0, 1, length.out = 6), seq(0, 1, length.out = 3), 
+             seq(0, 1, length.out = 5), seq(0, 1, length.out = 6))
+mean_spp_summ_gw2$spacing <- spacing
+
+line_fits_gw <- 
+  mean_spp_summ_gw2 %>% group_by(fg, visregLwr, visregUpr, visregFit) %>% summarise(count = length(fg)) %>% as.data.frame
+
+gw_plot <- 
+ggplot(mean_spp_summ_gw2) +
+  geom_rect(data = line_fits_gw, aes(xmin = -0.05, xmax = 1.05, ymin = visregLwr, ymax = visregUpr), fill = "gray85") +
+  geom_point(aes(x = -0.2, y = 1), alpha = 0) +
+  geom_point(aes(x = spacing, y = slope), size = 1, colour = "gray50") + 
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(panel.margin = unit(0, "cm")) +
+  theme(panel.border = element_blank()) +
+  theme(plot.margin = unit(c(1.5,0.5,0.5,0.5), "lines")) +
+  theme(strip.background = element_rect(fill = "white", colour = "white")) +
+  theme(axis.line = element_line()) +
+  theme(strip.text.x = element_blank()) +
+  theme(axis.text.x = element_blank(), 
+        axis.text.y = element_text(margin = margin(0, 6, 0, 0)), 
+        #axis.ticks.x=element_blank(), 
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank(), 
+        axis.ticks.length = unit(-0.1, "cm")) +
+  geom_segment(data=line_fits_gw, aes(y = visregFit, yend = visregFit, x = -0.05, xend = 1.05), colour = '#099DFFFF', size = 1, lineend = 'round') +
+  geom_hline(aes(yintercept = 1), colour = 'red', linetype = 2) +
+  scale_x_continuous(breaks = 0.5) +
+  scale_y_continuous(breaks = c(0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0), lim =c(0.6, 2)) +
+  #ylim(c(0.6, 2)) +
+  facet_grid(. ~ fg) 
+
+dev.new(height = 6.6, width = 4.8)
+
+master_layout <- 
+grid.layout(nrow = 4, ncol = 6, 
+            widths = unit(c(0.2, 0.3, 1, 1, 1, 1), "null"),
+            heights = unit(c(1, 1, 0.2, 0.1), "null"))
+grid.newpage()
+pushViewport(viewport(layout=master_layout))
+top <- viewport(layout.pos.row = 1, layout.pos.col = 2:6)
+bottom <- viewport(layout.pos.row = 2, layout.pos.col = 2:6)
+print(gh_plot, vp = top)
+print(gw_plot, vp = bottom)
+grid.text(
+  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -12
+  )
+grid.text(
+  "b)", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -12
+  )
+grid.text(
+  "Gape height slope estimate",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 1),
+  rot = 90, gp = gpar(fontsize = 9), vjust = 1, hjust = 0.6
+    )
+grid.text(
+  "Gape width slope estimate",
+  vp = viewport(layout.pos.row = 2, layout.pos.col = 1),
+  rot = 90, gp = gpar(fontsize = 9), vjust = 1, hjust = 0.6
+    )
+grid.text(
+    "Piscivore",
+    vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
+    vjust = -1.2, gp = gpar(fontsize = 9), hjust = 0.45
+    )
+grid.text(
+    expression("  Benthic \nInvertivore"),
+    vp = viewport(layout.pos.row = 3, layout.pos.col = 4),
+    vjust = 0.5, gp = gpar(fontsize = 9), hjust = 0.45
+    )
+grid.text(
+    "Zooplanktivore",
+    vp = viewport(layout.pos.row = 3, layout.pos.col = 5),
+    vjust = -1.2, gp = gpar(fontsize = 9), hjust = 0.5
+    )
+grid.text(
+    "Herbivore",
+    vp = viewport(layout.pos.row = 3, layout.pos.col = 6),
+    vjust = -1.2, gp = gpar(fontsize = 9), hjust = 0.55
+    )
+grid.text("Functional group", vp = viewport(layout.pos.row = 4, layout.pos.col = 3:6),
+    gp = gpar(fontsize = 9), vjust = -1, hjust = 0.5)
+#grid.text("Figure 2", vp = viewport(layout.pos.row = 4, layout.pos.col = 1:3),
+#    gp = gpar(fontsize = 9), vjust = 0, hjust = 1.5)
+
+dev.copy2eps(device = quartz, file = "panel_plots/non-phylogenetically_corrected_allometrice_slope_estimates.eps")
