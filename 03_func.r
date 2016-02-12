@@ -66,23 +66,25 @@ write_group_sma_eqn <- function(sma_summary_df, group_column) {
     l <- list(slp = format(sma_summary_df$slope[i], digits=2),
               int = format(sma_summary_df$elev[i], digits=2), 
               r2  = format(sma_summary_df$xy_r2[i], digits=2, nsmall = 2),
-              count   = sma_summary_df$n[i]
+              count = sma_summary_df$n[i], 
+              sig = sma_summary_df$sig[i]
     )
     if (l$int >= 0) {
       eqn_r2 <- substitute(atop(italic(r)^2~"="~r2, italic(y) ==
                           slp%.%italic(x) + int), l)
-      eqn <- substitute(italic(y) == slp*italic(x) + int, l)
+      eqn <- substitute(italic(y) == slp*italic(x) + int*sig, l)
       r2  <- substitute(italic(r)^2~"="~r2, l)
       n   <- substitute(italic(n) ~ "=" ~ count, l)
     } else {
         l <- list(slp = format(sma_summary_df$slope[i], digits=2),
                   int = format(abs(sma_summary_df$elev[i]), digits=2),
                   r2  = format(sma_summary_df$xy_r2[i], digits=2, nsmall = 2),
-                  count   = sma_summary_df$n[i]
+                  count   = sma_summary_df$n[i], 
+                  sig = sma_summary_df$sig[i]
       )
       eqn_r2 <- substitute(atop(italic(r)^2~"="~r2, italic(y) ==
                           slp%.% italic(x) - int), l)
-      eqn <- substitute(italic(y) == slp*italic(x) - int, l)
+      eqn <- substitute(italic(y) == slp*italic(x) - int*sig, l)
       r2  <- substitute(italic(r)^2~"="~r2, l)
       n   <- substitute(italic(n) ~ "=" ~ count, l)
     }    
@@ -102,6 +104,20 @@ count_spp <- function(df) {
         len = length(SpeciesCode),
         n = paste("n ==", len)
   )
+}
+
+# test whether a slope is allometric 
+get_allometry <- function(slope, p_val) {
+    allometry <- 'I'
+    if (p_val < 0.05 & slope < 1) allometry <- 'N'
+    if (p_val < 0.05 & slope > 1) allometry <- 'P'
+    return(allometry)
+}
+
+get_sig <- function(p_val) {
+    sig <- ''
+    if (p_val < 0.05) sig <- "*"
+    return(sig)
 }
 
 
