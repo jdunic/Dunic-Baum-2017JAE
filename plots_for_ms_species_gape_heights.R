@@ -619,17 +619,18 @@ rel_gh
 
 # With "Figure" label
 master_layout <- 
-grid.layout(nrow = 2, ncol = 1, 
-            widths = unit(c(1), "null"),
+grid.layout(nrow = 2, ncol = 2, 
+            widths = unit(c(0.03, 1), "null"),
             heights = unit(c(1, 0.05), "null"))
 grid.newpage()
 pushViewport(viewport(layout = master_layout))
-print(rel_gh, vp = set_vp(1, 1))
+print(rel_gh, vp = set_vp(1, 2))
 
 # Figure label
 grid.text("Figure 3", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
-    gp = gpar(fontsize = 9), hjust = 8, vjust = -1)
-dev.copy2eps(device = quartz, file = "panel_plots/rel_gh_figure_label.eps")
+    gp = gpar(fontsize = 9), hjust = 0, vjust = 0)
+
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f3.eps")
 
 
 #===============================================================================
@@ -719,10 +720,10 @@ grid.text(
   gp = gpar(fontsize = 9), vjust = -13
   )
 # Figure label
-grid.text("Figure 6", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+grid.text("Figure 7", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
     gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 
-dev.copy2eps(device = quartz, file = "panel_plots/pred_prey_SL_figure_label.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f7.eps")
 
 #===============================================================================
 # Quantile Regressions
