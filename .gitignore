@@ -4,20 +4,12 @@
 .Rapp.history
 *.sublime-workspace
 
-.DS_Store
-
-Plots/.DS_Store
-
-Gape_body_plots_old/.DS_Store
+*.DS_Store
 
 KI_maps/
 
-!dissection_data_for_prey_size_2013_03_10_cleaned.csv
-!dissection_data_for_prey_size_2013_03_10_invert_fish_freq.csv
-!gape_data_for_MS_Jul11_cleaned.csv
-
-*.csv
+.csv
 *.eps
 *.pdf
-*.xlsx
+.xlsx
 *.pptx
