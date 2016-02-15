@@ -20,7 +20,7 @@ all_fg_GH <- sma(gh ~ SL * j_fg, data = pento, log = "xy", method = "SMA",
                  robust = T, slope.test = 1, multcomp = F)
 all_fg_GH_summ <- mk_spp_summary(all_fg_GH, 5, grouping=TRUE)
 all_fg_GH_graph_df <- mk_smaSPP_graph_df(all_fg_GH_summ, 5, "j_fg")
-all_fg_GH_graph_df$boot_slope <- c(pento_slopes_gh, NA)
+all_fg_GH_graph_df$boot_slope <- c(pento_slopes_gh, all_fg_GH_graph_df$slp[5])
 
 all_fg_GH_graph_df <- 
   all_fg_GH_graph_df %>% 
@@ -45,7 +45,10 @@ for (i in seq_along(allGH_bySPP_summ[[1]])) {
 }
 
 allGH_bySPP_summ$allometry <- allometry
-allGH_bySPP_summ$sig <- sig
+allGH_bySPP_summ$sig <- '*'
+allGH_bySPP_summ <- 
+  mutate(allGH_bySPP_summ, allometry = replace(allometry, group == 'CH.ORNA', ''), 
+         sig = replace(sig, group == 'CH.ORNA', ''))
 
 allGH_bySPP_graph_df <- mk_smaSPP_graph_df(allGH_bySPP_summ, 22, "SpeciesCode")
 allGH_bySPP_graph_df$allometry <- allometry
