@@ -19,7 +19,7 @@ all_fg_GW <- sma(gw ~ SL * j_fg, data = pento, log = "xy", method = "SMA",
                  robust = T, slope.test = 1, multcomp = F)
 all_fg_GW_summ <- mk_spp_summary(all_fg_GW, 5, grouping=TRUE)
 all_fg_GW_graph_df <- mk_smaSPP_graph_df(all_fg_GW_summ, 5, "j_fg")
-all_fg_GW_graph_df$boot_slope <- c(pento_slopes_gh, NA)
+all_fg_GW_graph_df$boot_slope <- c(pento_slopes_gh, all_fg_GW_graph_df$slp[5])
 
 all_fg_GW_graph_df <- 
   all_fg_GW_graph_df %>% 
@@ -43,7 +43,10 @@ for (i in seq_along(allGW_bySPP_summ[[1]])) {
 }
 
 allGW_bySPP_summ$allometry <- allometry
-allGW_bySPP_summ$sig <- sig
+allGW_bySPP_summ$sig <- '*'
+allGW_bySPP_summ <- 
+  mutate(allGW_bySPP_summ, allometry = replace(allometry, group == 'CH.ORNA', ''), 
+         sig = replace(sig, group == 'CH.ORNA', ''))
 
 allGW_bySPP_graph_df <- mk_smaSPP_graph_df(allGW_bySPP_summ, 22, "SpeciesCode")
 
@@ -487,8 +490,57 @@ grid.text(
     vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
+grid.text("Figure S4", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 
-dev.copy2eps(device = quartz, file = "panel_plots/gw_herb_panel_figure_label.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S4.eps")
+
+#-------------------------------------------------------------------------------
+# Corallivore plot
+#-------------------------------------------------------------------------------
+dev.new(height = 2.4, width = 2.7)
+master_layout <- 
+grid.layout(nrow = 2, ncol = 2, 
+            widths = unit(c(0.2, 1), "null"),
+            heights = unit(c(1, 0.2), "null"))
+
+grid.newpage()
+chorna <-
+mk_corallivore_plot(fg_point_df = c, spp_point_df = c, 
+    eqn_df = spp_sma_eqns[22, ], 
+    eqn_x = 440, eqn_y = 5.4, r2_x = 440, r2_y = 6.7,
+    n_x = 440, n_y = 7.9, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GW_graph_df$ref_intercept_iso[5], 
+    x_axis_text = TRUE, y_axis_text = TRUE, 
+    plot_title = "Chaetodon ornatissimus", gape_dim = 'gw') +
+    geom_abline(data = all_fg_GW_graph_df[5, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 40)) +
+    geom_point(aes(x = 40, y = 5), alpha = 0) +
+    geom_point(aes(x = 40, y = 40), alpha = 0) 
+
+pushViewport(viewport(layout = master_layout))
+print(chorna, vp = set_vp(1, 2))
+#grid.text("Figure 6", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+#    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
+grid.text(
+    expression( paste("Gape width (", mm, ")", sep = "") ), 
+    vp = viewport(layout.pos.row = 1, layout.pos.col = 1),
+    rot = 90, gp = gpar(fontsize = 9), 
+    vjust = 2
+    )
+grid.text(
+    "Standard length (mm)",
+    vp = viewport(layout.pos.row = 2, layout.pos.col = 2),
+    vjust = -1.2, gp = gpar(fontsize = 9)
+    )
+grid.text("Figure S5", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = 0, vjust = 1)
+
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S5.eps")
+
+
 
 #===============================================================================
 # Relative gape size
