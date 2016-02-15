@@ -332,8 +332,8 @@ print(pttile, vp = set_vp(7, 3))
 print(chvand, vp = set_vp(7, 4))
 
 # Figure label
-grid.text("Figure 4", vp = viewport(layout.pos.row = 8, layout.pos.col = 1),
-    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
+#grid.text("Figure 4", vp = viewport(layout.pos.row = 8, layout.pos.col = 1),
+#    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 
 # piscs
 grid.text(
@@ -383,8 +383,11 @@ grid.text(
     vp = viewport(layout.pos.row = 8, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
+grid.text("Figure S3", vp = viewport(layout.pos.row = 8, layout.pos.col = 1),
+    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 
-dev.copy2eps(device = quartz, file = "panel_plots/gw_benth_pisc_zoop_panel_figure_label.eps")
+
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S3.eps")
 
 #-------------------------------------------------------------------------------
 # Multipanel herbivores
@@ -497,8 +500,8 @@ print(scfren, vp = set_vp(2, 3))
 print(ceflav, vp = set_vp(2, 4))
 
 # Figure label
-grid.text("Figure 5", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
-    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
+#grid.text("Figure 5", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+#    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 
 grid.text(
     expression( paste("Gape width (", mm, ")", sep = "") ), 
@@ -587,7 +590,7 @@ sp_name_by_slope <-
 spp_key <- data.frame(SpeciesCode, sp_name_by_slope)
 pento_by_slope <- merge(x = pento, y = spp_key, all.x = TRUE, all.y = FALSE)
 #pento_by_slope$SpeciesCode <- factor(pento_by_slope$SpeciesCode, levels = SpeciesCode)
-pento_by_slope$sp_name_by_slope <- factor(pento_by_slope$sp_name_by_slope, levels = sp_name_by_slope)
+pento_by_slope$sp_name_by_slope <- factor(pento_by_slope$sp_name_by_slope, levels = rev(sp_name_by_slope))
 
 #-------------------------------------------------------------------------------
 # Removing ceargu_out (CE.ARGU outlier)
@@ -645,17 +648,17 @@ rel_gw
 
 # With "Figure" label
 master_layout <- 
-grid.layout(nrow = 2, ncol = 1, 
-            widths = unit(c(1), "null"),
+grid.layout(nrow = 2, ncol = 2, 
+            widths = unit(c(0.03, 1), "null"),
             heights = unit(c(1, 0.05), "null"))
 grid.newpage()
 pushViewport(viewport(layout = master_layout))
-print(rel_gw, vp = set_vp(1, 1))
+print(rel_gw, vp = set_vp(1, 2))
 
 # Figure label
-#grid.text("Figure 3", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
- #   gp = gpar(fontsize = 9), hjust = 8, vjust = -1)
-dev.copy2eps(device = quartz, file = "panel_plots/rel_gw_figure_label.eps")
+grid.text("Figure S2", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = 0, vjust = 0)
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S2.eps")
 
 
 #===============================================================================
