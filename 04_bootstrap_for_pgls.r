@@ -1,5 +1,3 @@
-if (getwd() != '/Users/jillian/R_projects/Allometry') setwd('Allometry')
-
 source('01_load.r')
 source('02_clean.r')
 source('03_func.r')
@@ -19,7 +17,8 @@ resample_spp <- function(data) {
 #n <- 10000
 #spp_resamples <- rlply(.n = n, ddply(pento, .(SpeciesCode), resample_spp), .progress = 'text') 
 
-# Species bootstrap commented out so that I don't accidentally do it again.
+# Species bootstrap commented out so that I don't accidentally do it again. 
+# Takes a long time.
 
 # Run an SMA for each species
 # Learned how to use tryCatch because there are cases where model convergence 

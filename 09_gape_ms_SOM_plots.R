@@ -1,8 +1,8 @@
-data = p
-site = random effect
-observer = random effect
-gape = predicted
-standard_length = fixed
+#data = p
+#site = random effect
+#observer = random effect
+#gape = predicted
+#standard_length = fixed
 
 library(lme4)
 

@@ -1,5 +1,3 @@
-if (getwd() != '/Users/jillian/R_projects/Allometry') setwd('Allometry')
-
 library(ape)
 library(nlme)
 library(multcomp)
