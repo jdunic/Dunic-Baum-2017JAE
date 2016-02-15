@@ -492,7 +492,51 @@ grid.text(
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
 
-dev.copy2eps(device = quartz, file = "panel_plots/gh_herb_panel_figure_label.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f5.eps")
+
+
+#-------------------------------------------------------------------------------
+# Corallivore plot
+#-------------------------------------------------------------------------------
+dev.new(height = 2.4, width = 2.7)
+master_layout <- 
+grid.layout(nrow = 2, ncol = 2, 
+            widths = unit(c(0.2, 1), "null"),
+            heights = unit(c(1, 0.2), "null"))
+
+grid.newpage()
+chorna <-
+mk_corallivore_plot(fg_point_df = c, spp_point_df = c, 
+    eqn_df = spp_sma_eqns[22, ], 
+    eqn_x = 440, eqn_y = 5.4, r2_x = 440, r2_y = 6.8,
+    n_x = 440, n_y = 8.2, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[5], 
+    x_axis_text = TRUE, y_axis_text = TRUE, plot_title = "Chaetodon ornatissimus") +
+    geom_abline(data = all_fg_GH_graph_df[5, ], 
+                aes(slope = slp, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 40)) +
+    geom_point(aes(x = 40, y = 5), alpha = 0) +
+    geom_point(aes(x = 40, y = 40), alpha = 0) 
+
+pushViewport(viewport(layout = master_layout))
+print(chorna, vp = set_vp(1, 2))
+grid.text("Figure 6", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = 0, vjust = 1)
+grid.text(
+    expression( paste("Gape height (", mm, ")", sep = "") ), 
+    vp = viewport(layout.pos.row = 1, layout.pos.col = 1),
+    rot = 90, gp = gpar(fontsize = 9), 
+    vjust = 2
+    )
+grid.text(
+    "Standard length (mm)",
+    vp = viewport(layout.pos.row = 2, layout.pos.col = 2),
+    vjust = -1.2, gp = gpar(fontsize = 9)
+    )
+
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f6.eps")
+
 
 #===============================================================================
 # Relative gape size
@@ -517,7 +561,7 @@ sp_name_by_slope <-
 spp_key <- data.frame(SpeciesCode, sp_name_by_slope)
 pento_by_slope <- merge(x = pento, y = spp_key, all.x = TRUE, all.y = FALSE)
 #pento_by_slope$SpeciesCode <- factor(pento_by_slope$SpeciesCode, levels = SpeciesCode)
-pento_by_slope$sp_name_by_slope <- factor(pento_by_slope$sp_name_by_slope, levels = sp_name_by_slope)
+pento_by_slope$sp_name_by_slope <- factor(pento_by_slope$sp_name_by_slope, levels = rev(sp_name_by_slope))
 
 #-------------------------------------------------------------------------------
 # Removing ceargu_out (CE.ARGU outlier)
