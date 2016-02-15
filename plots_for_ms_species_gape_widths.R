@@ -84,6 +84,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC,
     geom_abline(data = all_fg_GW_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGW_bySPP_graph_df[2, ], aes_string(x = 80, y = 100, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -98,6 +99,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA,
     geom_abline(data = all_fg_GW_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) +
     geom_text(data = allGW_bySPP_graph_df[3, ], aes_string(x = 80, y = 100, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -112,6 +114,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT,
     geom_abline(data = all_fg_GW_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGW_bySPP_graph_df[6, ], aes_string(x = 80, y = 100, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -126,6 +129,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.ARGU,
     geom_abline(data = all_fg_GW_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGW_bySPP_graph_df[4, ], aes_string(x = 80, y = 100, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -140,6 +144,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD,
     geom_abline(data = all_fg_GW_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGW_bySPP_graph_df[5, ], aes_string(x = 80, y = 100, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -154,6 +159,7 @@ mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA,
     geom_abline(data = all_fg_GW_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGW_bySPP_graph_df[1, ], aes_string(x = 80, y = 100, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -169,6 +175,7 @@ mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.ARCA,
     geom_abline(data = all_fg_GW_graph_df[2, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(5, 20, 50)) +
     geom_point(aes(x = 100, y = 7), alpha = 0) +
     geom_text(data = allGW_bySPP_graph_df[7, ], aes_string(x = 55, y = 45, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -183,6 +190,7 @@ mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.INSU,
     geom_abline(data = all_fg_GW_graph_df[2, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(5, 20, 50)) +
     geom_point(aes(x = 100, y = 7), alpha = 0) + 
     geom_text(data = allGW_bySPP_graph_df[9, ], aes_string(x = 55, y = 45, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -197,6 +205,7 @@ mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$MO.GRAN,
     geom_abline(data = all_fg_GW_graph_df[2, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(5, 20, 50)) +
     geom_point(aes(x = 100, y = 7), alpha = 0) +
     geom_text(data = allGW_bySPP_graph_df[8, ], aes_string(x = 55, y = 45, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -212,6 +221,7 @@ mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.BART,
     geom_abline(data = all_fg_GW_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(1, 5, 20)) +
     geom_text(data = allGW_bySPP_graph_df[13, ], aes_string(x = 30, y = 25, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 catere <-
@@ -225,6 +235,7 @@ mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CA.TERE,
     geom_abline(data = all_fg_GW_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(1, 5, 20)) +
     geom_text(data = allGW_bySPP_graph_df[10, ], aes_string(x = 30, y = 25, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 psdisp <-
@@ -237,7 +248,8 @@ mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.DISP,
     plot_title = "Pseudanthias dispar", gape_dim = 'gw') +
     geom_abline(data = all_fg_GW_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(1, 5, 20)) + 
     geom_text(data = allGW_bySPP_graph_df[14, ], aes_string(x = 30, y = 25, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 psoliv <-
@@ -250,7 +262,8 @@ mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.OLIV,
     plot_title = "Pseudanthias olivaceus", gape_dim = 'gw') +
     geom_abline(data = all_fg_GW_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(1, 5, 20)) + 
     geom_text(data = allGW_bySPP_graph_df[15, ], aes_string(x = 30, y = 25, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 pttile <-
@@ -263,7 +276,8 @@ mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$PT.TILE,
     plot_title = "Pterocaesio tile", gape_dim = 'gw') +
     geom_abline(data = all_fg_GW_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(1, 5, 20)) + 
     geom_text(data = allGW_bySPP_graph_df[11, ], aes_string(x = 30, y = 25, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 chvand <-
@@ -276,7 +290,8 @@ mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CH.VAND,
     plot_title = "Chromis vanderbilti", gape_dim = 'gw') +
     geom_abline(data = all_fg_GW_graph_df[3, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
-    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(1, 5, 20)) + 
     geom_text(data = allGW_bySPP_graph_df[12, ], aes_string(x = 30, y = 25, 
         label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
 
@@ -385,6 +400,7 @@ mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.NIGR,
     geom_abline(data = all_fg_GW_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 50)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) +
     geom_text(data = allGW_bySPP_graph_df[16, ], aes_string(x = 50, y = 50, 
               label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -399,6 +415,7 @@ mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$CE.FLAV,
     geom_abline(data = all_fg_GW_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 50)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) + 
     geom_text(data = allGW_bySPP_graph_df[18, ], aes_string(x = 50, y = 50, 
               label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -413,6 +430,7 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$CH.SORD,
     geom_abline(data = all_fg_GW_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 50)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) + 
     geom_text(data = allGW_bySPP_graph_df[19, ], aes_string(x = 50, y = 50, 
               label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -427,6 +445,7 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.RUBR,
     geom_abline(data = all_fg_GW_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 50)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) + 
     geom_text(data = allGW_bySPP_graph_df[21, ], aes_string(x = 50, y = 50, 
               label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -441,6 +460,7 @@ mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.OLIV,
     geom_abline(data = all_fg_GW_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 50)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) +
     geom_text(data = allGW_bySPP_graph_df[17, ], aes_string(x = 50, y = 50, 
               label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
@@ -455,6 +475,7 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.FREN,
     geom_abline(data = all_fg_GW_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 50)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) +
     geom_text(data = allGW_bySPP_graph_df[20, ], aes_string(x = 50, y = 50, 
               label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
