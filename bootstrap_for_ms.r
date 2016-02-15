@@ -201,7 +201,7 @@ slp_check_df <- data.frame(j_fg = c("Pi", "BI", "ZP", "He", "C"), iso = 0,
 
 # Create dataframe to determine whether sma regression was neg, iso, or pos
 # Checking allometry
-check_df <- ldply(bootSMA, function(x) slp_check(x))
+check_df <- ldply(bootSMA, function(x) slp_check(x, slope_value = 2))
 allo_check_df <- ddply(check_df, .(j_fg), summarise, 
              iso = sum(iso), neg = sum(neg), pos = sum(pos)
              )
