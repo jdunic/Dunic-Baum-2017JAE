@@ -597,6 +597,63 @@ mk_multipanel_plots2 <- function(fg_point_df, spp_point_df, spp_line_df_row,
   plot4  
 }
 
+mk_corallivore_plot <- function(fg_point_df, spp_point_df, 
+  #ref_intercept_row, 
+  eqn_df, eqn_x, eqn_y, r2_x, r2_y, n_x, n_y, x_axis_labels=TRUE, 
+  y_axis_labels=TRUE, fg_line_intercept, y_axis_text = TRUE, x_axis_text = TRUE,
+  plot_title = "", y_value, gape_dim = 'gh') 
+  {
+  plotTitle <- substitute(italic(plot_title), list(plot_title = plot_title))
+  plot_base <- 
+      ggplot(data = fg_point_df, aes_string(x = "SL", y = gape_dim)) +
+        geom_point(shape = 1, colour = "grey") +
+        geom_point(data = spp_point_df, colour = "black", shape = 1) +
+        scale_y_log10() +
+        scale_x_log10() +
+      geom_abline(intercept = fg_line_intercept, slope = 1, linetype = 2, 
+        colour = "darkgrey") +
+      theme_bw() +
+      theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+      theme(axis.line = element_line(color = 'black')) +
+      geom_text(data = eqn_df, aes_string(x = eqn_x, y = eqn_y, 
+        label = "eqn"), parse = TRUE, size = 3, hjust = 1) +
+      geom_text(data = eqn_df, aes_string(x = r2_x, y = r2_y, 
+        label = "r2"), parse = TRUE, size = 3, hjust = 1) +
+      geom_text(data = eqn_df, aes_string(x = n_x, y = n_y, 
+        label = "n"), parse = TRUE, size = 3, hjust = 1) +
+      labs(title = bquote(plain(.(plotTitle)))) +
+      theme(plot.title = element_text(size = 9), 
+            axis.text = element_text(size = 8),
+            axis.ticks.length = unit(-0.1, "cm"),
+            axis.text.y = element_text(margin = margin(0, 5, 0, 0)), 
+            axis.text.x = element_text(margin = margin(5, 0, 0, 0), vjust = 1))
+      #plot <- plot_base +
+  if (x_axis_labels == TRUE) {
+    plot1 <- plot_base + xlab("standard length, mm")
+  } else if (x_axis_labels == FALSE) {
+    plot1 <- plot_base + theme(axis.title.x = element_blank())
+  }
+  if (y_axis_labels == TRUE) {
+    plot2 <- plot1 + ylab(expression(paste("gape height, ", mm, "", sep= "")))
+  } else if (y_axis_labels == FALSE) {
+    plot2 <- plot1 + theme(axis.title.y = element_blank())
+  } 
+  if (y_axis_text == TRUE) {
+    plot3 <- plot2
+  } else if (y_axis_text == FALSE) {
+    plot3 <- plot2 + theme(axis.text.y = element_blank())
+  }
+  if (x_axis_text == TRUE) {
+    plot4 <- plot3
+  } else if (x_axis_text == FALSE) {
+    plot4 <- plot3 + theme(axis.text.x = element_blank())
+  }
+  plot4  
+}
+
+
 # This function is used for making the multipanel plots for a presentation
 # This has bigger fonts, and such.
 mk_multipanel_plots3 <- function(fg_point_df, spp_point_df, spp_line_df_row, 
