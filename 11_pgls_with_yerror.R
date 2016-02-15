@@ -293,8 +293,7 @@ summary(spp_err_iso_gw)
 
 # Slope comparison plots for MS
 fit.gls$data <- dplyr::filter(mean_spp_summ, codes != 'CH.ORNA')
-#v <- visreg(fit.gls)
-
+v <- visreg(fit.gls)
 v$fit$visregLwr <- as.data.frame(confint(fit.gls, param.CI=0.95))[[1]]
 v$fit$visregUpr <- as.data.frame(confint(fit.gls, param.CI=0.95))[[2]]
 
@@ -447,7 +446,7 @@ grid.text("Functional group", vp = viewport(layout.pos.row = 4, layout.pos.col =
 grid.text("Figure 2", vp = viewport(layout.pos.row = 4, layout.pos.col = 1:3),
     gp = gpar(fontsize = 9), vjust = 0, hjust = 1.5)
 
-dev.copy2eps(device = quartz, file = "panel_plots/phylogenetically_corrected_allometrice_slope_estimates.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f2.eps")
 
 
 #------------------------------------------------------------------------------
@@ -591,7 +590,7 @@ grid.text(
     )
 grid.text("Functional group", vp = viewport(layout.pos.row = 4, layout.pos.col = 3:6),
     gp = gpar(fontsize = 9), vjust = -1, hjust = 0.5)
-#grid.text("Figure 2", vp = viewport(layout.pos.row = 4, layout.pos.col = 1:3),
-#    gp = gpar(fontsize = 9), vjust = 0, hjust = 1.5)
+grid.text("Figure S1", vp = viewport(layout.pos.row = 4, layout.pos.col = 1:3),
+    gp = gpar(fontsize = 9), vjust = 0, hjust = 1.3)
 
-dev.copy2eps(device = quartz, file = "panel_plots/non-phylogenetically_corrected_allometrice_slope_estimates.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S1.eps")
