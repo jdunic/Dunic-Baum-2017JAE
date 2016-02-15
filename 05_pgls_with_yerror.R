@@ -7,6 +7,7 @@ library(dplyr)
 
 # Prepare phylogenetic tree and bootstrapped species data for analysis
 #-------------------------------------------------------------------------------
+# gape area coefficients
 boot_spp_summary <- read.csv('species_bootstrapped_coefficients_10000.csv')
 
 boot_spp_summary_gh <- 
