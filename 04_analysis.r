@@ -1412,7 +1412,7 @@ min_spp$y <- as.numeric(seq(1:29))
 min_spp$fg <- factor(min_spp$fg, levels=c('Pi', 'BI', 'He', 'ZP', 'C'))
 
 max_spp <- df[with(df, order(max)), ]
-max_spp$y <- as.numeric(seq(1:29))
+max_spp$y <- as.numeric(seq(1:22))
 
 
 min <- ggplot(data=min_spp, aes(x=min, y=y, colour=fg)) +
