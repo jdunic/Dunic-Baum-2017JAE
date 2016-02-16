@@ -20,26 +20,6 @@ extract_legend <- function(a.gplot){
   return(legend)
 }
 
-write_lme_gen <- function(df, y){
-  m = lm(log(y) ~ log(SL), df);
-  l <- list(a = format(coef(m)[1], digits = 2), 
-            b = format(coef(m)[2], digits = 2), 
-            r2 = format(summary(m)$r.squared, digits = 3)
-  )
-  
-  if (l$a >= 0) {
-    eq <- substitute(italic(y) == b %.% italic(x) + a*","~~italic(r)^2~"="~r2, l) 
-  } else {
-      l <- list(a = format(abs(coef(m)[1]), digits = 2), 
-                b = format(coef(m)[2], digits = 2), 
-                r2 = format(summary(m)$r.squared, digits = 3)
-    )
-    eq <- substitute(italic(y) == b %.% italic(x) - a*","~~italic(r)^2~"="~r2, l)
-  }
-  as.character(as.expression(eq))
-}
-
-
 write_sma_eqn <- function(df, y){
   m = lm(log(y) ~ log(SL), df);
   l <- list(a = format(coef(m)[1], digits = 2), 
@@ -118,83 +98,6 @@ get_sig <- function(p_val) {
     sig <- ''
     if (p_val < 0.05) sig <- "*"
     return(sig)
-}
-
-
-################################################################################
-#############                    Linear Models                      ############
-################################################################################
-
-fg_lm <- function(df, gape) {
-    lm <- lm(log(gape)~log(SL), data=df)
-    data.frame(int   = coefficients(lm)[1],
-               slope = coefficients(lm)[2],
-               rsq   = summary(lm)$r.squared,
-               se    = summary(lm)$coefficients[2,2],
-               p_val = summary(lm)$coef[2,4],
-               lw_conf_slp = confint(lm, level = 0.95)[2,1],
-               up_conf_slp = confint(lm, level = 0.95)[2,2],
-               lw_conf_int = confint(lm, level = 0.95)[1,1],
-               up_conf_int = confint(lm, level = 0.95)[1,2]
-               )
-}
-
-groupwise_lm_gh <- function(df, variable) {
-  lm  <- with(data=df, ddply(df, .(variable), function(z) {
-    t <- lm(log(gh)~log(SL), data=z)
-    data.frame(int    = coefficients(t)[1],
-               slope  = coefficients(t)[2],
-               rsq    = summary(t)$r.squared,
-               se     = summary(t)$coefficients[2,2],
-               p_val  = summary(t)$coef[2,4],
-               lw_conf_slp = confint(t, level = 0.95)[2,1],
-               up_conf_slp = confint(t, level = 0.95)[2,2],
-               lw_conf_int = confint(t, level = 0.95)[1,1],
-               up_conf_int = confint(t, level = 0.95)[1,2])
-  }))
-}
-
-groupwise_lm_gw <- function(df, variable) {
-  lm  <- with(data=df, ddply(df, .(variable), function(z) {
-    t <- lm(log(gw)~log(SL), data=z)
-    data.frame(int    = coefficients(t)[1],
-               slope  = coefficients(t)[2],
-               rsq    = summary(t)$r.squared,
-               se     = summary(t)$coefficients[2,2],
-               p_val  = summary(t)$coef[2,4],
-               lw_conf_slp = confint(t, level = 0.95)[2,1],
-               up_conf_slp = confint(t, level = 0.95)[2,2],
-               lw_conf_int = confint(t, level = 0.95)[1,1],
-               up_conf_int = confint(t, level = 0.95)[1,2])
-  }))
-}
-
-groupwise_lm_ga <- function(df, variable) {
-  lm  <- with(data=df, ddply(df, .(variable), function(z) {
-    t <- lm(log(ga)~log(SL), data=z)
-    data.frame(int    = coefficients(t)[1],
-               slope  = coefficients(t)[2],
-               rsq    = summary(t)$r.squared,
-               se     = summary(t)$coefficients[2,2],
-               p_val  = summary(t)$coef[2,4],
-               lw_conf_slp = confint(t, level = 0.95)[2,1],
-               up_conf_slp = confint(t, level = 0.95)[2,2],
-               lw_conf_int = confint(t, level = 0.95)[1,1],
-               up_conf_int = confint(t, level = 0.95)[1,2])
-  }))
-}
-
-
-awesome <- function(lm) {
-  ldply(lm, function(model) {
-    c(
-      "coefs" = coef(model),
-      "confint" = confint(model, level=0.95),
-      "rsq" = summary(model)$r.squared,
-      "se" = summary(model)$coefficients[2,2],
-      "p_val" = summary(model)$coefficients[2,4]
-    )
-  })
 }
 
 ################################################################################
@@ -516,29 +419,6 @@ mk_SMAfacets2 <- function( df_points, df_lines, gapeType = c("gh", "gw", "ga"),
   scales = "free")
 }
 
-mk_multipanel_plots1 <- function(point_df, colour, line_df_row, ref_intercept_row)
-ggplot(data = point_df, aes_string(x = "SL", y = "ga")) +
-    geom_segment(data = line_df_row, aes_string(x = "from", xend = "to", 
-     y = "yfrom", yend = "yto")) +
-    geom_point(colour = colour) +
-    scale_y_log10(limits = c(1, 12000)) +
-    scale_x_log10(limits = c(1, 1100)) +
-    theme(axis.title.x = element_blank()) +
-    theme(axis.title.y = element_blank()) +
-    #xlab("log(standard length, mm)") +     
-    #ylab(expression(paste("log(gape area ", mm^2, ")", sep= ""))) + 
-  geom_abline(intercept = ref_intercept_row, slope = 2, linetype = 2, 
-    colour = "darkgrey") +
-  theme_bw() +
-  theme( plot.background = element_blank(), 
-    panel.grid.major = element_blank(), 
-    panel.grid.minor = element_blank(), 
-    panel.border = element_blank(), 
-    panel.background = element_blank()
-  ) +
-    theme(axis.line = element_line(color = 'black'))
-
-
 mk_multipanel_plots2 <- function(fg_point_df, spp_point_df, spp_line_df_row, 
   #ref_intercept_row, 
   eqn_df, eqn_x, eqn_y, r2_x, r2_y, n_x, n_y, x_axis_labels=TRUE, 
@@ -654,72 +534,6 @@ mk_corallivore_plot <- function(fg_point_df, spp_point_df,
 }
 
 
-# This function is used for making the multipanel plots for a presentation
-# This has bigger fonts, and such.
-mk_multipanel_plots3 <- function(fg_point_df, spp_point_df, spp_line_df_row, 
-  #ref_intercept_row, 
-  eqn_df, eqn_x, eqn_y, r2_x, r2_y, n_x, n_y, x_axis_labels=TRUE, 
-  y_axis_labels=TRUE, fg_line_intercept, y_axis_text = TRUE, x_axis_text = TRUE,
-  plot_title = "") 
-  {
-  plotTitle <- substitute(plot_title, list(plot_title = plot_title))
-  plot_base <- 
-      ggplot(data = fg_point_df, aes_string(x = "SL", y = "ga")) +
-        geom_point(shape = 1, colour = "grey") +
-        geom_segment(data = spp_line_df_row, aes_string(x = "from", xend = "to", 
-         y = "yfrom", yend = "yto")) +
-        geom_point(data = spp_point_df, colour = "black", shape = 19,) +
-        scale_y_log10(limits = c(0.8, 17000), breaks = c(1, 10, 100, 1000, 10000)) +
-        scale_x_log10(limits = c(15, 700), breaks = c(50, 100, 500)) +
-        #xlab("log(standard length, mm)") +     
-        #ylab(expression(paste("log(gape area ", mm^2, ")", sep= ""))) + 
-      #geom_abline(intercept = ref_intercept_row, slope = 2, linetype = 2, 
-       # colour = "darkgrey") +
-      geom_abline(intercept = fg_line_intercept, slope = 2, linetype = 2, 
-        colour = "darkgrey") +
-      theme_bw() +
-      theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
-      theme(axis.line = element_line(color = 'black')) +
-      geom_text(data = eqn_df, aes_string(x = eqn_x, y = eqn_y, 
-        label = "eqn"), parse = TRUE, size = 6, hjust = 1) +
-      geom_text(data = eqn_df, aes_string(x = r2_x, y = r2_y, 
-        label = "r2"), parse = TRUE, size = 6, hjust = 1) +
-      geom_text(data = eqn_df, aes_string(x = n_x, y = n_y, 
-        label = "n"), parse = TRUE, size = 6, hjust = 1) +
-      labs(title = bquote(plain(.(plotTitle)))) +
-      #labs(title = bquote(italic(.(plotTitle)))) +
-      theme(plot.title = element_text(size = 20)) +
-      theme(axis.text = element_text(size = 14)) +
-      theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
-      #theme(axis.ticks.length = unit(-0.1, "cm")) +
-      #theme(axis.ticks.margin = unit(0.3, "cm"))
-      #plot <- plot_base +
-  if (x_axis_labels == TRUE) {
-    plot1 <- plot_base + xlab("standard length, mm")
-  } else if (x_axis_labels == FALSE) {
-    plot1 <- plot_base + theme(axis.title.x = element_blank())
-  }
-  if (y_axis_labels == TRUE) {
-    plot2 <- plot1 + ylab(expression(paste("gape area, ", mm^2, "", sep= "")))
-  } else if (y_axis_labels == FALSE) {
-    plot2 <- plot1 + theme(axis.title.y = element_blank())
-  } 
-  if (y_axis_text == TRUE) {
-    plot3 <- plot2
-  } else if (y_axis_text == FALSE) {
-    plot3 <- plot2 + theme(axis.text.y = element_blank())
-  }
-  if (x_axis_text == TRUE) {
-    plot4 <- plot3
-  } else if (x_axis_text == FALSE) {
-    plot4 <- plot3 + theme(axis.text.x = element_blank())
-  }
-  plot4  
-}
-
-
 mk_SMAplot <- function(df_points, df_lines, facets = TRUE, x = "SL", gapeType = 
   c("gh", "gw", "ga"), grouping = c("j_fg", "Family", "SpeciesCode", "Region", 
   "dissected_by"), labels = c("Region", "Region_colour", "dissected_by",  
@@ -798,91 +612,6 @@ set_vp <- function(row, column) {
   viewport(layout.pos.row = row, layout.pos.col = column)
 }
 
-
-
-
-# groupwise_lm_gh <- function(df, variable) {
-#   lm  <- with(data=df, ddply(df, .(variable), function(z) {
-#     t <- lm(log(gh)~log(SL), data=z)
-#     data.frame(int   = coefficients(t)[1],
-#                slope = coefficients(t)[2],
-#                rsq   = summary(t)$r.squared,
-#                se    = summary(t)$coefficients[2,2],
-#                p_val = summary(t)$coef[2,4])
-#   }))
-# }
-# 
-# groupwise_lm_gw <- function(df, variable) {
-#   lm  <- with(data=df, ddply(df, .(variable), function(z) {
-#     t <- lm(log(gw)~log(SL), data=z)
-#     data.frame(int   = coefficients(t)[1],
-#                slope = coefficients(t)[2],
-#                rsq   = summary(t)$r.squared,
-#                se    = summary(t)$coefficients[2,2],
-#                p_val = summary(t)$coef[2,4])
-#   }))
-# }
-# 
-# groupwise_lm_ga <- function(df, variable) {
-#   lm  <- with(data=df, ddply(df, .(variable), function(z) {
-#     t <- lm(log(ga)~log(SL), data=z)
-#     data.frame(int   = coefficients(t)[1],
-#                slope = coefficients(t)[2],
-#                rsq   = summary(t)$r.squared,
-#                se    = summary(t)$coefficients[2,2],
-#                p_val = summary(t)$coef[2,4])
-#   }))
-# }
-# 
-# call_master_df <- function(lm) {
-#     coefs <- ldply(lm, coef)
-#     rsq   <- function(lm) c("rsqd"  = summary(lm)$r.squared)
-#     se    <- function(lm) c("SE"    = summary(lm)$coefficients[2,2])
-#     p_val <- function(lm) c("p_val" = summary(lm)$coefficients[2,4])
-#     spp.n <- ddply(.data = p, .(SpeciesCode), summarize, 
-#                    n     = paste("n ==", length(SpeciesCode))
-#                    )
-#     dfs <- list(coefs,
-#                 rsqs   <- ldply(lm, rsq),
-#                 ses    <- ldply(lm, se),
-#                 p_vals <- ldply(lm, p_val),
-#                 spp.n)
-#     all <- join_all(dfs, by="SpeciesCode")
-# }
-
-# Function that generates data
-
-# Example dataframe produced by using above groupwise function
-# test <- groupwise_lm_gh(fish, fish$SpeciesCode)
-
-
-write_lme_groups <- function(summ_df, variable) {
-  df <- summ_df
-  m = matrix(data=NA, nrow=0, ncol=2)
-  len <- length(variable)
-  for (i in (1:len)) {
-    l <- list(slp = format(df[[3]][i], digits=2),
-              int = format(df[[2]][i], digits=2), 
-              r2 = format(df[[4]][i], digits=2)
-    )
-    if (l$int >= 0) {
-      eqn <- substitute(italic(y) ==
-                          slp%.%italic(x) + int*~~italic(r)^2~"="~r2, l)
-    } else {
-        l <- list(slp = format(df[[3]][i], digits=2),
-                  int = format(abs(df[[2]][i]), digits=2), 
-                  r2 = format(df[[4]][i], digits=2)
-      )
-      eqn <- substitute(italic(y) ==
-                          slp%.% italic(x) - int*~~italic(r)^2~"="~r2, l)
-    }
-    #browser()
-    lm_eq <- as.character(as.expression(eqn)) 
-    m <- rbind(m, c(as.character(df[[1]][i]), lm_eq))
-    #m <- rbind(m, c(as.character(df[i,1]), lm_eq))
-  }
-  m <- as.data.frame(m)
-}
 
 
 ################################################################################
