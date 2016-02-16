@@ -225,34 +225,6 @@ spp_err_iso_gw <- glht(fit.gls_gw, linfct = c('fgPi = 1',
 summary(spp_err_iso_gw)
 
 
-# Multiple comparisons
-#-------------------------------------------------------------------------------
-# Functions from: 
-# http://rstudio-pubs-static.s3.amazonaws.com/13472_0daab9a778f24d3dbf38d808952455ce.html
-
-#model.matrix.gls <- function(object, ...) {
-#    model.matrix(terms(object), data = getData(object), ...)
-#}
-#model.frame.gls <- function(object, ...) {
-#    model.frame(formula(object), data = getData(object), ...)
-#}
-#terms.gls <- function(object, ...) {
-#    terms(model.frame(object), ...)
-#}
-
-# The line below gives pairwise comparisons now.  Note that the above
-# performs t-tests for all pairwise differences.
-#multCompTukey <- glht(fit.gls, linfct = mcp(fg = "Tukey"))
-
-#multCompTukey <- glht(fit.gls_gh, mcp(fg = "Tukey"))
-
-#summary(multCompTukey)
-
-
-#multCompTukey <- glht(fit.gls_gw, mcp(fg = "Tukey"))
-
-#summary(multCompTukey)
-
 
 #-------------------------------------------------------------------------------
 # Double check that our modified pgls with y-error matches under the test case
