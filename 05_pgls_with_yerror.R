@@ -561,7 +561,7 @@ grid.text(
     )
 grid.text("Functional group", vp = viewport(layout.pos.row = 4, layout.pos.col = 3:6),
     gp = gpar(fontsize = 9), vjust = -1, hjust = 0.5)
-grid.text("Figure S1", vp = viewport(layout.pos.row = 4, layout.pos.col = 1:3),
+grid.text("Figure S2", vp = viewport(layout.pos.row = 4, layout.pos.col = 1:3),
     gp = gpar(fontsize = 9), vjust = 0, hjust = 1.3)
 
-dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S1.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S2.eps")

@@ -311,7 +311,7 @@ print(pttile, vp = set_vp(7, 3))
 print(chvand, vp = set_vp(7, 4))
 
 # Figure label
-grid.text("Figure 4", vp = viewport(layout.pos.row = 8, layout.pos.col = 1),
+grid.text("Figure 5", vp = viewport(layout.pos.row = 8, layout.pos.col = 1),
     gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 
 # piscs
@@ -363,7 +363,7 @@ grid.text(
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
 
-dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f4.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f5.eps")
 
 #-------------------------------------------------------------------------------
 # Multipanel herbivores
@@ -478,7 +478,7 @@ print(scfren, vp = set_vp(2, 3))
 print(scrubr, vp = set_vp(2, 4))
 
 # Figure label
-grid.text("Figure 5", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+grid.text("Figure 6", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
     gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 grid.text(
     expression( paste("Gape height (", mm, ")", sep = "") ), 
@@ -492,7 +492,7 @@ grid.text(
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
 
-dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f5.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f6.eps")
 
 
 #-------------------------------------------------------------------------------
@@ -521,7 +521,7 @@ mk_corallivore_plot(fg_point_df = c, spp_point_df = c,
 
 pushViewport(viewport(layout = master_layout))
 print(chorna, vp = set_vp(1, 2))
-grid.text("Figure 6", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+grid.text("Figure 3", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
     gp = gpar(fontsize = 9), hjust = 0, vjust = 1)
 grid.text(
     expression( paste("Gape height (", mm, ")", sep = "") ), 
@@ -535,7 +535,7 @@ grid.text(
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
 
-dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f6.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f3.eps")
 
 
 #===============================================================================
@@ -627,10 +627,10 @@ pushViewport(viewport(layout = master_layout))
 print(rel_gh, vp = set_vp(1, 2))
 
 # Figure label
-grid.text("Figure 3", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+grid.text("Figure 4", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
     gp = gpar(fontsize = 9), hjust = 0, vjust = 0)
 
-dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f3.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_f4.eps")
 
 
 #===============================================================================

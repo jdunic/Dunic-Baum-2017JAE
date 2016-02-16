@@ -383,11 +383,11 @@ grid.text(
     vp = viewport(layout.pos.row = 8, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
-grid.text("Figure S3", vp = viewport(layout.pos.row = 8, layout.pos.col = 1),
+grid.text("Figure S4", vp = viewport(layout.pos.row = 8, layout.pos.col = 1),
     gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 
 
-dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S3.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S4.eps")
 
 #-------------------------------------------------------------------------------
 # Multipanel herbivores
@@ -514,10 +514,10 @@ grid.text(
     vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
-grid.text("Figure S4", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+grid.text("Figure S5", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
     gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
 
-dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S4.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S5.eps")
 
 #-------------------------------------------------------------------------------
 # Corallivore plot
@@ -559,10 +559,10 @@ grid.text(
     vp = viewport(layout.pos.row = 2, layout.pos.col = 2),
     vjust = -1.2, gp = gpar(fontsize = 9)
     )
-grid.text("Figure S5", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+grid.text("Figure S1", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
     gp = gpar(fontsize = 9), hjust = 0, vjust = 1)
 
-dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S5.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S1.eps")
 
 
 
@@ -656,100 +656,7 @@ pushViewport(viewport(layout = master_layout))
 print(rel_gw, vp = set_vp(1, 2))
 
 # Figure label
-grid.text("Figure S2", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+grid.text("Figure S3", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
     gp = gpar(fontsize = 9), hjust = 0, vjust = 0)
-dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S2.eps")
-
-
-#===============================================================================
-# Predator prey size graphs
-#===============================================================================
-
-#===============================================================================
-# STANDARD LENGTH PRED - PREY
-# Graphs for piscivores prey size - predator STANDARD LENGTH
-P_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'Pi'), ]
-df.n <- ddply(.data=P_prey_SL, .(j_fg), summarize, n=paste("n ==", length(SL)))
-pisc_prey <-
-ggplot(data = P_prey_SL, aes(x = SL, y = pSize)) +
-  geom_point(aes(shape = pType)) +
-  scale_shape_manual(values=c(1, 19)) +
-  geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
-            size = 3, hjust = 0) +
-  theme_bw() +
-  theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
-  theme(axis.line = element_line(color = 'black')) +
-  theme(legend.position = "none") +
-  theme(axis.title = element_blank()) +
-  #geom_smooth(method = "lm") +
-  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
-                colour = "black") +
-  theme(axis.ticks.length = unit(-0.2, "cm"),
-        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
-        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1))
-
-# Benthic invertivore stomach contents for predator STANDARD LENGTH
-B_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'BI'), ]
-# Graph of just benthic invertivore stomach contents:
-df.n <- ddply(.data=B_prey_SL, .(j_fg), summarize, n=paste("n ==", length(j_fg)))
-benth_prey <- 
-ggplot(data = B_prey_SL, aes(x = SL, y = pSize)) +
-  geom_point(aes(shape = pType)) +
-  geom_point(aes(x = 510, y = 100), alpha = 0.0) +
-  geom_point(aes(x = 49, y = 258), alpha = 0.0) +
-  scale_shape_manual(values=c(1, 19)) +
-  geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
-            size = 3, hjust = 0) +
-  theme_bw() +
-  theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
-  theme(axis.line = element_line(color = 'black')) +
-  theme(legend.position = "none") +
-  theme(axis.title = element_blank()) +
-  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
-                colour = "black") +
-  theme(axis.ticks.length = unit(-0.2, "cm"), 
-        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
-        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1))
-
-#camela_prey_SL <- prey_PiBI[which(prey_PiBI$SpeciesCode == 'CA.MELA'), ]
-#ggplot(data = camela_prey_SL, aes(x = SL, y = pSize)) +
- # geom_point(aes(shape = pType))
-
-dev.new(height = 3.2, width = 7.5)
-
-master_layout <- 
-grid.layout(nrow = 2, ncol = 4, 
-      widths = unit(c(0.1, 1, 0.1, 1), "null"),
-      heights = unit(c(1, 0.15), "null"))
-grid.newpage()
-pushViewport(viewport(layout = master_layout))
-print(pisc_prey, vp = set_vp(1, 2))
-print(benth_prey, vp = set_vp(1, 4))
-grid.text(
-  expression( paste("Standard length (", mm, ")", sep = "") ), 
-  vp = viewport(layout.pos.row = 2, layout.pos.col = 2:4), 
-  gp = gpar(fontsize = 10), vjust = -0.25
-  )
-grid.text(
-  "Prey total length (mm)",
-  vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
-  gp = gpar(fontsize = 10), rot = 90, vjust = 1.7
-  )
-grid.text(
-  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
-  gp = gpar(fontsize = 9), vjust = -13
-  )
-grid.text(
-  "b)", vp = viewport(layout.pos.row = 1, layout.pos.col = 3), 
-  gp = gpar(fontsize = 9), vjust = -13
-  )
-# Figure label
-grid.text("Figure 6", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
-    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
-
-dev.copy2eps(device = quartz, file = "panel_plots/pred_prey_SL_figure_label.eps")
+dev.copy2eps(device = quartz, file = "panel_plots/DunicBaum_S3.eps")
 
