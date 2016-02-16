@@ -7,8 +7,8 @@ pGW <- sma(gw~SL, data=p, log="xy", method="SMA", robust=T, slope.test=1)
 pGA <- sma(ga~SL, data=p, log="xy", method="SMA", robust=T, slope.test=2)
 
 # verifying SMA assumptions
-check_assump(pGH)
-check_assump(pGW)
+check_assump(pGH, "Pi Gape Height")
+check_assump(pGW, "Pi Gape Width")
 check_assump(pGA, "Pi Gape Area")
 
 # Benthic Invertivores
@@ -17,8 +17,8 @@ bGW <- sma(gw~SL, data=b, log="xy", method="SMA", robust=T, slope.test=1)
 bGA <- sma(ga~SL, data=b, log="xy", method="SMA", robust=T, slope.test=2)
 
 # verifying SMA assumptions
-check_assump(bGH)
-check_assump(bGW)
+check_assump(bGH, "BI Gape Height")
+check_assump(bGW, "BI Gape Width")
 check_assump(bGA, "BI Gape Area")
 
 # Zooplanktivores
@@ -28,8 +28,8 @@ zGA <- sma(ga~SL, data=zp, log="xy", method="SMA", robust=T, slope.test=2)
 zGH
 
 # verifying SMA assumptions
-check_assump(zGH)
-check_assump(zGW)
+check_assump(zGH, "ZP Gape Height")
+check_assump(zGW, "ZP Gape Width")
 check_assump(zGA, "Zp Gape Area")
 
 # Herbivores
@@ -39,8 +39,8 @@ hGA <- sma(ga~SL*Region, data=h, log="xy", method="SMA", robust=T, slope.test=2)
 hGH
 
 # verifying SMA assumptions
-check_assump(hGH)
-check_assump(hGW)
+check_assump(hGH, "H Gape Height")
+check_assump(hGW, "H Gape Width")
 check_assump(hGA, "He Gape Area by Region")
 
 # Corallivores
@@ -52,8 +52,8 @@ cGH
 plot(cGH)
 
 # verifying SMA assumptions
-check_assump(cGH)
-check_assump(cGW)
+check_assump(cGH, "Co Gape Height")
+check_assump(cGW, "Co Gape Width")
 check_assump(cGA, "Co Gape Area by Region")
 
 
