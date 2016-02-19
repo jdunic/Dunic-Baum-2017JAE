@@ -541,7 +541,7 @@ mk_SMAplot <- function(df_points, df_lines, facets = TRUE, x = "SL", gapeType =
   plot_base <- ggplot(data = df_points, aes_string(x = x, y = gapeType)) +
   scale_y_log10() +
   scale_x_log10() +
-  xlab("log(standard length, mm)") +
+  xlab("standard length (mm)") +
   theme_bw() +
   theme(panel.border = element_blank(),
         panel.grid.major = element_blank(),
@@ -549,10 +549,13 @@ mk_SMAplot <- function(df_points, df_lines, facets = TRUE, x = "SL", gapeType =
   theme(axis.line = element_line(color = 'black')) +
   #labs(title = bquote(plain(.(plotTitle)))) +
       #labs(title = bquote(italic(.(plotTitle)))) +
-  theme(axis.text = element_text(size = 8)) +
-  theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
   theme(axis.ticks.length = unit(-0.2, "cm")) +
-  theme(axis.ticks.margin = unit(0.3, "cm"))
+  theme(axis.text = element_text(size = 8),
+        axis.ticks.length = unit(-0.1, "cm"),
+        axis.text.y = element_text(margin = margin(0, 5, 0, 0)), 
+        axis.text.x = element_text(margin = margin(5, 0, 0, 0), vjust = 1)) + 
+  scale_x_log10(breaks=number_ticks(3)) +
+  scale_y_log10(breaks=number_ticks(3))
   if (facets == FALSE) {
     plot1 <- plot_base + geom_point( aes_string(colour = grouping), size = 1.5 ) +
              geom_segment(data = df_lines, aes(x = from, xend = to, y = yfrom, 
@@ -567,9 +570,9 @@ mk_SMAplot <- function(df_points, df_lines, facets = TRUE, x = "SL", gapeType =
     "None" = { plot1 <- plot1 }
       )
     switch(gapeType,
-      "gh" = { plot1 + ylab("log(vertical gape, mm)") },
-      "gw" = { plot1 + ylab("log(horizontal gape, mm)") },
-      "ga" = { plot1 + ylab(expression(paste("log(gape area ", mm^2, ")", 
+      "gh" = { plot1 + ylab("gape height (mm)") },
+      "gw" = { plot1 + ylab("gape width, (mm)") },
+      "ga" = { plot1 + ylab(expression(paste("gape area (", mm^2, ")",  
         sep= ""))) }
       )
   } else if (facets == TRUE) {
@@ -592,9 +595,9 @@ mk_SMAplot <- function(df_points, df_lines, facets = TRUE, x = "SL", gapeType =
     "None" = { plot2 <- plot2 }
       )
     switch(gapeType,
-      "gh" = { plot3 <- plot2 + ylab("log(vertical gape, mm)") },
-      "gw" = { plot3 <- plot2 + ylab("log(horizontal gape, mm)") },
-      "ga" = { plot3 <- plot2 + ylab(expression(paste("log(gape area ", mm^2, ")", 
+      "gh" = { plot3 <- plot2 + ylab("gape height (mm)") },
+      "gw" = { plot3 <- plot2 + ylab("gape width (mm)") },
+      "ga" = { plot3 <- plot2 + ylab(expression(paste("gape area (", mm^2, ")", 
         sep= ""))) }
       )
     switch(grouping,
