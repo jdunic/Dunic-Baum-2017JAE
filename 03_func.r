@@ -87,10 +87,10 @@ count_spp <- function(df) {
 }
 
 # test whether a slope is allometric 
-get_allometry <- function(slope, p_val) {
+get_allometry <- function(slope, p_val, iso_val = 1) {
     allometry <- 'I'
-    if (p_val < 0.05 & slope < 1) allometry <- 'N'
-    if (p_val < 0.05 & slope > 1) allometry <- 'P'
+    if (p_val <= 0.05 & slope < iso_val) allometry <- 'N'
+    if (p_val <= 0.05 & slope > iso_val) allometry <- 'P'
     return(allometry)
 }
 
