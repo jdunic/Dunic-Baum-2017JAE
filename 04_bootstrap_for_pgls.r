@@ -14,8 +14,8 @@ resample_spp <- function(data) {
 }
 
 # Get 100 resamples - for now. This should be bumped up to 10 000
-#n <- 10000
-#spp_resamples <- rlply(.n = n, ddply(pento, .(SpeciesCode), resample_spp), .progress = 'text') 
+n <- 10000
+spp_resamples <- rlply(.n = n, ddply(pento, .(SpeciesCode), resample_spp), .progress = 'text') 
 
 # Species bootstrap commented out so that I don't accidentally do it again. 
 # Takes a long time.
@@ -47,7 +47,18 @@ resample_spp <- function(data) {
 #   }, .progress = 'text')
 #beep()
 
-#boot_spp_SMA_gh_mass <- llply(spp_resamples[1:1000], function(x) {
+#boot_spp_SMA_gh_mass <- llply(spp_resamples, function(x) {
+#  spp_sma <- tryCatch(
+#        sma(gh ~ wt * SpeciesCode, data = x, log = "xy", 
+#                       method = "SMA", robust = T, slope.test = 3), 
+#        error = function(e) e, 
+#        warning = function(w) w
+#    )
+#    if (inherits(spp_sma, 'try-error')) { next }
+#    return(spp_sma)
+#   }, .progress = 'text')
+
+#boot_spp_SMA_gw_mass <- llply(spp_resamples, function(x) {
 #  spp_sma <- tryCatch(
 #        sma(gw ~ wt * SpeciesCode, data = x, log = "xy", 
 #                       method = "SMA", robust = T, slope.test = 3), 
@@ -103,3 +114,26 @@ boot_spp_summary_gw <- rbind.fill(boot_spp_summ_list_gw)
 #write.csv(boot_spp_summary, 'species_bootstrapped_coefficients_10000.csv')
 #write.csv(boot_spp_summary_gh, 'gape_height_species_bootstrapped_coefficients_10000.csv')
 #write.csv(boot_spp_summary_gw, 'gape_width_species_bootstrapped_coefficients_10000.csv')
+
+boot_spp_summ_list_gh_mass <- list()
+for (i in 1:length(boot_spp_SMA_gh_mass)) {
+    summ <- boot_spp_SMA_gh_mass[[i]]$groupsummary
+    if (is.null(summ)) {
+        next
+    }
+    boot_spp_summ_list_gh_mass[[i]] <- summ    
+}
+
+boot_spp_summ_list_gw_mass <- list()
+for (i in 1:length(boot_spp_SMA_gw_mass)) {
+    summ <- boot_spp_SMA_gw_mass[[i]]$groupsummary
+    if (is.null(summ)) {
+        next
+    }
+    boot_spp_summ_list_gw_mass[[i]] <- summ  
+}
+
+boot_spp_summary_gh_mass <- rbind.fill(boot_spp_summ_list_gh_mass)
+boot_spp_summary_gw_mass <- rbind.fill(boot_spp_summ_list_gw_mass)
+#write.csv(boot_spp_summary_gh_mass, 'gape_height_mass_species_bootstrapped_coefficients_10000.csv')
+#write.csv(boot_spp_summary_gw_mass, 'gape_width_mass_species_bootstrapped_coefficients_10000.csv')
