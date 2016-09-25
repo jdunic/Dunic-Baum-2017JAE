@@ -2,41 +2,15 @@
 ############             Entering and Cleaning Data                 ############
 ################################################################################
 
-# BAD CLEANING STRATEGY:
-# using row indices instead of actual field values means that good rows were 
-# deleted as the dataframe row indices changed with each 'deletion'
-# Remove PS.COOP and AC.TRIOS because low n, but more so because there is no 
-# size gradient
-# Which rows have PS.COOP and AC.TRIOS?
-#ps_coop <- which(fish$SpeciesCode==('PS.COOP'))
-#ct_marg <- which(fish$SpeciesCode==('CT.MARG'))
-#ch_auri <- which(fish$SpeciesCode == 'CH.AURI')
-#me_nige <- which(fish$SpeciesCode == 'ME.NIGE')
-#ch_marg <- which(fish$SpeciesCode == 'CH.MARG')
-#ct_marg <- which(fish$SpeciesCode == 'CT.MARG')
-#ct_stri <- which(fish$SpeciesCode == 'CT.STRI')
-#ce_lori <- which(fish$SpeciesCode == 'CE.LORI')
-#pl_dick <- which(fish$SpeciesCode == 'PL.DICK')
-##extra_sites <- which(fish$Region == 'EXTRA')
-#site_unknown <- which(fish$Site == 'Site Not Certain')
-#lu_kasm <- which(fish$SpeciesCode == 'LU.KASM')
-#kif12_130 <- which(fish$SpecimenID == 'KIF12_130')
-#kif11_319 <- which(fish$SpecimenID == 'KIF11_319')
-#kif12_050 <- which(fish$SpecimenID == "KIF12_050") # obvious outlier
-#ao <- which(fish$dissected_by == "AO" | fish$dissected_by == "angeleen")
-
-# BAD BAD BAD BAD BAD
-#fish <- fish[-c(ps_coop, ch_marg, ch_auri, me_nige, ct_marg, ct_stri, ce_lori, 
-#                lu_kasm, site_unknown, kif12_130, kif11_319, kif12_050, ao, 
-#                pl_dick), ]
-
-# More robust system
+# Remove species for which there were not enough samples
 excluded_spp <- c('PS.COOP', 'CT.MARG', 'CH.AURI', 'ME.NIGE', 'CH.MARG', 'CT.STRI', 
                   'CE.LORI', 'PL.DICK', 'LU.KASM')
+# Remove erroneous fish and observations
 excluded_ids <- c('KIF12_130', 'KIF11_319', 'KIF12_050')
+# 
 excluded_sites <- c('Site Not Certain')
+# Observer error - systematically had lower sample sizes
 excluded_obs <- c('AO', 'angeleen')
-
 
 fish <- fish[!fish$SpeciesCode %in% excluded_spp, ]
 fish <- fish[!fish$SpecimenID %in% excluded_ids, ]
@@ -44,21 +18,18 @@ fish <- fish[!fish$Site %in% excluded_sites, ]
 fish <- fish[!fish$dissected_by %in% excluded_obs, ]
 
 # setting site 26 which is currently noted as EXTRA to LP.MF
+# was assigned this new categorisation after the initial data collection 
+# as part of a larger project
 fish[which(fish$Site == 26), ]$Region <- "LP.MF"
 
-
-# Remove fish where site == "Site Not Certain"
-#no_site <- which(fish$Site == "Site Not Certain")
-#fish <- fish[-no_site, ]
-
-# Including area and relative gape sizes:
+# Calculate gape area (estimated to be an ellipse) and relative gape sizes:
 fish$ga <- with(fish, pi*(gh/2)*(gw/2))
 
 fish$gh_ratio <- fish$gh/fish$SL
 fish$gw_ratio <- fish$gw/fish$SL
 fish$ga_ratio <- fish$ga/(fish$SL^2)
 
-
+# Set factor levels. 'Om' and 'De' are now deprecated.
 fish$j_fg <- factor(fish$j_fg, levels = c("Pi", "BI", "ZP", "He", 
                                           "C", "Om", "De"))
 
@@ -201,7 +172,7 @@ pento$Family <- factor(pento$Family, levels=c("Carangidae",
                                             "Pomacentridae",
                                             "Acanthuridae",
                                             "Pomacanthidae",
-                                            "Scaridae",
+                                            "Labridae",
                                             "Chaetodontidae")
 )
 
@@ -254,10 +225,11 @@ h_spp_dfs <- split(h, h$SpeciesCode, drop=TRUE)
 ################################################################################
 ddply(pento[which(pento$SpeciesCode %in% c("CE.UROD", "CE.ARGU")), ], .(SpeciesCode), summarise, mean_gw_ratio = mean(gw_ratio))
 
+# calculate gape area in the prey dataset
 prey$ga <- with(prey, pi*(gh/2)*(gw/2))
+# Remove unnecessary columns
 prey <- prey[, !(colnames(prey) %in% c("PreySize", "CollectionNotes", "StomachContents", "DissectionNotes"))]
 
-#pTypeNA <- which(is.na(prey$PreySize) == TRUE)
 
 dim(prey)
 prey1 <- prey[which(is.na(prey$pSize) == FALSE), ]
@@ -312,8 +284,6 @@ prey2 <- data.frame(specimen = prey_zps$SpecimenID,
 prey3 <- subset(prey2, fg == 'Pi' | fg == 'BI')
 
 prey_gh <- subset(prey3, is.na(prey3$gh)==FALSE)
-
-prey4 <- subset(prey2, fg == 'Pi' | fg == 'BI' | fg == 'ZP' | fg == 'Om')
 
 prey5 <- subset(prey2, fg == 'Pi')
 prey5 <- prey5[which(is.na(prey5$psize) == FALSE & is.na(prey5$gh) == FALSE), ]
