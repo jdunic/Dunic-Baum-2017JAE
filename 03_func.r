@@ -12,6 +12,11 @@ gg_colour_hue <- function(n) {
 ################################################################################
 #############             Graph equations and formatting            ############
 ################################################################################
+# Get geometric mean
+gm_mean = function(x, na.rm=TRUE){
+  exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
+}
+
 # extract ggplot legend to stick beside gridExtra plots as desired:
 extract_legend <- function(a.gplot){
   tmp    <- ggplot_gtable(ggplot_build(a.gplot))
