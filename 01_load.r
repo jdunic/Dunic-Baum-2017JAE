@@ -2,7 +2,6 @@ library(ggplot2)
 library(plyr)
 library(gridExtra)
 library(grid)
-library(doMC)
 library(smatr)
 library(quantreg)
 
