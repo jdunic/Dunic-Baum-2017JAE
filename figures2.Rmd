@@ -1,0 +1,1273 @@
+---
+output: pdf_document
+---
+
+
+```{r, include=FALSE}
+library(lme4)
+library(lmerTest)
+library(multcomp)
+library(beepr)
+library(visreg)
+library(dplyr)
+
+knitr::opts_chunk$set(warning=FALSE, message = FALSE)
+
+new_pento <- filter(pento, SpeciesCode != 'CH.ORNA') %>% 
+             mutate(j_fg = as.character(j_fg)) %>% 
+             mutate(j_fg = replace(j_fg, j_fg == 'He', 'HE/DE')) %>% 
+             mutate(j_fg = factor(.$j_fg, levels=c('Pi', 'BI', 'ZP', 'HE/DE', 'C')))
+```
+
+
+--------------------------------------------------------------------------------
+
+```{r, include=FALSE}
+#===============================================================================
+# Predator prey size graphs
+#===============================================================================
+#===============================================================================
+# STANDARD LENGTH PRED - PREY
+# Graphs for piscivores prey size - predator STANDARD LENGTH
+P_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'Pi'), ]
+P_prey_SL <- mutate(P_prey_SL, j_fg = 'All Piscivores')
+df.n <- ddply(.data=P_prey_SL, .(j_fg), summarize, n=paste("n ==", length(SL)))
+pisc_prey <-
+ggplot(data = P_prey_SL, aes(x = SL, y = pSize)) +
+  geom_point(aes(shape = pType)) +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") + 
+  geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+            size = 3, hjust = 0) +
+  scale_shape_manual(values=c(1, 19)) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black'), 
+        legend.position = "none",
+        axis.title = element_blank(),
+        axis.ticks.length = unit(-0.2, "cm"),
+        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1), 
+        strip.background = element_blank()) + 
+  facet_wrap(~ j_fg)
+
+df.n <- ddply(.data=filter(P_prey_SL, Family == 'Lutjanidae'), .(j_fg), summarize, n=paste("n ==", length(SL)))
+pisc_prey_lut <- 
+ggplot(data = filter(P_prey_SL, Family == 'Lutjanidae'), aes(x = SL, y = pSize)) +
+  geom_point(aes(shape = pType)) +
+  geom_point(aes(x = 510, y = 100), alpha = 0.0) +
+  geom_point(aes(x = 49, y = 258), alpha = 0.0) +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") + 
+  geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+            size = 3, hjust = 0) +
+    geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+            size = 3, hjust = 0) +
+  scale_shape_manual(values=c(1, 19)) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black'), 
+        legend.position = "none",
+        axis.title = element_blank(),
+        axis.ticks.length = unit(-0.2, "cm"),
+        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1), 
+        strip.background = element_blank()) + 
+  theme(axis.text.y = element_blank()) + 
+  facet_wrap(~ Family)
+
+df.n <- ddply(.data=filter(P_prey_SL, Family == 'Serranidae'), .(j_fg), summarize, n=paste("n ==", length(SL)))
+pisc_prey_ser <- 
+ggplot(data = filter(P_prey_SL, Family == 'Serranidae'), aes(x = SL, y = pSize)) +
+  geom_point(aes(shape = pType)) +
+  geom_point(aes(x = 510, y = 100), alpha = 0.0) +
+  geom_point(aes(x = 49, y = 258), alpha = 0.0) +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") + 
+  geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+            size = 3, hjust = 0) +
+  scale_shape_manual(values=c(1, 19)) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black'), 
+        legend.position = "none",
+        axis.title = element_blank(),
+        axis.ticks.length = unit(-0.2, "cm"),
+        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1), 
+        strip.background = element_blank()) + 
+  theme(axis.text.y = element_blank()) + 
+  facet_wrap(~ Family)
+
+# Benthic invertivore stomach contents for predator STANDARD LENGTH
+B_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'BI'), ]
+B_prey_SL <- mutate(B_prey_SL, j_fg = 'All Benthic Invertivores')
+# Graph of just benthic invertivore stomach contents:
+df.n <- ddply(.data=B_prey_SL, .(j_fg), summarize, n=paste("n ==", length(j_fg)))
+benth_prey <- 
+ggplot(data = B_prey_SL, aes(x = SL, y = pSize)) +
+  geom_point(aes(shape = pType)) +
+  geom_point(aes(x = 510, y = 100), alpha = 0.0) +
+  geom_point(aes(x = 49, y = 258), alpha = 0.0) +
+  scale_shape_manual(values=c(1, 19)) +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") +
+  geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+            size = 3, hjust = 0) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black'), 
+        legend.position = "none",
+        axis.title = element_blank(),
+        axis.ticks.length = unit(-0.2, "cm"),
+        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1), 
+        strip.background = element_blank()) + 
+  theme(axis.text.y = element_blank()) + 
+  facet_wrap(~ j_fg)
+
+B_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'BI'), ]
+B_prey_SL <- mutate(B_prey_SL, j_fg = 'All Benthic Invertivores')
+# Graph of just benthic invertivore stomach contents:
+df.n <- ddply(.data=filter(B_prey_SL, Family == 'Mullidae'), .(j_fg), summarize, n=paste("n ==", length(j_fg)))
+benth_prey_mul <- 
+ggplot(data = filter(B_prey_SL, Family == 'Mullidae'), aes(x = SL, y = pSize)) +
+  geom_point(aes(shape = pType)) +
+  geom_point(aes(x = 510, y = 100), alpha = 0.0) +
+  geom_point(aes(x = 49, y = 258), alpha = 0.0) +
+  scale_shape_manual(values=c(1, 19)) +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") +
+  geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+            size = 3, hjust = 0) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black'), 
+        legend.position = "none",
+        axis.title = element_blank(),
+        axis.ticks.length = unit(-0.2, "cm"),
+        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1), 
+        strip.background = element_blank()) + 
+  theme(axis.text.y = element_blank()) + 
+  facet_wrap(~ Family)
+
+```
+
+```{r, echo=FALSE, fig.height=3.2, fig.width=11, fig.cap='**Figure 1.** Quantile regressions (10th, 50th, and 90th quantiles) of the relationships between prey total length (mm) and predator standard length (mm) for (a) all piscivores (68 predator individuals) and the two most sampled piscivore families (b) Lutjanidae and (c) Serranidae and (d) all benthic invertivores (77 predator individuals) and the most sampled benthic invertivore (e) *Parupeneus insularis* (68 predator individuals). Each point represents a single fish (open circles) or invertebrate (solid circles) prey item found in a predator stomach. The sample size of prey items plotted are labelled on the plot as n = number of prey items. Prey size is the measured length (mm) of the intact or partially digested prey items, and hence taken to be the minimum prey size.'}
+
+# Piscivores: n = 92 prey items from 68 individuals
+# Benthic invertivores: n = 108 prey items from 77 individuals
+# Lutjanidae: (n = 30 prey items from 20 individuals)
+# Serranidae: (n = 54 prey items from 44 individuals)
+# Parupeneus insularis: (n = 99 prey items from 68 individuals)
+
+master_layout <- 
+grid.layout(nrow = 2, ncol = 10, 
+            widths = unit(c(0.1, 1.2, 0.1, 1, 0.1, 1, 0.1, 1, 0.1, 1), "null"), 
+            heights = unit(c(1, 0.15), "null"))
+
+grid.newpage()
+pushViewport(viewport(layout = master_layout))
+print(pisc_prey, vp = set_vp(1, 2))
+print(pisc_prey_lut, vp = set_vp(1, 4))
+print(pisc_prey_ser, vp = set_vp(1, 6))
+print(benth_prey, vp = set_vp(1, 8))
+print(benth_prey_mul, vp = set_vp(1, 10))
+grid.text(
+  expression( paste("Standard length (", mm, ")", sep = "") ), 
+  #vp = viewport(layout.pos.row = 2, layout.pos.col = 2:4), 
+  vp = viewport(layout.pos.row = 2, layout.pos.col = 6), 
+  gp = gpar(fontsize = 10), vjust = -0.25
+  )
+grid.text(
+  "Prey total length (mm)",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 0.5#1.6
+  )
+grid.text(
+  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -10.5 #-13
+  )
+grid.text(
+  "b)", vp = viewport(layout.pos.row = 1, layout.pos.col = 3), 
+  gp = gpar(fontsize = 9), vjust = -10.5 #-13
+  )
+grid.text(
+  "c)", vp = viewport(layout.pos.row = 1, layout.pos.col = 5), 
+  gp = gpar(fontsize = 9), vjust = -10.5 #-13
+  )
+grid.text(
+  "d)", vp = viewport(layout.pos.row = 1, layout.pos.col = 7), 
+  gp = gpar(fontsize = 9), vjust = -10.5 #-13
+  )
+grid.text(
+  "e)", vp = viewport(layout.pos.row = 1, layout.pos.col = 9), 
+  gp = gpar(fontsize = 9), vjust = -10.5 #-13
+  )
+grid.text(
+  "Figure 1.", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = 1, hjust = -0.5
+  )
+
+```
+
+--------------------------------------------------------------------------------
+
+
+```{r, include=FALSE}
+#===============================================================================
+# Relative gape size - code
+#===============================================================================
+# Pento factored by functional group then absolute gape size
+SpeciesCode <- c('CE.UROD', 'LU.BOHA', 'CA.MELA', 'AP.FURC', 'CE.ARGU', 'VA.LOUT', 
+                 'PA.ARCA', 'PA.INSU', 'MO.GRAN', 
+                 'CH.VAND', 'PS.BART', 'PS.OLIV', 'PS.DISP', 'PT.TILE', 'CA.TERE', 
+                 'CE.FLAV', 'AC.NIGR', 'AC.OLIV', 'CH.SORD', 'SC.FREN', 'SC.RUBR'
+                 )
+
+sp_name_by_slope <- 
+    c('Cephalopholis urodeta', 'Lutjanus bohar', 'Caranx melampygus', 
+      'Aphareus furca', 'Cephalopholis argus', 'Variola louti', 
+      'Paracirrhites arcatus', 'Parupeneus insularis', 'Monotaxis grandoculis', 
+      'Chromis vanderbilti', 'Pseudanthias bartlettorum', 'Pseudanthias olivaceus', 
+      'Pseudanthias dispar', 'Pterocaesio tile', 'Caesio tile', 
+      'Centropyge flavissima', 'Acanthurus nigricans', 'Acanthurus olivaceus', 
+      'Chlorurus sordidus', 'Scarus frenatus', 'Scarus rubroviolaceus')
+
+spp_key <- data.frame(SpeciesCode, sp_name_by_slope)
+pento_by_slope <- merge(x = new_pento, y = spp_key, all.x = TRUE, all.y = FALSE)
+#pento_by_slope$SpeciesCode <- factor(pento_by_slope$SpeciesCode, levels = SpeciesCode)
+pento_by_slope$sp_name_by_slope <- factor(pento_by_slope$sp_name_by_slope, levels = rev(sp_name_by_slope))
+
+#-------------------------------------------------------------------------------
+# Removing ceargu_out (CE.ARGU outlier)
+#-------------------------------------------------------------------------------
+# Finding outlier in boxplot Cephalopholis argus
+ceargu_df <- fish[(which(fish$SpeciesCode == "CE.ARGU")), ]
+
+ceargu_out <- which(ceargu_df$gh_ratio == max(ceargu_df$gh_ratio))
+ceargu_df[ceargu_out, ]
+#    SpecimenID     Family       Order         Genus SpeciesCode j_fg Site
+#633  KIF12_171 Serranidae Perciformes Cephalopholis     CE.ARGU   Pi   40
+#    Region    TL    SL FL  wt length.cm. a..cm. b..cm. calc_wt   gh   gw
+#633  HP.MF 138.6 134.2 NA 380         NA     NA     NA      NA 63.9 66.5
+#    dissected_by  stomach_contents prey_size coll_notes dis_notes       ga
+#633           MW shrimp; see photo    30.1mm                      3337.432
+#    gh_ratio  gw_ratio  ga_ratio observer_id
+#633 0.476155 0.4955291 0.1853136          13
+
+bp_outlier <- which(pento_by_slope$SpecimenID == "KIF12_171")
+pento_by_slope <- pento_by_slope[-bp_outlier, ]
+
+
+# With facets:
+fgs <- list('Pi' = "PI",
+            'BI' = "BI", 
+            'ZP' = "ZP", 
+            'HE/DE' = "HE/DE")
+
+fg_labeller <- function(variable, value){
+  return(fgs[value])
+}
+
+abs_gh <- 
+ggplot(pento_by_slope, aes(.id, value, dodge = j_fg)) +
+  geom_boxplot(aes(x=sp_name_by_slope, y=gh)) +
+  xlab("Species") +
+  ylab("Absolute gape height (mm)\n") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.text.x = element_blank()) +#element_text(angle=45, colour="black", hjust=1, size = 9)) +
+  theme(axis.text.y = element_text(colour="black")) +
+  theme(axis.title.x = element_blank()) + #element_text(vjust = -0.2, size = 9)) +
+  theme(axis.title.y = element_text(vjust = 0.15, size = 9)) +
+  theme(legend.position = c(0.64, 0.9)) +
+  theme(legend.background = element_rect(fill = "#FFFFFFaa", colour = 'NA')) +
+  theme(legend.text = element_text(size = 8)) +
+  theme(panel.margin = unit(0.8, "cm")) +
+  theme(panel.border = element_blank()) +
+  theme(strip.background = element_rect(fill = "white", colour = "white"),
+        axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black')) +
+  facet_grid(. ~ j_fg, space = "free", scales = "free", labeller = labeller(fgs = fg_labeller))
+
+# RELATIVE GAPE HEIGHT- CODE
+rel_gh <- 
+ggplot(pento_by_slope, aes(.id, value, dodge = j_fg)) +
+  geom_boxplot(aes(x=sp_name_by_slope, y=gh/SL)) +
+  xlab("Species") +
+  ylab("Relative gape height\n") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.text.x = element_text(angle=45, colour="black", hjust=1, size = 9)) +
+  theme(axis.text.y = element_text(colour="black")) +
+  theme(axis.title.x = element_text(vjust = -0.2, size = 9)) +
+  theme(axis.title.y = element_text(vjust = 0.15, size = 9)) +
+  theme(legend.position = c(0.64, 0.9)) +
+  theme(legend.background = element_rect(fill = "#FFFFFFaa", colour = 'NA')) +
+  theme(legend.text = element_text(size = 8)) +
+  theme(panel.margin = unit(0.8, "cm")) +
+  theme(panel.border = element_blank()) +
+  theme(strip.background = element_rect(fill = "white", colour = "white"), 
+        strip.text = element_blank()) +
+  theme(axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black')) +
+  facet_grid(. ~ j_fg, space = "free", scales = "free", labeller = labeller(fgs = fg_labeller))
+```
+
+```{r, echo=FALSE, fig.height = 6, fig.width = 8, fig.cap = '**Figure 2.** (a) Absolute gape height (mm) and (b) relative gape height, calculated as gape height (mm) / standard length (mm) for all species ordered within each functional group by decreasing absolute gape height. A single outlier (64 mm) for *Cephalopholis argus* is not shown.'}
+# ABSOLUTE GAPE HEIGHT PLOT
+master_layout <- 
+grid.layout(nrow = 4, ncol = 2, 
+            widths = unit(c(0.03, 1), "null"),
+            heights = unit(c(0.65, 0.05, 1, 0.05), "null"))
+grid.newpage()
+pushViewport(viewport(layout = master_layout))
+print(abs_gh, vp = set_vp(1, 2))
+print(rel_gh, vp = set_vp(3, 2))
+
+grid.text("a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = 0, vjust = -10)
+grid.text("b)", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = 0, vjust = -16)
+
+# Figure label
+grid.text("Figure 2", vp = viewport(layout.pos.row = 4, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = 0, vjust = 0)
+```
+
+--------------------------------------------------------------------------------
+
+```{r, include=FALSE}
+# CODE FOR VISREG STYLE FG COMPARISON
+# Fit random effects model with family as a random effect (phylogenetic non-independence)
+#-------------------------------------------------------------------------------
+
+#boot_spp_summary_gh_mass <- 
+#  read.csv('gape_height_mass_species_bootstrapped_coefficients_10000.csv') %>% 
+#  as_data_frame()
+
+#boot_spp_summary_gw_mass <- 
+#  read.csv('gape_width_mass_species_bootstrapped_coefficients_10000.csv') %>% 
+#  as_data_frame()
+
+# SMA regression for each species
+all_spp_GH <- sma(gh ~ SL * SpeciesCode, data = new_pento, log = "xy", 
+                  method = "SMA", robust = T, slope.test = 1,
+                  multcomp = F, multcompmethod = "adjusted")
+#check_assump(allGA, "Species Gape Area All")
+allGH_bySPP_summ <- mk_spp_summary(all_spp_GH, 21, grouping=TRUE)
+
+all_spp_GW <- sma(gw ~ SL * SpeciesCode, data = new_pento, log = "xy", 
+                  method = "SMA", robust = T, slope.test = 1,
+                  multcomp = F, multcompmethod = "adjusted")
+#check_assump(allGA, "Species Gape Area All")
+allGW_bySPP_summ <- mk_spp_summary(all_spp_GW, 21, grouping=TRUE)
+
+
+spp_names <- c("Acanthurus nigricans", "Acanthurus olivaceus", "Aphareus furca", 
+               "Lutjanus bohar", "Caesio teres", "Pterocaesio tile", 
+               "Pseudanthias bartlettorum", "Pseudanthias dispar", 
+               "Pseudanthias olivaceus", 
+               "Cephalopholis argus", "Cephalopholis urodeta", "Variola louti", 
+               "Chromis vanderbilti", "Monotaxis grandoculis", 
+               "Chlorurus sordidus", "Scarus frenatus", "Scarus rubroviolaceus", 
+               "Paracirrhites arcatus", "Caranx melampygus", 
+               "Parupeneus insularis", "Centropyge flavissima")
+
+spp_codes <- c('AC.NIGR', 'AC.OLIV', 'AP.FURC', 'LU.BOHA', 'CA.TERE', 
+               'PT.TILE', 'PS.BART', 'PS.DISP', 'PS.OLIV', 'CE.ARGU', 
+               'CE.UROD', 'VA.LOUT', 'CH.VAND', 'MO.GRAN', 'CH.SORD', 
+               'SC.FREN', 'SC.RUBR', 'PA.ARCA', 'CA.MELA', 'PA.INSU', 
+               'CE.FLAV')
+# Create lookup dataframes
+fg_lookup <- unique(data.frame('codes' = new_pento$SpeciesCode, 'fg' = new_pento$j_fg))
+spp_lookup_df <- data.frame('species' = spp_names, 'codes' = spp_codes)
+fam_lookup <- ddply(fish, .(SpeciesCode), summarise, 'Family' = unique(Family), 
+                    'Order' = unique(Order))
+
+spp_lookup_df <- left_join(spp_lookup_df, fg_lookup) %>% 
+                 left_join(., fam_lookup, by = c('codes' = 'SpeciesCode'))
+
+all_spp_summ_df_gh <- left_join(allGH_bySPP_summ, spp_lookup_df, by = c('group' = 'codes'))
+
+# Gape height
+#all_spp_summ_df_gh <- 
+#  left_join(boot_spp_summary_gh_mass, spp_lookup_df, by = c('group' = 'codes')) %>% 
+#  as_data_frame() %>% 
+#  rename(codes = group) %>% 
+#  filter(codes != 'CH.ORNA') %>% 
+#  filter(Slope < 100) %>% 
+#  filter(Slope > 0)
+
+#mean_spp_summ_gh <- ddply(all_spp_summ_df_gh, .(codes), summarise, 
+#                       'slope' = mean(Slope), 
+#                       'fg' = unique(fg), 
+#                       'species' = unique(species), 
+#                       'se' = sd(Slope),
+#                       'family' = unique(Family))
+
+# Gape width
+
+all_spp_summ_df_gw <- left_join(allGW_bySPP_summ, spp_lookup_df, by = c('group' = 'codes'))
+
+#all_spp_summ_df_gw <- 
+#  left_join(boot_spp_summary_gw_mass, spp_lookup_df, by = c('group' = 'codes')) %>% 
+#  as_data_frame() %>% 
+#  rename(codes = group) %>% 
+#  filter(codes != 'CH.ORNA')
+
+#mean_spp_summ_gw <- ddply(all_spp_summ_df_gw, .(codes), summarise, 
+#                       'slope' = mean(Slope), 
+#                       'fg' = unique(fg), 
+#                       'species' = unique(species), 
+#                       'se' = sd(Slope),
+#                       'family' = unique(Family))
+
+#test_gh <- lme4::lmer(slope ~ fg + 0 + (1 | Family), data = all_spp_summ_df_gh)
+test_gh <- lm(slope ~ fg + 0, data = all_spp_summ_df_gh)
+test_gh_ci <- confint(test_gh)
+
+test_gh_summ <- data_frame(fg = factor(c('Pi', 'BI', 'ZP', 'HE/DE'), levels = c('Pi', 'BI', 'ZP', 'HE/DE')), 
+                        estimate = summary(test_gh)$coefficients[, 1],
+                        lwr = test_gh_ci[, 1], 
+                        upr = test_gh_ci[, 2])
+
+#all_spp_summ_df_gh2 <- 
+#  mean_spp_summ_gh %>% 
+#  mutate(id = as.numeric(codes)) %>% 
+#  mutate(fg = factor(fg, levels = levels(mean_spp_summ_gh$fg))) %>% 
+#  arrange(., fg)
+
+all_spp_summ_df_gh2 <- 
+  all_spp_summ_df_gh %>% 
+  mutate(id = as.numeric(group)) %>% 
+  mutate(fg = factor(fg, levels = levels(all_spp_summ_df_gh$fg))) %>% 
+  arrange(., fg)
+
+#spacing <- c(seq(0, 1, length.out = 6), seq(0, 1, length.out = 3), 
+#             seq(0, 1, length.out = 6), seq(0, 1, length.out = 6))
+#all_spp_summ_df_gh2$spacing <- spacing
+
+all_spp_summ_df_gh2$spacing <- seq(from = 0, by = 0.2, length.out = 21)
+
+test_gh_summ$start <- c(0.0, 1.2, 1.8, 3.0)
+test_gh_summ$end   <- c(1.0, 1.6, 2.8, 4.0)
+
+gh_plot <- 
+ggplot(all_spp_summ_df_gh2) +
+  geom_rect(data = test_gh_summ, aes(xmin = start - 0.05, xmax = end + 0.05, ymin = lwr, ymax = upr), fill = "gray85") +
+  #geom_point(aes(x = -0.2, y = 1), alpha = 0) +
+  geom_point(aes(x = spacing, y = slope), size = 1, colour = "gray50") + 
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(panel.margin = unit(0, "cm")) +
+  theme(panel.border = element_blank()) +
+  theme(plot.margin = unit(c(1.5,0.5,0.5,1.5), "lines")) +
+  theme(strip.background = element_rect(fill = "white", colour = "white")) +
+  theme(axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black')) +
+  theme(strip.text.x = element_blank()) +
+  theme(axis.text.x = element_blank(), 
+        axis.text.y = element_text(margin = margin(0, 6, 0, 0)), 
+        #axis.ticks.x=element_blank(), 
+        axis.title.x=element_blank(),
+        axis.title.y = element_blank(), 
+        axis.ticks.length = unit(-0.1, "cm")) +
+  geom_segment(data=test_gh_summ, aes(y = estimate, yend = estimate, x = start - 0.05, xend = end + 0.05), colour = '#099DFFFF', size = 1, lineend = 'round') +
+  geom_hline(aes(yintercept = 1), colour = 'red', linetype = 2) +
+  #scale_x_continuous(breaks = 0.5) +
+  #scale_y_continuous(breaks = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), lim =c(0, 0.6)) +
+  facet_wrap(~ fg, scales = 'free_x', ncol = 4) + 
+  ylim(c(0.5, 2.0))
+
+#test_gw <- lme4::lmer(slope ~ fg + 0 + (1 | Family), data = all_spp_summ_df_gw)
+test_gw <- lm(slope ~ fg + 0, data = all_spp_summ_df_gw)
+test_gw_ci <- confint(test_gw)
+
+test_gw_summ <- data_frame(fg = factor(c('Pi', 'BI', 'ZP', 'HE/DE'), 
+  levels = c('Pi', 'BI', 'ZP', 'HE/DE')), 
+                        estimate = summary(test_gw)$coefficients[, 1],
+                        lwr = test_gw_ci[, 1], 
+                        upr = test_gw_ci[, 2])
+
+all_spp_summ_df_gw2 <- 
+  all_spp_summ_df_gw %>% 
+  mutate(id = as.numeric(group)) %>% 
+  mutate(fg = factor(fg, levels = levels(all_spp_summ_df_gw$fg))) %>% 
+  arrange(., fg)
+
+all_spp_summ_df_gw2$spacing <- seq(from = 0, by = 0.2, length.out = 21)
+
+test_gw_summ$start <- c(0.0, 1.2, 1.8, 3.0)
+test_gw_summ$end   <- c(1.0, 1.6, 2.8, 4.0)
+
+gw_plot <- 
+ggplot(all_spp_summ_df_gw2) +
+  geom_rect(data = test_gw_summ, aes(xmin = start - 0.05, xmax = end + 0.05, ymin = lwr, ymax = upr), fill = "gray85") +
+  #geom_point(aes(x = -0.2, y = 1), alpha = 0) +
+  geom_point(aes(x = spacing, y = slope), size = 1, colour = "gray50") + 
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(panel.margin = unit(0, "cm")) +
+  theme(panel.border = element_blank()) +
+  theme(plot.margin = unit(c(1.5,0.5,0.5,1.5), "lines")) +
+  theme(strip.background = element_rect(fill = "white", colour = "white")) +
+  theme(axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black')) +
+  theme(strip.text.x = element_blank()) +
+  theme(axis.text.x = element_text(angle=45, colour="black", hjust=1, size = 8), 
+        axis.text.y = element_text(margin = margin(0, 6, 0, 0)), 
+        #axis.ticks.x=element_blank(), 
+        axis.title.x=element_blank(),
+        axis.title.y = element_blank(), 
+        axis.ticks.length = unit(-0.1, "cm")) +
+  geom_segment(data=test_gw_summ, aes(y = estimate, yend = estimate, x = start - 0.05, xend = end + 0.05), colour = '#099DFFFF', size = 1, lineend = 'round') +
+  geom_hline(aes(yintercept = 1), colour = 'red', linetype = 2) +
+  #scale_x_continuous(breaks = 0.5) +
+  #scale_y_continuous(breaks = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7), lim =c(0, 0.7)) +
+  facet_wrap(~ fg, scales = 'free_x', ncol=4) +
+  scale_x_continuous(breaks = all_spp_summ_df_gw2$spacing, 
+    labels = c('Caranx melampygus', 'Aphareus furca', 'Lutjanus bohar', 
+    'Cephalopholis argus', 'Cephalopholis urodeta', 'Variola louti', 
+    'Paracirrhites arcatus', 'Monotaxis grandoculis', 'Parupeneus insularis', 
+    'Caesio teres', 'Pterocaesio tile', 'Chromis vanderbilti', 
+    'Pseudanthias bartlettorum', 'Pseudanthias dispar', 'Pseudanthias olivaceus', 
+    'Acanthurus nigricans', 'Acanthurus olivaceus', 'Centropyge flavissima', 
+    'Chlorurus sordidus', 'Scarus frenatus', 'Scarus rubroviolaceus')) + 
+  ylim(c(0.5, 2.0))
+
+
+```
+
+```{r, echo=FALSE, fig.height=7, fig.width=5.2, fig.cap='**Figure 3.** Comparison of allometric coefficients across functional groups, calculated using a linear model for (a) gape height ~ standard length and (b) gape width ~ standard length relationships. Estimates of functional group mean slopes are shown by the blue line, species mean slopes are plotted as grey points, and confidence limits are bounded by the grey box. For reference, isometry (slope = 1) is plotted as the red dashed line.'}
+
+# CODE FOR VISREG STYLE FG COMPARISON PLOT
+
+master_layout <- 
+grid.layout(nrow = 3, ncol = 6, 
+            widths = unit(c(0.2, 0.2, 1, 1, 1, 1), "null"),
+            heights = unit(c(0.8, 1, 0.1), "null"))
+grid.newpage()
+pushViewport(viewport(layout=master_layout))
+print(gh_plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 2:6))
+print(gw_plot, vp = viewport(layout.pos.row = 2, layout.pos.col = 2:6))
+grid.text(
+  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -12
+  )
+grid.text(
+  "b)", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -16
+  )
+grid.text(
+  "Gape height slope estimate",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 1),
+  rot = 90, gp = gpar(fontsize = 9), vjust = 1, hjust = 0.6
+    )
+grid.text(
+  "Gape width slope estimate",
+  vp = viewport(layout.pos.row = 2, layout.pos.col = 1),
+  rot = 90, gp = gpar(fontsize = 9), vjust = 1, hjust = 0.2
+    )
+grid.text(
+    "Piscivore",
+    vp = viewport(layout.pos.row = 1, layout.pos.col = 3),
+    vjust = -12, gp = gpar(fontsize = 9), hjust = 0.1
+    )
+grid.text(
+    expression("  Benthic \nInvertivore"),
+    vp = viewport(layout.pos.row = 1, layout.pos.col = 4),
+    vjust = -11, gp = gpar(fontsize = 9), hjust = 0.22
+    )
+grid.text(
+    "Zooplanktivore",
+    vp = viewport(layout.pos.row = 1, layout.pos.col = 5),
+    vjust = -12, gp = gpar(fontsize = 9), hjust = 0.45
+    )
+grid.text(
+    "Herbivore/\nDetritivore",
+    vp = viewport(layout.pos.row = 1, layout.pos.col = 6),
+    vjust = -3.75, gp = gpar(fontsize = 9), hjust = 0.55
+    )
+#grid.text("Functional group", vp = viewport(layout.pos.row = 4, layout.pos.col = 3:6),
+    #gp = gpar(fontsize = 9), vjust = -1, hjust = 0.5)
+grid.text("Figure 3", vp = viewport(layout.pos.row = 3, layout.pos.col = 1:3),
+    gp = gpar(fontsize = 9), vjust = 0, hjust = 1.3)
+
+```
+
+--------------------------------------------------------------------------------
+
+
+```{r, include=FALSE}
+#===============================================================================
+# Multipanel plot with functional group and species GAPE HEIGHT
+#===============================================================================
+
+# Get community level midpoint
+allGH <- sma(gh ~ SL, data = new_pento, log = "xy", method = "SMA", robust = T, slope.test = 1)
+#check_assump(allGH, "new_pento Gape Area All")
+allGH_summ <- mk_sma_summary(allGH, 1)
+allGH_graph_df <- mk_sma_graph_df(allGH_summ, 1, "j_fg")
+names(allGH_graph_df)
+
+
+# Get functional group level metrics: midpoints of data
+# Using a single sma() iteration because this does not alter results, nor the 
+# visual display of the data.
+pento_slopes_gh <- summary(test_gh)$coefficients[, 1]
+#pento_slopes_gh <- coef(fit.gls_gh)
+names(pento_slopes_gh) <- c('Pi', 'Bi', 'ZP', 'HE/DE')
+
+all_fg_GH <- sma(gh ~ SL * j_fg, data = new_pento, log = "xy", method = "SMA", 
+                 robust = T, slope.test = 1, multcomp = F)
+all_fg_GH_summ <- mk_spp_summary(all_fg_GH, 4, grouping=TRUE)
+all_fg_GH_graph_df <- mk_smaSPP_graph_df(all_fg_GH_summ, 4, "j_fg", iso_slope = 1)
+all_fg_GH_graph_df$boot_slope <- c(pento_slopes_gh)
+
+all_fg_GH_graph_df <- 
+  all_fg_GH_graph_df %>% 
+    dplyr::mutate(boot_ref_int = log10(midpoint_y / (midpoint_x ^ boot_slope))) %>% 
+    dplyr::mutate(lme_slope = test_gh_summ$estimate) %>% 
+    dplyr::mutate(lme_ref_int = log10(midpoint_y / (midpoint_x ^ lme_slope)))
+
+# SMA regression for each species
+all_spp_GH <- sma(gh ~ SL * SpeciesCode, data = new_pento, log = "xy", 
+                  method = "SMA", robust = T, slope.test = 1,
+                  multcomp = F, multcompmethod = "adjusted")
+#check_assump(allGA, "Species Gape Area All")
+allGH_bySPP_summ <- mk_spp_summary(all_spp_GH, 21, grouping=TRUE)
+
+allometry <- NA
+for (i in seq_along(allGH_bySPP_summ[[1]])) {
+  allometry[i] <- get_allometry(slope = allGH_bySPP_summ$slope[i], 
+                                p_val = allGH_bySPP_summ$slp_p_val[i], 
+                                iso_val = 1)
+}
+
+sig <- NA
+for (i in seq_along(allGH_bySPP_summ[[1]])) {
+  sig[i] <- get_sig(p_val = allGH_bySPP_summ$slp_p_val[i])
+}
+
+allGH_bySPP_summ$allometry <- allometry
+#allGH_bySPP_summ$sig <- '*'
+
+allGH_bySPP_graph_df <- mk_smaSPP_graph_df(allGH_bySPP_summ, 21, "SpeciesCode", iso_slope = 1)
+allGH_bySPP_graph_df$allometry <- allometry
+
+
+#-------------------------------------------------------------------------------
+# Setting up values to plot the lines at the species level
+spp_lines <- allGH_bySPP_graph_df
+
+# Setting up equation, r^2, and n values that will be written on the graphs
+spp_sma_eqns <- write_group_sma_eqn(allGH_bySPP_summ, allGH_bySPP_summ$group)
+names(spp_sma_eqns) <- c("SpeciesCode", "eqn_r2", "eqn", "r2", "n")
+
+```
+
+
+```{r, include=FALSE}
+#-------------------------------------------------------------------------------
+# Multipanel comparison of 3 predatory functional groups
+#-------------------------------------------------------------------------------
+apfurc <- 
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC, 
+    spp_line_df_row = spp_lines[2, ], eqn_df = spp_sma_eqns[2, ], 
+    eqn_x = 700, eqn_y = 20, r2_x = 700, r2_y = 25.8,
+    n_x = 700, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[1], 
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Aphareus furca") +
+    geom_abline(data = all_fg_GH_graph_df[1, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[2, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+luboha <- 
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA, 
+    spp_line_df_row = spp_lines[3, ], eqn_df = spp_sma_eqns[3, ], 
+    eqn_x = 700, eqn_y = 20, r2_x = 700, r2_y = 25.8, 
+    n_x = 700, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
+    x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "Lutjanus bohar") +
+    geom_abline(data = all_fg_GH_graph_df[1, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
+    geom_point(aes(x = 100, y = 95), alpha = 0) +
+    geom_text(data = allGH_bySPP_graph_df[3, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+valout <-
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT, 
+    spp_line_df_row = spp_lines[6, ], eqn_df = spp_sma_eqns[6, ], 
+    eqn_x = 700, eqn_y = 20, r2_x = 700, r2_y = 25.8, 
+    n_x = 700, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Variola louti") +
+    geom_abline(data = all_fg_GH_graph_df[1, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[6, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+ceargu <-
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.ARGU, 
+    spp_line_df_row = spp_lines[4, ], eqn_df = spp_sma_eqns[4, ], 
+    eqn_x = 700, eqn_y = 20, r2_x = 700, r2_y = 25.8, 
+    n_x = 700, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
+    x_axis_text = TRUE, y_axis_text = TRUE, plot_title = "Cephalopholis argus") +
+    geom_abline(data = all_fg_GH_graph_df[1, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[4, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+ceurod <-
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD, 
+    spp_line_df_row = spp_lines[5, ], eqn_df = spp_sma_eqns[5, ], 
+    eqn_x = 700, eqn_y = 20, r2_x = 700, r2_y = 25.8, 
+    n_x = 700, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
+    x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Cephalopholis urodeta") +
+    geom_abline(data = all_fg_GH_graph_df[1, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[5, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+camela <- 
+mk_multipanel_plots2(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA, 
+    spp_line_df_row = spp_lines[1, ], eqn_df = spp_sma_eqns[1, ], 
+    eqn_x = 700, eqn_y = 20, r2_x = 700, r2_y = 25.8, 
+    n_x = 700, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
+    x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Caranx melampygus") +
+    geom_abline(data = all_fg_GH_graph_df[1, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250, 500)) +
+    scale_y_log10(breaks = c(20, 50, 100)) +
+    geom_point(aes(x = 100, y = 95), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[1, ], aes_string(x = 80, y = 100, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+# Benthic invertivores
+paarca <-
+mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.ARCA, 
+    spp_line_df_row = spp_lines[7, ], eqn_df = spp_sma_eqns[7, ],
+    eqn_x = 350, eqn_y = 4.6, r2_x = 350, r2_y = 6.8, 
+    n_x = 350, n_y = 9, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[2], 
+    x_axis_text = TRUE, y_axis_text = TRUE, plot_title = "Paracirrhites arcatus") +
+    geom_abline(data = all_fg_GH_graph_df[2, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(5, 10, 50)) +
+    geom_point(aes(x = 100, y = 7), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[7, ], aes_string(x = 50, y = 60, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+painsu <-
+mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$PA.INSU, 
+    spp_line_df_row = spp_lines[9, ], eqn_df = spp_sma_eqns[9, ], 
+    eqn_x = 350, eqn_y = 4.6, r2_x = 350, r2_y = 6.8, 
+    n_x = 350, n_y = 9, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept[2], x_axis_text = TRUE, 
+    y_axis_text = FALSE, plot_title = "Parupeneus insularis") +
+    geom_abline(data = all_fg_GH_graph_df[2, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(5, 10, 50)) +
+    geom_point(aes(x = 100, y = 7), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[9, ], aes_string(x = 50, y = 60, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+mogran <-
+mk_multipanel_plots2(fg_point_df = b, spp_point_df = b_spp_dfs$MO.GRAN, 
+    spp_line_df_row = spp_lines[8, ], eqn_df = spp_sma_eqns[8, ], 
+    eqn_x = 350, eqn_y = 4.6, r2_x = 350, r2_y = 6.8, 
+    n_x = 350, n_y = 9, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept[2], x_axis_text = TRUE, 
+    y_axis_text = FALSE, plot_title = "Monotaxis grandoculis") +
+    geom_abline(data = all_fg_GH_graph_df[2, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) +
+    scale_y_log10(breaks = c(5, 10, 50)) +
+    geom_point(aes(x = 100, y = 7), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[8, ], aes_string(x = 50, y = 60, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+
+```
+
+```{r, echo=FALSE, fig.height=7, fig.width=7,, fig.cap='**Figure 4.** Gape height ~ standard length relationships for the nine species sampled from two predatory functional groups: (a) piscivores and (b) benthic invertivores. Within each functional group, species are in order of increasing slope of the allometric relationship. Individual fish from each species are shown in open black circles, along with the fitted SMA regression for each respective species (black line). The associated sample size, regression equation and r$^2$ value are inset in each plot. The gape allometry for each species is indicated by the N (negative allometry), I (isometry), or P (positive allometry). For comparison, individual fish belonging to other species within the functional group are plotted in open grey circles; also shown is the line of isometry (slope = 1; dashed grey line) and the functional group’s fitted SMA regression (dashed black line), both plotted through the midpoint of the functional group-level relationship.'}
+
+# With "Figure" labelled
+#master_layout <- 
+#grid.layout(nrow = 8, ncol = 4, 
+#            widths = unit(c(0.2, 1, 0.9, 0.9), "null"),
+#            heights = unit(c(1, 1.1, 0.2, 1.1, 0.2, 1, 1.1, 0.2), "null"))
+
+master_layout <- 
+grid.layout(nrow = 5, ncol = 4, 
+            widths = unit(c(0.2, 1, 0.9, 0.9), "null"),
+            heights = unit(c(0.9, 1.05, 0.2, 1, 0.2), "null"))
+
+#grid.newpage()
+pushViewport(viewport(layout = master_layout))
+# piscs
+print(luboha, vp = set_vp(1, 2))
+print(valout, vp = set_vp(1, 3))
+print(apfurc, vp = set_vp(1, 4))
+print(ceargu, vp = set_vp(2, 2))
+print(ceurod, vp = set_vp(2, 3))
+print(camela, vp = set_vp(2, 4))
+# benths
+print(paarca, vp = set_vp(4, 2))
+print(painsu, vp = set_vp(4, 3))
+print(mogran, vp = set_vp(4, 4))
+# Figure label
+grid.text("Figure 4", vp = viewport(layout.pos.row = 5, layout.pos.col = 1),
+    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
+
+# piscs
+grid.text(
+    "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), vjust = -8
+    )
+grid.text(
+    expression( paste("Gape height (", mm, ")", sep = "") ), 
+    vp = viewport(layout.pos.row = 1:2, layout.pos.col = 1),
+    rot = 90, gp = gpar(fontsize = 9), 
+    vjust = 1
+    )
+grid.text(
+    "Standard length (mm)",
+    vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
+    vjust = -1.2, gp = gpar(fontsize = 9)
+    )
+# benths
+grid.text(
+    "b)", vp = viewport(layout.pos.row = 4, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), vjust = -10
+    )
+grid.text(
+    expression( paste("Gape height (", mm, ")", sep = "") ), 
+    vp = viewport(layout.pos.row = 4, layout.pos.col = 1),
+    rot = 90, gp = gpar(fontsize = 9), 
+    vjust = 1
+    )
+grid.text(
+    "Standard length (mm)",
+    vp = viewport(layout.pos.row = 5, layout.pos.col = 3),
+    vjust = -1.2, gp = gpar(fontsize = 9)
+    )
+```
+
+```{r, include=FALSE}
+
+# Zooplanktivores
+psbart <-
+mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.BART, 
+    spp_line_df_row = spp_lines[13, ], eqn_df = spp_sma_eqns[13, ], 
+    eqn_x = 290, eqn_y = 1.8, r2_x = 290, r2_y = 2.625, 
+    n_x = 290, n_y = 3.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[3], 
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Pseudanthias bartlettorum") +
+    geom_abline(data = all_fg_GH_graph_df[3, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(2, 5, 20)) + 
+    geom_text(data = allGH_bySPP_graph_df[13, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+catere <-
+mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CA.TERE, 
+    spp_line_df_row = spp_lines[10, ], eqn_df = spp_sma_eqns[10, ], 
+    eqn_x = 290, eqn_y = 1.8, r2_x = 290, r2_y = 2.625, 
+    n_x = 290, n_y = 3.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[3], x_axis_text = FALSE, 
+    y_axis_text = FALSE, plot_title = "Caesio teres") +
+    geom_abline(data = all_fg_GH_graph_df[3, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(2, 5, 20)) + 
+    geom_text(data = allGH_bySPP_graph_df[10, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+psdisp <-
+mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.DISP, 
+    spp_line_df_row = spp_lines[14, ], eqn_df = spp_sma_eqns[14, ], 
+    eqn_x = 290, eqn_y = 1.8, r2_x = 290, r2_y = 2.625, 
+    n_x = 290, n_y = 3.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[3], x_axis_text = FALSE, 
+    y_axis_text = TRUE, plot_title = "Pseudanthias dispar") +
+    geom_abline(data = all_fg_GH_graph_df[3, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(2, 5, 20)) + 
+    geom_text(data = allGH_bySPP_graph_df[14, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+psoliv <-
+mk_multipanel_plots2(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.OLIV, 
+    spp_line_df_row = spp_lines[15, ], eqn_df = spp_sma_eqns[15, ], 
+    eqn_x = 290, eqn_y = 1.8, r2_x = 290, r2_y = 2.625, 
+    n_x = 290, n_y = 3.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[3], x_axis_text = TRUE, 
+    y_axis_text = TRUE, plot_title = "Pseudanthias olivaceus") +
+    geom_abline(data = all_fg_GH_graph_df[3, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(2, 5, 20)) + 
+    geom_text(data = allGH_bySPP_graph_df[15, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+pttile <-
+mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$PT.TILE, 
+    spp_line_df_row = spp_lines[11, ], eqn_df = spp_sma_eqns[11, ], 
+    eqn_x = 290, eqn_y = 1.8, r2_x = 290, r2_y = 2.625, 
+    n_x = 290, n_y = 3.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[3], x_axis_text = TRUE, 
+    y_axis_text = FALSE, plot_title = "Pterocaesio tile") +
+    geom_abline(data = all_fg_GH_graph_df[3, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(2, 5, 20)) + 
+    geom_text(data = allGH_bySPP_graph_df[11, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+chvand <-
+mk_multipanel_plots2(fg_point_df = z, spp_point_df = z_spp_dfs$CH.VAND, 
+    spp_line_df_row = spp_lines[12, ], eqn_df = spp_sma_eqns[12, ], 
+    eqn_x = 290, eqn_y = 1.8, r2_x = 290, r2_y = 2.625, 
+    n_x = 290, n_y = 3.5, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[3], x_axis_text = TRUE, 
+    y_axis_text = FALSE, plot_title = "Chromis vanderbilti") +
+    geom_abline(data = all_fg_GH_graph_df[3, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(2, 5, 20)) + 
+    geom_text(data = allGH_bySPP_graph_df[12, ], aes_string(x = 30, y = 25, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+#-------------------------------------------------------------------------------
+# Multipanel herbivores
+#-------------------------------------------------------------------------------
+acnigr <-
+mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.NIGR, 
+    spp_line_df_row = spp_lines[16, ], eqn_df = spp_sma_eqns[16, ], 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
+    x_axis_text = TRUE, y_axis_text = TRUE, plot_title = "Acanthurus nigricans") +
+    geom_abline(data = all_fg_GH_graph_df[4, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 40)) +
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[16, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+ceflav <-
+mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$CE.FLAV, 
+    spp_line_df_row = spp_lines[18, ], eqn_df = spp_sma_eqns[18, ], 
+    eqn_x = 440, eqn_y = 3.5, r2_x = 440, r2_y = 5.2,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
+    x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "Centropyge flavissima") +
+    geom_abline(data = all_fg_GH_graph_df[4, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 40)) +
+    geom_point(aes(x = 40, y = 5), alpha = 0) +
+    geom_text(data = allGH_bySPP_graph_df[18, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+chsord <-
+mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$CH.SORD, 
+    spp_line_df_row = spp_lines[19, ], eqn_df = spp_sma_eqns[19, ], 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Chlorurus sordidus") +
+    geom_abline(data = all_fg_GH_graph_df[4, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 40)) +
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[19, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+scrubr <-
+mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.RUBR, 
+    spp_line_df_row = spp_lines[21, ], eqn_df = spp_sma_eqns[21, ], 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
+    x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Scarus rubroviolaceus") +
+    geom_abline(data = all_fg_GH_graph_df[4, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 40)) +
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[21, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+acoliv <-
+mk_multipanel_plots2(fg_point_df = h, spp_point_df = h_spp_dfs$AC.OLIV, 
+    spp_line_df_row = spp_lines[17, ], eqn_df = spp_sma_eqns[17, ], 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Acanthurus olivaceus") +
+    geom_abline(data = all_fg_GH_graph_df[4, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 40)) +
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[17, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+scfren <-
+mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.FREN, 
+    spp_line_df_row = spp_lines[20, ], eqn_df = spp_sma_eqns[20, ], 
+    eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
+    n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
+    fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
+    x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Scarus frenatus") +
+    geom_abline(data = all_fg_GH_graph_df[4, ], 
+                aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
+    scale_x_log10(breaks = c(50, 100, 250)) + 
+    scale_y_log10(breaks = c(5, 10, 40)) +
+    geom_point(aes(x = 40, y = 5), alpha = 0) + 
+    geom_text(data = allGH_bySPP_graph_df[20, ], aes_string(x = 50, y = 40, 
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+
+```
+
+--------------------------------------------------------------------------------
+
+```{r, echo=FALSE, fig.height=8, fig.width=7, fig.cap='**Figure 5.** Gape height ~ standard length relationships for the (a) six zooplanktivores and (b) six energy$-$sharing herbivorous and detritivorous species, in order of increasing slope. Plot details are the same as in Figure 4.'}
+# With "Figure" label
+master_layout <- 
+grid.layout(nrow = 6, ncol = 4, 
+            widths = unit(c(0.2, 1, 0.9, 0.9), "null"),
+            heights = unit(c(1, 1.05, 0.2, 1, 1.05, 0.2), "null"))
+grid.newpage()
+
+pushViewport(viewport(layout = master_layout))
+# zoops
+print(psdisp, vp = set_vp(1, 2))
+print(catere, vp = set_vp(1, 3))
+print(psbart, vp = set_vp(1, 4))
+print(psoliv, vp = set_vp(2, 2))
+print(pttile, vp = set_vp(2, 3))
+print(chvand, vp = set_vp(2, 4))
+# he/de
+print(ceflav, vp = set_vp(4, 2))
+print(acoliv, vp = set_vp(4, 3))
+print(chsord, vp = set_vp(4, 4))
+print(acnigr, vp = set_vp(5, 2))
+print(scfren, vp = set_vp(5, 3))
+print(scrubr, vp = set_vp(5, 4))
+
+
+# Figure label
+grid.text("Figure 5", vp = viewport(layout.pos.row = 6, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
+grid.text(
+    expression( paste("Gape height (", mm, ")", sep = "") ), 
+    vp = viewport(layout.pos.row = 1:2, layout.pos.col = 1),
+    rot = 90, gp = gpar(fontsize = 9), 
+    vjust = 2
+    )
+grid.text(
+    expression( paste("Gape height (", mm, ")", sep = "") ), 
+    vp = viewport(layout.pos.row = 4:5, layout.pos.col = 1),
+    rot = 90, gp = gpar(fontsize = 9), 
+    vjust = 2
+    )
+grid.text(
+    "Standard length (mm)",
+    vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
+    vjust = -1.2, gp = gpar(fontsize = 9)
+    )
+grid.text(
+    "Standard length (mm)",
+    vp = viewport(layout.pos.row = 6, layout.pos.col = 3),
+    vjust = -1.2, gp = gpar(fontsize = 9)
+    )
+grid.text(
+    "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), vjust = -6
+    )
+grid.text(
+    "b)", vp = viewport(layout.pos.row = 4, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), vjust = -6
+    )
+```
+
+
+
+```{r, include=FALSE, eval=FALSE}
+
+B_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'BI'), ]
+B_prey_SL <- mutate(B_prey_SL, j_fg = 'All Benthic Invertivores')
+# Graph of just benthic invertivore stomach contents:
+df.n <- ddply(.data=B_prey_SL, .(j_fg), summarize, n=paste("n ==", length(j_fg)))
+benth_prey <- 
+ggplot(data = B_prey_SL, aes(x = SL, y = pSize)) +
+  geom_point(aes(shape = pType)) +
+  geom_point(aes(x = 510, y = 100), alpha = 0.0) +
+  geom_point(aes(x = 49, y = 258), alpha = 0.0) +
+  scale_shape_manual(values=c(1, 19)) +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") +
+  geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+            size = 3, hjust = 0) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = 'black'), 
+        axis.line.y = element_line(color = 'black'), 
+        legend.position = "none",
+        axis.title = element_blank(),
+        axis.ticks.length = unit(-0.2, "cm"),
+        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1), 
+        strip.background = element_blank()) + 
+  facet_wrap(~ j_fg)
+
+master_layout <- 
+grid.layout(nrow = 4, ncol = 4, 
+            widths = unit(c(0.1, 1.2, 1, 1), "null"), 
+            heights = unit(c(1, 0.15, 1, 0.15), "null"))
+
+grid.newpage()
+pushViewport(viewport(layout = master_layout))
+print(pisc_prey, vp = set_vp(1, 2))
+print(pisc_prey_lut, vp = set_vp(1, 3))
+print(pisc_prey_ser, vp = set_vp(1, 4))
+print(benth_prey, vp = set_vp(3, 2))
+print(benth_prey_mul, vp = set_vp(3, 3))
+grid.text(
+  expression( paste("Standard length (", mm, ")", sep = "") ), 
+  #vp = viewport(layout.pos.row = 2, layout.pos.col = 2:4), 
+  vp = viewport(layout.pos.row = 2, layout.pos.col = 3), 
+  gp = gpar(fontsize = 10), vjust = -0.25
+  )
+grid.text(
+  "Prey total length (mm)",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 1.6
+  )
+
+grid.text(
+  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -13
+  )
+grid.text(
+  "b)", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -13
+  )
+
+
+master_layout <- 
+#grid.layout(nrow = 2, ncol = 4, 
+#      widths = unit(c(0.1, 1, 0.1, 1), "null"),
+#      heights = unit(c(1, 0.15), "null"))
+grid.layout(nrow = 4, ncol = 4, 
+      widths = unit(c(0.1, 1.2, 1, 1), "null"),
+      heights = unit(c(1, 0.15, 1, 0.15), "null"))
+
+grid.newpage()
+pushViewport(viewport(layout = master_layout))
+print(pisc_prey, vp = set_vp(1, 2))
+print(pisc_prey, vp = set_vp(1, 3:4))
+print(benth_prey, vp = set_vp(3, 2))
+print(benth_prey, vp = set_vp(3, 3))
+grid.text(
+  expression( paste("Standard length (", mm, ")", sep = "") ), 
+  #vp = viewport(layout.pos.row = 2, layout.pos.col = 2:4), 
+  vp = viewport(layout.pos.row = 4, layout.pos.col = 3), 
+  gp = gpar(fontsize = 10), vjust = -0.25
+  )
+grid.text(
+  "Prey total length (mm)",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 1.6
+  )
+grid.text(
+  "Prey total length (mm)",
+  vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 1.6
+  )
+grid.text(
+  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -13
+  )
+grid.text(
+  "b)", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -13
+  )
+# Figure label
+#grid.text("Figure 4", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+#    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
+
+```
+
+```{r, include=FALSE, eval=FALSE}
+
+# fig.height=3.2, fig.width=7.5
+
+master_layout <- 
+#grid.layout(nrow = 2, ncol = 4, 
+#      widths = unit(c(0.1, 1, 0.1, 1), "null"),
+#      heights = unit(c(1, 0.15), "null"))
+
+grid.layout(nrow = 4, ncol = 2, 
+      widths = unit(c(0.1, 1), "null"),
+      heights = unit(c(1, 0.15, 1, 0.15), "null"))
+
+grid.newpage()
+pushViewport(viewport(layout = master_layout))
+print(pisc_prey_fg, vp = set_vp(1, 2))
+print(benth_prey_fg, vp = set_vp(3, 2))
+grid.text(
+  expression( paste("Standard length (", mm, ")", sep = "") ), 
+  #vp = viewport(layout.pos.row = 2, layout.pos.col = 2:4), 
+  vp = viewport(layout.pos.row = 4, layout.pos.col = 1:2), 
+  gp = gpar(fontsize = 10), vjust = -0.25
+  )
+grid.text(
+  "Prey total length (mm)",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 1.7
+  )
+grid.text(
+  "Prey total length (mm)",
+  vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 1.7
+  )
+grid.text(
+  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -13
+  )
+grid.text(
+  "b)", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -13
+  )
+# Figure label
+grid.text("Figure 4", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
+```

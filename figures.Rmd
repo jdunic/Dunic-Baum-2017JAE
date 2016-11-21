@@ -16,13 +16,13 @@ new_pento <- filter(pento, SpeciesCode != 'CH.ORNA')
 # Fit random effects model with family as a random effect (phylogenetic non-independence)
 #-------------------------------------------------------------------------------
 
-#boot_spp_summary_gh_mass <- 
-#  read.csv('gape_height_mass_species_bootstrapped_coefficients_10000.csv') %>% 
-#  as_data_frame()
+boot_spp_summary_gh_mass <- 
+  read.csv('gape_height_mass_species_bootstrapped_coefficients_10000.csv') %>% 
+  as_data_frame()
 
-#boot_spp_summary_gw_mass <- 
-#  read.csv('gape_width_mass_species_bootstrapped_coefficients_10000.csv') %>% 
-#  as_data_frame()
+boot_spp_summary_gw_mass <- 
+  read.csv('gape_width_mass_species_bootstrapped_coefficients_10000.csv') %>% 
+  as_data_frame()
 
 # SMA regression for each species
 all_spp_GH <- sma(gh ~ wt * SpeciesCode, data = new_pento, log = "xy", 
@@ -44,7 +44,7 @@ spp_names <- c("Acanthurus nigricans", "Acanthurus olivaceus", "Aphareus furca",
                "Pseudanthias olivaceus", 
                "Cephalopholis argus", "Cephalopholis urodeta", "Variola louti", 
                "Chromis vanderbilti", "Monotaxis grandoculis", 
-               "Chlororus sordidus", "Scarus frenatus", "Scarus rubroviolaceus", 
+               "Chlorurus sordidus", "Scarus frenatus", "Scarus rubroviolaceus", 
                "Paracirrhites arcatus", "Caranx melampygus", 
                "Parupeneus insularis", "Centropyge flavissima")
 
@@ -192,6 +192,7 @@ ggplot(all_spp_summ_df_gw2) +
 
 ```
 
+Weird missing confidence intervals for ZP and He :(
 
 ```{r, echo=FALSE, fig.height=6.6, fig.width=4.8, fig.cap='**Figure 1.** Comparison of allometric coefficients across functional groups, calculated using a linear mixed effects model that includes family as a random effect for (a) gape height ~ body mass and (b) gape width ~ body mass relationships. Estimates of functional group mean slopes are shown by the blue line, species mean slopes are plotted as grey points, and confidence limits are bounded by the grey box. For reference, isometry (slope = 0.33) is plotted as the red dashed line.'}
 
@@ -271,7 +272,7 @@ sp_name_by_slope <-
       "Paracirrhites arcatus", "Parupeneus insularis", "Monotaxis grandoculis", 
       "Caesio teres", "Pseudanthias dispar", "Pterocaesio tile", 
       "Pseudanthias olivaceus", "Pseudanthias bartlettorum", "Chromis vanderbilti", 
-      "Centropyge flavissima", "Chlororus sordidus", "Acanthurus nigricans", 
+      "Centropyge flavissima", "Chlorurus sordidus", "Acanthurus nigricans", 
       "Scarus frenatus", "Acanthurus olivaceus", "Scarus rubroviolaceus"
       )
 
@@ -405,7 +406,8 @@ names(allGH_graph_df)
 # Get functional group level metrics: midpoints of data
 # Using a single sma() iteration because this does not alter results, nor the 
 # visual display of the data.
-pento_slopes_gh <- summary(test_gh)$coefficients[, 1]
+#pento_slopes_gh <- summary(test_gh)$coefficients[, 1]
+pento_slopes_gh <- coef(fit.gls_gh)
 names(pento_slopes_gh) <- c('Pi', 'Bi', 'Zp', 'He')
 
 all_fg_GH <- sma(gh ~ wt * j_fg, data = new_pento, log = "xy", method = "SMA", 
@@ -416,7 +418,9 @@ all_fg_GH_graph_df$boot_slope <- c(pento_slopes_gh)
 
 all_fg_GH_graph_df <- 
   all_fg_GH_graph_df %>% 
-    dplyr::mutate(boot_ref_int = log10(midpoint_y / (midpoint_x ^ boot_slope)))
+    dplyr::mutate(boot_ref_int = log10(midpoint_y / (midpoint_x ^ boot_slope))) %>% 
+    dplyr::mutate(lme_slope = test_gh_summ$estimate) %>% 
+    dplyr::mutate(lme_ref_int = log10(midpoint_y / (midpoint_x ^ lme_slope)))
 
 # SMA regression for each species
 all_spp_GH <- sma(gh ~ wt * SpeciesCode, data = new_pento, log = "xy", 
@@ -467,13 +471,16 @@ mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$AP.FURC,
     n_x = 4500, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[1], 
     x_axis_text = TRUE, y_axis_text = FALSE, plot_title = "Aphareus furca") +
+    geom_abline(slope = 1/3, intercept = all_fg_GH_graph_df$ref_intercept_iso[1], linetype = 2, colour = "darkgrey") + 
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(10, 100, 1000)) +
     scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[2, ], aes_string(x = 176, y = 100, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[1, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[1, ]$lme_ref_int, colour = 'red', alpha = 0.4) 
 luboha <- 
 mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA, 
     spp_line_df_row = spp_lines[3, ], eqn_df = spp_sma_eqns[3, ], 
@@ -481,13 +488,16 @@ mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$LU.BOHA,
     n_x = 4500, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
     x_axis_text = FALSE, y_axis_text = TRUE, plot_title = "Lutjanus bohar") +
+    geom_abline(slope = 1/3, intercept = all_fg_GH_graph_df$ref_intercept_iso[1], linetype = 2, colour = "darkgrey") + 
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(10, 100, 1000)) +
     scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) +
     geom_text(data = allGH_bySPP_graph_df[3, ], aes_string(x = 176, y = 100, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[1, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[1, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 valout <-
 mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT, 
     spp_line_df_row = spp_lines[6, ], eqn_df = spp_sma_eqns[6, ], 
@@ -495,13 +505,16 @@ mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$VA.LOUT,
     n_x = 4500, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
     x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Variola louti") +
+    geom_abline(slope = 1/3, intercept = all_fg_GH_graph_df$ref_intercept_iso[1], linetype = 2, colour = "darkgrey") + 
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(10, 100, 1000)) +
     scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[6, ], aes_string(x = 176, y = 100, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[1, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[1, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 ceargu <-
 mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$CE.ARGU, 
     spp_line_df_row = spp_lines[4, ], eqn_df = spp_sma_eqns[4, ], 
@@ -509,13 +522,16 @@ mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$CE.ARGU,
     n_x = 4500, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
     x_axis_text = TRUE, y_axis_text = TRUE, plot_title = "Cephalopholis argus") +
+    geom_abline(slope = 1/3, intercept = all_fg_GH_graph_df$ref_intercept_iso[1], linetype = 2, colour = "darkgrey") + 
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(10, 100, 1000)) +
     scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[4, ], aes_string(x = 176, y = 100, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[1, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[1, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 ceurod <-
 mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD, 
     spp_line_df_row = spp_lines[5, ], eqn_df = spp_sma_eqns[5, ], 
@@ -523,13 +539,16 @@ mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$CE.UROD,
     n_x = 4500, n_y = 31, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept[1], 
     x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Cephalopholis urodeta") +
+    geom_abline(slope = 1/3, intercept = all_fg_GH_graph_df$ref_intercept_iso[1], linetype = 2, colour = "darkgrey") + 
     geom_abline(data = all_fg_GH_graph_df[1, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(10, 100, 1000)) +
     scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[5, ], aes_string(x = 176, y = 100, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[1, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[1, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 camela <- 
 mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA, 
     spp_line_df_row = spp_lines[1, ], eqn_df = spp_sma_eqns[1, ], 
@@ -543,7 +562,10 @@ mk_multipanel_plots_mass(fg_point_df = p, spp_point_df = p_spp_dfs$CA.MELA,
     scale_y_log10(breaks = c(20, 50, 100)) +
     geom_point(aes(x = 100, y = 95), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[1, ], aes_string(x = 176, y = 100, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[1, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[1, ]$lme_ref_int, colour = 'red', alpha = 0.4) + 
+    geom_abline(slope = 1/3, intercept = all_fg_GH_graph_df$ref_intercept_iso[1], linetype = 2, colour = "darkgrey")
 # Benthic invertivores
 paarca <-
 mk_multipanel_plots_mass(fg_point_df = b, spp_point_df = b_spp_dfs$PA.ARCA, 
@@ -558,7 +580,9 @@ mk_multipanel_plots_mass(fg_point_df = b, spp_point_df = b_spp_dfs$PA.ARCA,
     scale_y_log10(breaks = c(5, 10, 50)) +
     geom_point(aes(x = 100, y = 7), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[7, ], aes_string(x = 45, y = 60, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[2, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[2, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 painsu <-
 mk_multipanel_plots_mass(fg_point_df = b, spp_point_df = b_spp_dfs$PA.INSU, 
     spp_line_df_row = spp_lines[9, ], eqn_df = spp_sma_eqns[9, ], 
@@ -572,7 +596,9 @@ mk_multipanel_plots_mass(fg_point_df = b, spp_point_df = b_spp_dfs$PA.INSU,
     scale_y_log10(breaks = c(5, 10, 50)) +
     geom_point(aes(x = 100, y = 7), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[9, ], aes_string(x = 45, y = 60, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[2, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[2, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 mogran <-
 mk_multipanel_plots_mass(fg_point_df = b, spp_point_df = b_spp_dfs$MO.GRAN, 
     spp_line_df_row = spp_lines[8, ], eqn_df = spp_sma_eqns[8, ], 
@@ -586,7 +612,9 @@ mk_multipanel_plots_mass(fg_point_df = b, spp_point_df = b_spp_dfs$MO.GRAN,
     scale_y_log10(breaks = c(5, 10, 50)) +
     geom_point(aes(x = 100, y = 7), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[8, ], aes_string(x = 45, y = 60, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[2, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[2, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 # Zooplanktivores
 psbart <-
 mk_multipanel_plots_mass(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.BART, 
@@ -600,7 +628,9 @@ mk_multipanel_plots_mass(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.BART,
     scale_x_log10(breaks = c(1, 10, 100)) + 
     scale_y_log10(breaks = c(2, 5, 20)) + 
     geom_text(data = allGH_bySPP_graph_df[13, ], aes_string(x = 9.7, y = 25, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[3, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[3, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 catere <-
 mk_multipanel_plots_mass(fg_point_df = z, spp_point_df = z_spp_dfs$CA.TERE, 
     spp_line_df_row = spp_lines[10, ], eqn_df = spp_sma_eqns[10, ], 
@@ -613,7 +643,9 @@ mk_multipanel_plots_mass(fg_point_df = z, spp_point_df = z_spp_dfs$CA.TERE,
     scale_x_log10(breaks = c(1, 10, 100)) + 
     scale_y_log10(breaks = c(2, 5, 20)) + 
     geom_text(data = allGH_bySPP_graph_df[10, ], aes_string(x = 9.7, y = 25, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[3, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[3, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 psdisp <-
 mk_multipanel_plots_mass(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.DISP, 
     spp_line_df_row = spp_lines[14, ], eqn_df = spp_sma_eqns[14, ], 
@@ -626,7 +658,9 @@ mk_multipanel_plots_mass(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.DISP,
     scale_x_log10(breaks = c(1, 10, 100)) + 
     scale_y_log10(breaks = c(2, 5, 20)) + 
     geom_text(data = allGH_bySPP_graph_df[14, ], aes_string(x = 9.7, y = 25, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[3, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[3, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 psoliv <-
 mk_multipanel_plots_mass(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.OLIV, 
     spp_line_df_row = spp_lines[15, ], eqn_df = spp_sma_eqns[15, ], 
@@ -639,7 +673,9 @@ mk_multipanel_plots_mass(fg_point_df  = z, spp_point_df  = z_spp_dfs$PS.OLIV,
     scale_x_log10(breaks = c(1, 10, 100)) + 
     scale_y_log10(breaks = c(2, 5, 20)) + 
     geom_text(data = allGH_bySPP_graph_df[15, ], aes_string(x = 9.7, y = 25, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[3, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[3, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 pttile <-
 mk_multipanel_plots_mass(fg_point_df = z, spp_point_df = z_spp_dfs$PT.TILE, 
     spp_line_df_row = spp_lines[11, ], eqn_df = spp_sma_eqns[11, ], 
@@ -652,7 +688,9 @@ mk_multipanel_plots_mass(fg_point_df = z, spp_point_df = z_spp_dfs$PT.TILE,
     scale_x_log10(breaks = c(1, 10, 100)) + 
     scale_y_log10(breaks = c(2, 5, 20)) + 
     geom_text(data = allGH_bySPP_graph_df[11, ], aes_string(x = 9.7, y = 25, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)  + 
+    geom_abline(slope = all_fg_GH_graph_df[3, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[3, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 chvand <-
 mk_multipanel_plots_mass(fg_point_df = z, spp_point_df = z_spp_dfs$CH.VAND, 
     spp_line_df_row = spp_lines[12, ], eqn_df = spp_sma_eqns[12, ], 
@@ -665,12 +703,14 @@ mk_multipanel_plots_mass(fg_point_df = z, spp_point_df = z_spp_dfs$CH.VAND,
     scale_x_log10(breaks = c(1, 10, 100)) + 
     scale_y_log10(breaks = c(2, 5, 20)) + 
     geom_text(data = allGH_bySPP_graph_df[12, ], aes_string(x = 9.7, y = 25, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[3, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[3, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 
 ```
 --------------------------------------------------------------------------------
 
-```{r, echo=FALSE, fig.height = 10, fig.width = 7, fig.cap='**Figure 4.** Gape height ~ body mass relationships for the fifteen species sampled from three predatory functional groups: (a) piscivores, (b) benthic invertivores, and (c) zooplanktivores. Within each functional group, species are in order of increasing allometry and slope. Individual fish from each species are shown in open black circles, along with the fitted SMA regression for each respective species (black line). The associated sample size, regression equation and r2 value are inset in each plot. The gape allometry for each species is indicated by the N (negative allometry), I (isometry), or P (positive allometry). For comparison, individual fish belonging to other species within the functional group are plotted in open grey circles; also shown is the line of isometry (slope = 0.33; dashed grey line) and the functional group’s fitted SMA regression (dashed black line), both plotted through the midpoint of the functional group-level relationship.'}
+```{r, echo=FALSE, fig.height = 10, fig.width = 7, fig.cap='**Figure 4.** Gape height ~ body mass relationships for the fifteen species sampled from three predatory functional groups: (a) piscivores, (b) benthic invertivores, and (c) zooplanktivores. Within each functional group, species are in order of increasing allometry and slope. Individual fish from each species are shown in open black circles, along with the fitted SMA regression for each respective species (black line). The associated sample size, regression equation and r2 value are inset in each plot. The gape allometry for each species is indicated by the N (negative allometry), I (isometry), or P (positive allometry). For comparison, individual fish belonging to other species within the functional group are plotted in open grey circles; also shown is the line of isometry (slope = 0.33; dashed grey line) and the functional group’s fitted SMA regression (dashed black line), both plotted through the midpoint of the functional group-level relationship. \n Red line is original PGLS estimate.'}
 
 # With "Figure" labelled
 master_layout <- 
@@ -770,7 +810,9 @@ mk_multipanel_plots_mass(fg_point_df = h, spp_point_df = h_spp_dfs$AC.NIGR,
     scale_y_log10(breaks = c(5, 10, 40)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[16, ], aes_string(x = 106, y = 50, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[4, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[4, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 ceflav <-
 mk_multipanel_plots_mass(fg_point_df = h, spp_point_df = h_spp_dfs$CE.FLAV, 
     spp_line_df_row = spp_lines[18, ], eqn_df = spp_sma_eqns[18, ], 
@@ -784,21 +826,25 @@ mk_multipanel_plots_mass(fg_point_df = h, spp_point_df = h_spp_dfs$CE.FLAV,
     scale_y_log10(breaks = c(5, 10, 40)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) +
     geom_text(data = allGH_bySPP_graph_df[18, ], aes_string(x = 106, y = 50, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[4, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[4, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 chsord <-
 mk_multipanel_plots_mass(fg_point_df  = h, spp_point_df  = h_spp_dfs$CH.SORD, 
     spp_line_df_row = spp_lines[19, ], eqn_df = spp_sma_eqns[19, ], 
     eqn_x = 2500, eqn_y = 4, r2_x = 2500, r2_y = 5.4,
     n_x = 2500, n_y = 6.9, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
-    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Chlororus sordidus") +
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Chlorurus sordidus") +
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(10, 100, 1000)) + 
     scale_y_log10(breaks = c(5, 10, 40)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[19, ], aes_string(x = 106, y = 50, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[4, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[4, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 scrubr <-
 mk_multipanel_plots_mass(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.RUBR, 
     spp_line_df_row = spp_lines[21, ], eqn_df = spp_sma_eqns[21, ], 
@@ -812,7 +858,9 @@ mk_multipanel_plots_mass(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.RUBR,
     scale_y_log10(breaks = c(5, 10, 40)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[21, ], aes_string(x = 106, y = 50, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[4, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[4, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 acoliv <-
 mk_multipanel_plots_mass(fg_point_df = h, spp_point_df = h_spp_dfs$AC.OLIV, 
     spp_line_df_row = spp_lines[17, ], eqn_df = spp_sma_eqns[17, ], 
@@ -826,7 +874,9 @@ mk_multipanel_plots_mass(fg_point_df = h, spp_point_df = h_spp_dfs$AC.OLIV,
     scale_y_log10(breaks = c(5, 10, 40)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[17, ], aes_string(x = 106, y = 50, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[4, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[4, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 scfren <-
 mk_multipanel_plots_mass(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.FREN, 
     spp_line_df_row = spp_lines[20, ], eqn_df = spp_sma_eqns[20, ], 
@@ -840,7 +890,9 @@ mk_multipanel_plots_mass(fg_point_df  = h, spp_point_df  = h_spp_dfs$SC.FREN,
     scale_y_log10(breaks = c(5, 10, 40)) +
     geom_point(aes(x = 40, y = 5), alpha = 0) + 
     geom_text(data = allGH_bySPP_graph_df[20, ], aes_string(x = 106, y = 50, 
-        label = 'allometry'), parse = TRUE, size = 3, hjust = 1)
+        label = 'allometry'), parse = TRUE, size = 3, hjust = 1) + 
+    geom_abline(slope = all_fg_GH_graph_df[4, ]$lme_slope, 
+                intercept = all_fg_GH_graph_df[4, ]$lme_ref_int, colour = 'red', alpha = 0.4)
 
 ```
 
@@ -881,6 +933,8 @@ grid.text(
 
 --------------------------------------------------------------------------------
 
+The prey size - predator mass size works... weight was coded as a factor :|
+
 ```{r, include=FALSE}
 #===============================================================================
 # Predator prey size graphs
@@ -889,7 +943,7 @@ grid.text(
 # STANDARD LENGTH PRED - PREY
 # Graphs for piscivores prey size - predator STANDARD LENGTH
 P_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'Pi'), ]
-df.n <- ddply(.data=P_prey_SL, .(j_fg), summarize, n=paste("n ==", length(SL)))
+df.n <- ddply(.data=P_prey_SL, .(j_fg, Family), summarize, n=paste("n ==", length(SL)))
 pisc_prey <-
 ggplot(data = P_prey_SL, aes(x = SL, y = pSize)) +
   geom_point(aes(shape = pType)) +
@@ -908,12 +962,13 @@ ggplot(data = P_prey_SL, aes(x = SL, y = pSize)) +
                 colour = "black") +
   theme(axis.ticks.length = unit(-0.2, "cm"),
         axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
-        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1))
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1)) + 
+  facet_wrap(~ Family)
 
 # Benthic invertivore stomach contents for predator STANDARD LENGTH
 B_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'BI'), ]
 # Graph of just benthic invertivore stomach contents:
-df.n <- ddply(.data=B_prey_SL, .(j_fg), summarize, n=paste("n ==", length(j_fg)))
+df.n <- ddply(.data=B_prey_SL, .(j_fg, Family), summarize, n=paste("n ==", length(j_fg)))
 benth_prey <- 
 ggplot(data = B_prey_SL, aes(x = SL, y = pSize)) +
   geom_point(aes(shape = pType)) +
@@ -933,7 +988,8 @@ ggplot(data = B_prey_SL, aes(x = SL, y = pSize)) +
                 colour = "black") +
   theme(axis.ticks.length = unit(-0.2, "cm"), 
         axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
-        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1))
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1)) + 
+  facet_wrap(~ Family)
 
 #camela_prey_SL <- prey_PiBI[which(prey_PiBI$SpeciesCode == 'CA.MELA'), ]
 #ggplot(data = camela_prey_SL, aes(x = SL, y = pSize)) +
@@ -941,19 +997,27 @@ ggplot(data = B_prey_SL, aes(x = SL, y = pSize)) +
 ```
 
 
-```{r, echo=FALSE, fig.height=3.2, fig.width=7.5, fig.cap='**Figure 6.** Quantile regressions (10th, 50th, and 90th quantiles) of the relationships between prey total length (mm) and predator standard length (mm) for (a) piscivores (n = 92 whole prey items from 68 individuals) and (b) the benthic invertivore *Parupeneus insularis* (n = 103 prey items from 72 individuals). Each point represents a single fish (open circles) or invertebrate (solid circles) prey item found in a predator stomach. Prey size is the measured length (mm) of the intact or partially digested prey items, and hence taken to be the minimum prey size.'}
+```{r, echo=FALSE, fig.height=6.4, fig.width=7.5, fig.cap='**Figure 6.** Quantile regressions (10th, 50th, and 90th quantiles) of the relationships between prey total length (mm) and predator standard length (mm) for (a) piscivores (n = 92 whole prey items from 68 individuals) and (b) the benthic invertivore *Parupeneus insularis* (n = 103 prey items from 72 individuals). Each point represents a single fish (open circles) or invertebrate (solid circles) prey item found in a predator stomach. Prey size is the measured length (mm) of the intact or partially digested prey items, and hence taken to be the minimum prey size.'}
+
+# fig.height=3.2, fig.width=7.5
 
 master_layout <- 
-grid.layout(nrow = 2, ncol = 4, 
-      widths = unit(c(0.1, 1, 0.1, 1), "null"),
-      heights = unit(c(1, 0.15), "null"))
+#grid.layout(nrow = 2, ncol = 4, 
+#      widths = unit(c(0.1, 1, 0.1, 1), "null"),
+#      heights = unit(c(1, 0.15), "null"))
+
+grid.layout(nrow = 4, ncol = 2, 
+      widths = unit(c(0.1, 1), "null"),
+      heights = unit(c(1, 0.15, 1, 0.15), "null"))
+
 grid.newpage()
 pushViewport(viewport(layout = master_layout))
 print(pisc_prey, vp = set_vp(1, 2))
-print(benth_prey, vp = set_vp(1, 4))
+print(benth_prey, vp = set_vp(3, 2))
 grid.text(
   expression( paste("Standard length (", mm, ")", sep = "") ), 
-  vp = viewport(layout.pos.row = 2, layout.pos.col = 2:4), 
+  #vp = viewport(layout.pos.row = 2, layout.pos.col = 2:4), 
+  vp = viewport(layout.pos.row = 4, layout.pos.col = 1:2), 
   gp = gpar(fontsize = 10), vjust = -0.25
   )
 grid.text(
@@ -962,11 +1026,16 @@ grid.text(
   gp = gpar(fontsize = 10), rot = 90, vjust = 1.7
   )
 grid.text(
+  "Prey total length (mm)",
+  vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 1.7
+  )
+grid.text(
   "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
   gp = gpar(fontsize = 9), vjust = -13
   )
 grid.text(
-  "b)", vp = viewport(layout.pos.row = 1, layout.pos.col = 3), 
+  "b)", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
   gp = gpar(fontsize = 9), vjust = -13
   )
 # Figure label

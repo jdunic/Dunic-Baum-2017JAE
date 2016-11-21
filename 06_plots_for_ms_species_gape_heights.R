@@ -402,7 +402,7 @@ mk_multipanel_plots2(fg_point_df  = h, spp_point_df  = h_spp_dfs$CH.SORD,
     eqn_x = 440, eqn_y = 3.9, r2_x = 440, r2_y = 5.3,
     n_x = 440, n_y = 6.8, x_axis_labels = FALSE, y_axis_labels = FALSE, 
     fg_line_intercept = all_fg_GH_graph_df$ref_intercept_iso[4], 
-    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Chlororus sordidus") +
+    x_axis_text = FALSE, y_axis_text = FALSE, plot_title = "Chlorurus sordidus") +
     geom_abline(data = all_fg_GH_graph_df[4, ], 
                 aes(slope = boot_slope, intercept = boot_ref_int), linetype = 2) +
     scale_x_log10(breaks = c(50, 100, 250)) + 
@@ -554,7 +554,7 @@ sp_name_by_slope <-
       "Paracirrhites arcatus", "Parupeneus insularis", "Monotaxis grandoculis", 
       "Pseudanthias dispar", "Caesio teres", "Pseudanthias bartlettorum", 
       "Pseudanthias olivaceus", "Pterocaesio tile", "Chromis vanderbilti", 
-      "Centropyge flavissima", "Chlororus sordidus", "Acanthurus olivaceus", "Acanthurus nigricans", "Scarus frenatus", "Scarus rubroviolaceus", 
+      "Centropyge flavissima", "Chlorurus sordidus", "Acanthurus olivaceus", "Acanthurus nigricans", "Scarus frenatus", "Scarus rubroviolaceus", 
       "Chaetodon ornatissimus"
       )
 

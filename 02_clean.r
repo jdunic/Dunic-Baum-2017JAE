@@ -2,6 +2,8 @@
 ############             Entering and Cleaning Data                 ############
 ################################################################################
 
+fish$Family <- gsub('Scaridae', 'Labridae', fish$Family)
+
 # Remove species for which there were not enough samples
 excluded_spp <- c('PS.COOP', 'CT.MARG', 'CH.AURI', 'ME.NIGE', 'CH.MARG', 'CT.STRI', 
                   'CE.LORI', 'PL.DICK', 'LU.KASM')
@@ -93,7 +95,7 @@ h <- fish[which(fish$j_fg=='He'), ]
 h$SpeciesCode <- factor(h$SpeciesCode)
 h$Family <- factor(h$Family)
 
-h_fam <- c("Acanthuridae", "Pomacanthidae", "Scaridae")
+h_fam <- c("Acanthuridae", "Pomacanthidae", "Labridae")
 h_fam <- factor(h_fam, levels=h_fam)
 
 ### ORDERING H by Family then Species --> this will make organizing facets 
@@ -224,6 +226,13 @@ h_spp_dfs <- split(h, h$SpeciesCode, drop=TRUE)
 ############             Cleaning Prey Size Data                    ############
 ################################################################################
 ddply(pento[which(pento$SpeciesCode %in% c("CE.UROD", "CE.ARGU")), ], .(SpeciesCode), summarise, mean_gw_ratio = mean(gw_ratio))
+
+# Weight was a factor. 
+prey <- dplyr::mutate(prey, wt = as.numeric(as.character(wt)))
+
+# Add missing families
+prey <- dplyr::mutate(prey, Family = replace(Family, SpeciesCode %in% c('EP.MACU', 'EP.HEXA', 'EP.TAUV', 'EP.SPIL'), 'Serranidae'))
+prey <- dplyr::mutate(prey, Family = replace(Family, SpeciesCode %in% c('AP.FURC', 'LU.KASM'), 'Lutjanidae'))
 
 # calculate gape area in the prey dataset
 prey$ga <- with(prey, pi*(gh/2)*(gw/2))

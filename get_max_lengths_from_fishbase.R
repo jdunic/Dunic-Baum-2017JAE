@@ -9,7 +9,7 @@ c('Caranx melampygus', 'Carangoides orthogrammus', 'Aphareus furca',
   'Caesio teres', 'Pterocaesio tile', 'Chromis vanderbilti', 
   'Pseudanthias bartlettorum', 'Pseudanthias dispar', 'Pseudanthias olivaceus', 
   'Acanthurus nigricans', 'Acanthurus olivaceus', 'Centropyge flavissima', 
-  'Chlororus sordidus', 'Scarus frenatus', 'Scarus rubroviolaceus', 
+  'Chlorurus sordidus', 'Scarus frenatus', 'Scarus rubroviolaceus', 
   'Chaetodon ornatissimus')
 
 fb_fish_data <- 

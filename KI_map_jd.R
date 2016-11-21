@@ -71,7 +71,7 @@ KI_map <- plot(kiM,
                )
 par(mar = c(5.3, 5.1, 4.1, 5.1))
 #box(bty = 'L')
-points(jd_sites, pch = 21, col = "black", bg = "white", cex = 1.2)
+points(jd_sites, pch = 21, col = "black", bg = "white", cex = 1.1)
 points(jd_sites, pch = 21, col = "black", bg = "black", cex = 0.3)
 #points(jd_sites, pch = 21, cex = 1.25, bg = as.character(jd_sites$colour))
 axis(side = 2, cex.axis = 0.8, pos = -157.6) #mgp = c(2, 0.5, 0))
@@ -94,4 +94,4 @@ polygon(x = x, y = y, border = "black", col = "black")
 text(x = x[3], y = 1.72, "N")
 
 
-dev.copy2pdf(device=quartz, file = "/Users/jillian/R_projects/Allometry/KI_map.pdf")
+dev.copy2pdf(device=quartz, file = "/Users/jillian/R_projects/Allometry/Figures/KI_map.pdf")

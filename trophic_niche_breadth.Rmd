@@ -1,0 +1,222 @@
+
+--------------------------------------------------------------------------------
+
+Trophic-niche breadth plots
+
+```{r, include=FALSE}
+#===============================================================================
+# Predator prey size graphs
+#===============================================================================
+#===============================================================================
+# STANDARD LENGTH PRED - PREY
+# Graphs for piscivores prey size - predator STANDARD LENGTH
+P_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'Pi'), ]
+df.n <- ddply(.data=P_prey_SL, .(j_fg, Family), summarize, n=paste("n ==", length(SL)))
+pisc_prey <-
+ggplot(data = P_prey_SL, aes(x = SL, y = pSize / SL)) +
+  geom_point(aes(shape = pType)) +
+  scale_shape_manual(values=c(1, 19)) +
+  #geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+  #          size = 3, hjust = 0) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  theme(axis.line = element_line(color = 'black')) +
+  theme(legend.position = "none") +
+  theme(axis.title = element_blank()) +
+  #geom_smooth(method = "lm") +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") +
+  theme(axis.ticks.length = unit(-0.2, "cm"),
+        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1)) + 
+  facet_wrap(~ Family)
+
+# Benthic invertivore stomach contents for predator STANDARD LENGTH
+B_prey_SL <- prey_PiBI[which(prey_PiBI$j_fg == 'BI'), ]
+# Graph of just benthic invertivore stomach contents:
+df.n <- ddply(.data=B_prey_SL, .(j_fg, Family), summarize, n=paste("n ==", length(j_fg)))
+benth_prey <- 
+ggplot(data = B_prey_SL, aes(x = SL, y = pSize / SL)) +
+  geom_point(aes(shape = pType)) +
+  #geom_point(aes(x = 510, y = 100), alpha = 0.0) +
+  #geom_point(aes(x = 49, y = 258), alpha = 0.0) +
+  scale_shape_manual(values=c(1, 19)) +
+  #geom_text(data = df.n, aes(x = 90, y = 230, label = n), parse = TRUE, 
+  #          size = 3, hjust = 0) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  theme(axis.line = element_line(color = 'black')) +
+  theme(legend.position = "none") +
+  theme(axis.title = element_blank()) +
+  stat_quantile(geom = "quantile", quantiles = c(0.10, 0.50, 0.90), method = "rq", 
+                colour = "black") +
+  theme(axis.ticks.length = unit(-0.2, "cm"), 
+        axis.text.y = element_text(margin = margin(0, 8, 0, 0)), 
+        axis.text.x = element_text(margin = margin(8, 0, 0, 0), vjust = 1)) + 
+  facet_wrap(~ Family)
+
+#camela_prey_SL <- prey_PiBI[which(prey_PiBI$SpeciesCode == 'CA.MELA'), ]
+#ggplot(data = camela_prey_SL, aes(x = SL, y = pSize)) +
+ # geom_point(aes(shape = pType))
+```
+
+
+```{r, echo=FALSE, fig.height=6.4, fig.width=7.5, fig.cap='**Figure X.** Trophic niche plots.'}
+
+# fig.height=3.2, fig.width=7.5
+
+master_layout <- 
+#grid.layout(nrow = 2, ncol = 4, 
+#      widths = unit(c(0.1, 1, 0.1, 1), "null"),
+#      heights = unit(c(1, 0.15), "null"))
+grid.layout(nrow = 4, ncol = 2, 
+      widths = unit(c(0.1, 1), "null"),
+      heights = unit(c(1, 0.15, 1, 0.15), "null"))
+
+grid.newpage()
+pushViewport(viewport(layout = master_layout))
+print(pisc_prey, vp = set_vp(1, 2))
+print(benth_prey, vp = set_vp(3, 2))
+grid.text(
+  expression( paste("Standard length (", mm, ")", sep = "") ), 
+  #vp = viewport(layout.pos.row = 2, layout.pos.col = 2:4), 
+  vp = viewport(layout.pos.row = 4, layout.pos.col = 1:2), 
+  gp = gpar(fontsize = 10), vjust = -0.25
+  )
+grid.text(
+  "Prey total length (mm) / \nPredator standard length (mm)",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 0.5 #1.7
+  )
+grid.text(
+  "Prey total length (mm) / \nPredator standard length (mm)",
+  vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+  gp = gpar(fontsize = 10), rot = 90, vjust = 0.5 #1.7
+  )
+grid.text(
+  "a)", vp = viewport(layout.pos.row = 1, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -13
+  )
+grid.text(
+  "b)", vp = viewport(layout.pos.row = 3, layout.pos.col = 1), 
+  gp = gpar(fontsize = 9), vjust = -13
+  )
+# Figure label
+grid.text("Figure 4", vp = viewport(layout.pos.row = 2, layout.pos.col = 1), 
+    gp = gpar(fontsize = 9), hjust = -1, vjust = 1)
+```
+
+
+
+**Trophic niche breadth**  
+
+```{r, echo=FALSE, eval=FALSE, include=FALSE}
+
+# Trophic niche breadth
+prey_PiBI <- as_data_frame(prey_PiBI)
+
+p_10 <- rq(formula = pSize ~ SL, tau = 0.1, data = filter(prey_PiBI, j_fg == 'Pi'))
+p_50 <- rq(formula = pSize ~ SL, tau = 0.5, data = filter(prey_PiBI, j_fg == 'Pi'))
+p_90 <- rq(formula = pSize ~ SL, tau = 0.9, data = filter(prey_PiBI, j_fg == 'Pi'))
+
+b_10 <- rq(formula = pSize ~ SL, tau = 0.1, data = filter(prey_PiBI, j_fg == 'BI'))
+b_50 <- rq(formula = pSize ~ SL, tau = 0.5, data = filter(prey_PiBI, j_fg == 'BI'))
+b_90 <- rq(formula = pSize ~ SL, tau = 0.9, data = filter(prey_PiBI, j_fg == 'BI'))
+
+# Was min, med, max regression different from zero?
+summary(p_10, se = 'ker')
+summary(p_50, se = 'ker')
+summary(p_90, se = 'ker')
+
+summary(b_10, se = 'ker')
+summary(b_50, se = 'ker')
+summary(b_90, se = 'ker')
+
+# Were min and max regression slopes different?
+anova(p_10, p_90)
+anova(b_10, b_90)
+
+# Was min, med, max regression different from zero?
+pl_10 <- rq(formula = pSize ~ SL, tau = 0.1, data = filter(prey_PiBI, Family == 'Lutjanidae'))
+pl_50 <- rq(formula = pSize ~ SL, tau = 0.5, data = filter(prey_PiBI, Family == 'Lutjanidae'))
+pl_90 <- rq(formula = pSize ~ SL, tau = 0.9, data = filter(prey_PiBI, Family == 'Lutjanidae'))
+
+summary(pl_10, se = 'ker')
+summary(pl_50, se = 'ker')
+summary(pl_90, se = 'ker')
+
+
+bm_10 <- rq(formula = pSize ~ SL, tau = 0.1, data = filter(prey_PiBI, Family == 'Mullidae'))
+bm_50 <- rq(formula = pSize ~ SL, tau = 0.5, data = filter(prey_PiBI, Family == 'Mullidae'))
+bm_90 <- rq(formula = pSize ~ SL, tau = 0.9, data = filter(prey_PiBI, Family == 'Mullidae'))
+
+summary(bm_10, se = 'ker')
+summary(bm_50, se = 'ker')
+summary(bm_90, se = 'ker')
+
+anova(bm_10, bm_90)
+
+
+bm_10 <- rq(formula = pSize ~ wt, tau = 0.1, data = filter(prey_PiBI, Family == 'Mullidae'))
+bm_50 <- rq(formula = pSize ~ wt, tau = 0.5, data = filter(prey_PiBI, Family == 'Mullidae'))
+bm_90 <- rq(formula = pSize ~ wt, tau = 0.9, data = filter(prey_PiBI, Family == 'Mullidae'))
+
+summary(bm_10, se = 'ker')
+summary(bm_50, se = 'ker')
+summary(bm_90, se = 'ker')
+
+anova(bm_10, bm_90)
+
+```
+
+Increase in Mullidae - maximum prey size does increase
+
+Trophic niche breadth as calculated as the difference in slopes between the 10th and 90th quantile regression slopes of the relative prey size ~ predator size relationship showed no change in either piscivores or benthic invertivores. 
+
+```{r}
+p_10 <- rq(formula = pSize / SL ~ SL, tau = 0.1, data = filter(prey_PiBI, j_fg == 'Pi'))
+p_50 <- rq(formula = pSize / SL ~ SL, tau = 0.5, data = filter(prey_PiBI, j_fg == 'Pi'))
+p_90 <- rq(formula = pSize / SL ~ SL, tau = 0.9, data = filter(prey_PiBI, j_fg == 'Pi'))
+
+b_10 <- rq(formula = pSize / SL ~ SL, tau = 0.1, data = filter(prey_PiBI, j_fg == 'BI'))
+b_50 <- rq(formula = pSize / SL ~ SL, tau = 0.5, data = filter(prey_PiBI, j_fg == 'BI'))
+b_90 <- rq(formula = pSize / SL ~ SL, tau = 0.9, data = filter(prey_PiBI, j_fg == 'BI'))
+
+
+anova(p_10, p_90)
+anova(b_10, b_90)
+
+```
+
+```{r, eval=FALSE, include=FALSE}
+# Trophic niche breadth actually decreases in the benthic invertivores, whereas 
+# it seems to stay the same in the piscivores. 
+
+get_tnb <- function(PSL, m90, b90, m10, b10) { 
+  tnb <- (m90 * PSL + b90) - (m10 * PSL + b10)
+  return(tnb)
+}
+
+p_tnb <- 
+apply(filter(prey_PiBI, j_fg == 'Pi'), MARGIN = 1, FUN = function(row) {
+  sl <- as.numeric(row[names(row) == 'SL'])
+  get_tnb(PSL = sl, m90 = coef(p_90)[[2]], b90 = coef(p_90)[[1]], 
+          m10 = coef(p_10)[[2]], b10 = coef(p_10)[[1]])
+})
+
+sum(p_tnb) / length(p_tnb)
+
+b_tnb <- 
+apply(filter(prey_PiBI, j_fg == 'BI'), MARGIN = 1, FUN = function(row) {
+  sl <- as.numeric(row[names(row) == 'SL'])
+  get_tnb(PSL = sl, m90 = coef(p_90)[[2]], b90 = coef(p_90)[[1]], 
+          m10 = coef(p_10)[[2]], b10 = coef(p_10)[[1]])
+})
+
+sum(b_tnb) / length(b_tnb)
+
+```
